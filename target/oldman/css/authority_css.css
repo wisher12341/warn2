@@ -1,0 +1,56 @@
+
+#buttonTool{
+    margin-left: 30%;
+    margin-top: 2%;
+}
+
+label{
+    font: 12px/1.5 Tahoma,Helvetica,Arial,'宋体',sans-serif;
+    margin-left: 10px;
+}
+
+
+
+.toolB{
+    margin-right: 2%;
+    background-color: #1ab394;
+}
+
+span{
+    font: 14px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+}
+
+span.parent{
+    font: 16px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif !important;
+    font-weight: bold;
+    margin-left: -15%;
+}
+
+span.children{
+    font: 12px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif !important;
+    font-weight: bold;
+    margin-left: 15%;
+}
+/*.datagrid-view1,.datagrid-view2{*/
+    /*!*margin: 0 6px 0!important;*!*/
+    /*margin-bottom: 10% !important;*/
+/*}*/
+
+/*.datagrid-body{*/
+    /*margin-bottom: 15% !important;*/
+/*}*/
+.datagrid-btable{
+    margin-bottom: 15% !important;
+}
+
+#toolbar .l-btn-plain{
+    padding: 0.4% 1%!important;
+}
+.messager-button .l-btn {
+    color: #365a5a !important;
+}
+
+.addButton{
+    color: #365a5a;
+}

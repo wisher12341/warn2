@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.DownHistoryDao">
+
+
+    <insert id="addDownData" parameterType="com.warn.entity.DownData" useGeneratedKeys="true" keyProperty="downid">
+        INSERT INTO downhistory(downid,oid,dataDown,readDown,timeDown,oldName,typeDown) VALUES (#{downid},#{oldMan.oid},#{dataDown},#{readDown},#{timeDown},#{oldMan.oldName},#{typeDown})
+    </insert>
+
+    <select id="getNoReadSum" resultType="long">
+        select
+        count(1)
+        from downhistory where readDown="否"
+    </select>
+
+    <update id="messageRead">
+        UPDATE downhistory SET readDown="是" WHERE downid=#{id}
+    </update>
+
+    <select id="getDatagridTotal" resultType="long" >
+        select
+        count(1)
+        from downhistory
+        WHERE 1=1
+        <if test="oldName != null and oldName != ''">
+            and oldName=#{oldName}
+        </if>
+        <if test="oid!= null and oid != ''">
+            and oid=#{oid}
+        </if>
+        <if test="readDown != null and readDown != ''">
+            and readDown=#{readDown}
+        </if>
+        <if test="typeDown != null and typeDown != ''">
+            and typeDown=#{typeDown}
+        </if>
+        <if test="timeDown != null and timeDown != ''">
+            and timeDown like concat('%',#{timeDown},'%')
+        </if>
+
+    </select>
+
+    <!--参数只有一个的话 可以直接用对象的属性值，但是有两个以上的话 就要 对象名.属性名-->
+    <select id="datagridDownData" resultType="com.warn.entity.DownData">
+        select
+        oid,oldName,readDown,downid,timeDown,typeDown,dataDown
+        FROM downhistory
+        WHERE 1=1
+        <if test="downData.oldName != null and downData.oldName != ''">
+            and oldName=#{downData.oldName}
+        </if>
+        <if test="downData.oid!= null and downData.oid != ''">
+            and oid=#{downData.oid}
+        </if>
+        <if test="downData.readDown != null and downData.readDown != ''">
+            and readDown=#{downData.readDown}
+        </if>
+        <if test="downData.typeDown != null and downData.typeDown != ''">
+            and typeDown=#{downData.typeDown}
+        </if>
+        <if test="downData.timeDown != null and downData.timeDown != ''">
+            and timeDown like concat('%',#{downData.timeDown},'%')
+        </if>
+            order by downid DESC
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+
+    <!--返回String类型 要加 resultType="String"-->
+    <!--<select id="getMessageByOdid"  resultType="String">-->
+        <!--SELECT dataD FROM outhistory WHERE odid=#{id}-->
+    <!--</select>-->
+
+</mapper>

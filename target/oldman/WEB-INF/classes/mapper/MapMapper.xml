@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.MapDao">
+
+    <select id="getHouseMarkers" resultType="com.warn.entity.HouseMarker">
+        select
+        m.id,m.oid,j.qid,m.jid,m.x,m.y,m.styleIndex,m.detail,o.oldName
+        from marker_house m,marker_street j,oldman o WHERE m.jid=j.id AND m.oid=o.oid
+    </select>
+
+    <select id="getLouMarkers" resultType="com.warn.entity.LouMarker">
+        SELECT l.id,l.x_g,l.y_g,l.x_y,l.y_y,l.x_r,l.y_r,info,
+        (select count(1) from oldman o where o.louID=l.id AND o.status=0) greenSum,
+        (select count(1) from oldman o where o.louID=l.id AND o.status=1) yellowSum,
+        (select count(1) from oldman o where o.louID=l.id AND o.status=2) redSum
+        FROM marker_lou l WHERE l.id!=0
+    </select>
+
+    <insert id="addHouseMarker" parameterType="com.warn.entity.HouseMarker">
+        INSERT INTO marker_house(oid,jid,x,y,styleIndex) VALUES (#{oid},#{jid},#{x},#{y},#{styleIndex})
+    </insert>
+
+    <insert id="addLouMarker" parameterType="com.warn.entity.LouMarker">
+        INSERT INTO marker_lou(x_g,y_g,x_r,y_r,x_y,y_y,jid,info) VALUES (#{xG},#{yG},#{xR},#{yR},#{xY},#{yY},#{jid},#{info})
+    </insert>
+    <select id="getQuMarkers" resultType="com.warn.entity.QuMarker">
+        select
+        d.id,d.qX,d.qY,d.styleIndex,d.qName,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) sum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=0 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) greenSum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=1 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) yellowSum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=2 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) redSum
+        from marker_district d WHERE d.id!=0
+    </select>
+
+    <select id="getJieDaoMarkers" resultType="com.warn.entity.JieDaoMarker">
+        select
+        s.id,s.jX,s.jY,s.styleIndex,s.qid,s.jName,d.qName,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id) sum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=0) greenSum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=1) yellowSum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=2) redSum
+        from marker_street s,marker_district d WHERE s.qid=d.id AND s.id!=0
+    </select>
+    <select id="getJieDaoMarkersByQid" resultType="com.warn.entity.JieDaoMarker">
+        select
+        id,jName
+        from marker_street WHERE qid=#{id}
+    </select>
+
+    <select id="getLouMarkersByJid" resultType="com.warn.entity.LouMarker">
+        select
+        id,info
+        from marker_lou WHERE jid=#{id}
+    </select>
+    <insert id="addStreetMarker" parameterType="com.warn.entity.JieDaoMarker"  useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO marker_street(qid,jName,jX,jY,styleIndex) VALUES (#{qid},#{jName},#{jX},#{jY},#{styleIndex})
+    </insert>
+
+
+    <select id="getSums_qu" resultType="com.warn.entity.QuMarker">
+        SELECT d.id,d.qName,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) sum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=0 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) greenSum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=1 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) yellowSum,
+        (select count(1) from oldman o,marker_lou l where o.louID=l.id AND o.status=2 AND l.jid IN (SELECT id FROM marker_street j WHERE j.qid=d.id)) redSum
+        from marker_district d WHERE d.id!=0
+    </select>
+
+
+    <select id="getSums_jiedao" resultType="com.warn.entity.JieDaoMarker">
+        select
+        s.id,s.jName,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id) sum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=0) greenSum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=1) yellowSum,
+        (select count(1) from marker_lou l,oldman o where o.louID=l.id AND l.jid=s.id AND o.status=2) redSum
+        from marker_street s WHERE s.qid=#{id} AND s.id!=0
+    </select>
+
+
+
+    <select id="getSums_house" resultMap="resultHouseMarker">
+        select
+        h.id,o.oid,o.oldName,o.oldAddress,h.styleIndex,h.detail
+        from marker_house h,oldman o WHERE h.jid=#{id} AND h.oid=o.oid
+    </select>
+
+    <resultMap id="resultHouseMarker" type="com.warn.entity.HouseMarker">
+        <id property="id" column="id"/>
+        <result property="styleIndex" column="styleIndex"/>
+        <result property="detail" column="detail"/>
+        <association property="oldMan" javaType="com.warn.entity.OldMan">
+            <id property="oid" column="oid"/>
+            <result property="oldName" column="oldName"/>
+            <!--<result property="oldPhone" column="rPhone"/>-->
+            <result property="oldAddress" column="oldAddress"/>
+        </association>
+    </resultMap>
+
+
+    <update id="editHouseMarker" parameterType="com.warn.entity.HouseMarker"  useGeneratedKeys="true" keyProperty="id">
+        UPDATE marker_house SET styleIndex=#{styleIndex},detail=#{detail} WHERE oid=#{oid}
+    </update>
+
+    <select id="getHouseMarkerByOid" resultType="com.warn.entity.HouseMarker">
+        select
+        oid,x,y,styleIndex,detail
+        from marker_house WHERE oid=#{oid}
+    </select>
+
+    <select id="getLouMarkersTotal" resultType="java.lang.Long">
+        select
+        count(1)
+        from marker_lou WHERE id!=0
+        <if test="id != null and id != ''">
+            and id=#{id}
+        </if>
+        <if test="jid != null and jid != ''">
+            and jid=#{jid}
+        </if>
+        <if test="info != null and info != ''">
+            and info like concat('%',#{info},'%')
+        </if>
+    </select>
+
+    <select id="getLouMarkersManager" resultType="com.warn.entity.LouMarker">
+        SELECT id,x_g,y_g,x_y,y_y,x_r,y_r,info,jid
+        FROM marker_lou WHERE id!=0
+        <if test="lou.id != null and lou.id != ''">
+            and id=#{lou.id}
+        </if>
+        <if test="lou.jid != null and lou.jid != ''">
+            and jid=#{lou.jid}
+        </if>
+        <if test="lou.info != null and lou.info != ''">
+            and info like concat('%',#{lou.info},'%')
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+
+    <select id="getQuMarkersTotal" resultType="java.lang.Long">
+        select
+        count(1)
+        from marker_district WHERE id!=0
+        <if test="id != null and id != ''">
+            and id=#{id}
+        </if>
+        <if test="qName != null and qName != ''">
+            and qName like concat('%',#{qName},'%')
+        </if>
+    </select>
+
+    <select id="getQuMarkersManager" resultType="com.warn.entity.QuMarker">
+        SELECT id,qName,styleIndex,qX,qY
+        FROM marker_district WHERE id!=0
+        <if test="qu.id != null and qu.id != ''">
+            and id=#{qu.id}
+        </if>
+        <if test="qu.qName != null and qu.qName != ''">
+            and qName like concat('%',#{qu.qName},'%')
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+
+    <select id="getJieDaoMarkersTotal" resultType="java.lang.Long">
+        select
+        count(1)
+        from marker_street WHERE id!=0
+        <if test="id != null and id != ''">
+            and id=#{id}
+        </if>
+        <if test="qid != null and qid != ''">
+            and qid=#{qid}
+        </if>
+        <if test="jName != null and jName != ''">
+            and jName like concat('%',#{jName},'%')
+        </if>
+    </select>
+
+    <select id="getJieDaoMarkersManager" resultType="com.warn.entity.JieDaoMarker">
+        SELECT id,jName,styleIndex,jX,jY,qid
+        FROM marker_street WHERE id!=0
+        <if test="jie.id != null and jie.id != ''">
+            and id=#{jie.id}
+        </if>
+        <if test="jie.qid != null and jie.qid != ''">
+            and jid=#{jie.jid}
+        </if>
+        <if test="jie.jName != null and jie.jName != ''">
+            and jName like concat('%',#{jie.jName},'%')
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+</mapper>

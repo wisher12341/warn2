@@ -1,0 +1,186 @@
+#search{
+    display: inline-block;
+    width: 100%;
+    margin-left: 10%;
+}
+
+
+#searchB{
+    margin-left: 20px;
+}
+
+.toolB{
+    margin-right: 15px;
+}
+
+span{
+    font: 14px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+}
+
+.aaa{
+    display: inline;
+}
+
+#buttonTool{
+    /*position: relative;*/
+    margin-left: 10%;
+    /*margin-top: -10px;*/
+    /*margin-bottom: 6px!important;*/
+    margin-top: -2.5%;
+}
+/*#toolbar + .datagrid-view{*/
+    /*height: 62% !important;*/
+    /*width: 100% !important;*/
+    /*margin-bottom: 5%;*/
+/*}*/
+
+#search .textbox{
+    margin-top: 2px;
+}
+
+.editButton{
+    margin: 5px;
+    padding: 5px;
+    background:#1ab394;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.saveButton{
+    margin: 5px 2px;
+    padding: 5px;
+    background:#1ab394;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+.cancelButton{
+    margin: 5px 2px;
+    padding: 5px;
+    background:#d01919;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+
+.layout-panel-center .panel {
+    overflow: hidden !important;
+    text-align: left !important;
+    margin: 3% !important;
+    border: solid 1px #ccc !important;
+    -moz-border-radius: 0 0 0 0 !important;
+    -webkit-border-radius: 0 0 0 0 !important;
+    border-radius: 0 0 0 0 !important;
+}
+
+.layout-panel-center .datagrid-toolbar {
+    height: auto !important;
+    padding: 1px 2px !important;
+    border-width: 0 0 1px 0 !important;
+    border-style: solid !important;
+}
+
+.layout-panel-center .panel-body {
+    background-color: #f2f2f2 !important;
+    color: #366a6a !important;
+    font-size: 12px !important;
+}
+.layout-panel-center .layout-body .panel-body{
+    background-color: white !important;
+}
+
+
+.layout-panel-center .panel:last-child{
+    margin-bottom: 10% !important;
+}
+
+.layout-panel-west{
+    border-right: solid 1px #365a5a !important;
+}
+
+#toolbar2 .aaa{
+    padding: 8px;
+    display: inline !important;
+}
+.layout-panel-center .datagrid-toolbar{
+    height: 4% !important;
+}
+
+#buttonTool1{
+    margin-top: 1%;
+    margin-left: 2% !important;
+}
+
+#toolbar2{
+    height: 6.5% !important;
+}
+
+#toolbar .l-btn-plain{
+    padding: 1.5% !important;
+}
+
+/*.datagrid .datagrid-pager{*/
+    /*margin-bottom: 10% !important;*/
+/*}*/
+
+.datagrid-toolbar{
+    height: 14% !important;
+}
+
+/*.panel-body{*/
+    /*overflow: auto !important;*/
+/*}*/
+
+/*.datagrid-pager{*/
+    /*height: 10% !important;*/
+/*}*/
+
+.datagrid-pager{
+    position: relative!important;
+    top:-4% !important;
+}
+
+/*.datagrid-body .datagrid-btable tr:last-child{*/
+    /*!*margin-bottom: 10% !important;*!*/
+/*}*/
+
+.datagrid-view{
+    margin: 0 5px 7%;
+}
+
+#buttonTool{
+    height: 13%;
+}
+
+.addButton{
+    color: #365a5a;
+}
+
+
+.pagination-info{
+    font-size: 10px;
+    line-height:10px;
+}
+
+.panel-title{
+    font-size: 15px;
+    line-height: 15px;
+    height:15px;
+}
+
+.datagrid-toolbar{
+    margin: 0 !important;
+}
+
+.panel-header{
+    padding:2px !important;
+}

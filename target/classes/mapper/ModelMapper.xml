@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.ModelDao">
+
+    <resultMap id="resultRoomModel" type="com.warn.entity.model.RoomModel">
+        <id property="rmid" column="rmid"/>
+        <result property="active" column="active"/>
+        <result property="rest" column="rest"/>
+        <association property="room" javaType="com.warn.entity.Room">
+            <id property="rid" column="rid"/>
+            <result property="roomName" column="roomName"/>
+        </association>
+    </resultMap>
+
+
+    <select id="getRoomModelByRoomId" resultMap="resultRoomModel">
+        SELECT model.rmid,model.active,model.rest,r.rid,r.roomName
+        FROM roommodel model,room r
+        WHERE model.roomId=#{id} AND r.rid=model.roomId
+    </select>
+
+
+    <select id="getRoomModelByRoomIds" resultMap="resultRoomModel">
+        SELECT model.rmid,model.active,model.rest,r.rid,r.roomName
+        FROM roommodel model,room r
+        WHERE r.rid=model.roomId AND roomId in
+        <foreach collection="list" item="room" index="index" open="(" close=")" separator=",">
+            #{room.rid}
+        </foreach>
+    </select>
+
+    <update id="updateRooModel" parameterType="com.warn.entity.model.RoomModel">
+        UPDATE roommodel
+        SET active=#{active},rest=#{rest}
+        WHERE rmid=#{rmid}
+    </update>
+
+    <insert id="addRoomModel" parameterType="com.warn.entity.model.RoomModel">
+        INSERT INTO roommodel(roomId,active,rest) VALUES (#{room.rid},#{active},#{rest})
+    </insert>
+
+    <delete id="deleteByRoomId">
+        delete from roommodel where roomId=#{id}
+    </delete>
+
+    <select id="getManModelByOid" resultType="com.warn.entity.model.ManModel">
+        SELECT mid,oldId,live from manmodel WHERE oldId=#{id}
+    </select>
+
+    <delete id="deleteByoldId">
+        DELETE FROM manmodel WHERE oldId=#{id}
+    </delete>
+
+    <insert id="addManModel" parameterType="com.warn.entity.model.ManModel">
+        INSERT INTO manmodel(oldId,live) VALUES (#{oldMan.oid},#{live})
+    </insert>
+
+    <delete id="deleteByRoomIds">
+        DELETE FROM roommodel WHERE roomId in
+        <foreach collection="list" item="room" index="index" open="(" close=")" separator=",">
+            #{room.rid}
+        </foreach>
+    </delete>
+</mapper>

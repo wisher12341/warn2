@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 2.0//EN" "http://www.getahead.ltd.uk/dwr/dwr20.dtd">
+<dwr>
+    <allow>
+        <create creator="new" JavaScript="Remote">
+            <param name="class" value="com.warn.dwr.Remote" />
+            <include method="noticeNewOrder" />
+            <!--<include method="getData" />-->
+        </create>
+
+        <!--传给前端的对象类型-->
+        <convert converter="bean" match="com.warn.dto.DwrData"/>
+        <convert converter="bean" match="com.warn.dto.Urgency"/>
+        <convert converter="bean" match="com.warn.entity.Equipment"/>
+        <convert converter="bean" match="com.warn.entity.Room"/>
+        <convert converter="bean" match="com.warn.entity.OldMan"/>
+        <convert converter="bean" match="com.warn.dto.Warn"/>
+        <convert converter="bean" match="com.warn.dto.Warn_wendu"/>
+        <convert converter="bean" match="com.warn.dto.Warn_light"/>
+        <convert converter="bean" match="com.warn.entity.Threshold_wendu"/>
+        <convert converter="bean" match="com.warn.entity.Threshold_light"/>
+        <convert converter="bean" match="com.warn.entity.Threshold_out"/>
+        <convert converter="bean" match="com.warn.entity.Outdoor"/>
+        <convert converter="bean" match="com.warn.entity.EquipDown"/>
+
+        <convert converter="bean" match="com.warn.entity.HouseMarker"/>
+    </allow>
+</dwr>

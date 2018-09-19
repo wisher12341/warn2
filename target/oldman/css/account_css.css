@@ -1,0 +1,65 @@
+
+#search{
+    display: inline-block;
+    margin-top: 15px;
+    width: 100%;
+    margin-left: 18%;
+}
+
+/*.admin{*/
+    /*margin: 20px;*/
+/*}*/
+
+#buttonTool{
+    margin-left: 30%;
+    margin-top: 2%;
+}
+
+label{
+    font: 12px/1.5 Tahoma,Helvetica,Arial,'宋体',sans-serif;
+    margin-left: 10px;
+}
+
+#searchB{
+    margin-left: 20px;
+}
+
+.toolB{
+    margin-right: 2%;
+    background-color: #1ab394;
+}
+
+span{
+    font: 14px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+}
+
+.aaa{
+    display: inline;
+}
+
+.cC .quanxian{
+    margin-left: 2px;
+}
+
+#toolbar + .datagrid-view{
+    height: 70% !important;
+    width: 100% !important;
+    /*margin-bottom: 5% !important;*/
+}
+
+/*.datagrid-row:last-child{*/
+    /*margin-bottom: 10% !important;*/
+/*}*/
+#toolbar .l-btn-plain{
+    padding: 0.4% 1%!important;
+}
+
+
+.addButton{
+    color: #365a5a;
+}
+
+.messager-button .l-btn {
+    color: #365a5a !important;
+}

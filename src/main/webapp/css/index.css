@@ -1,0 +1,85 @@
+.navbar{
+    margin-bottom: 0;
+}
+.carousel {
+    height: 95%;
+}
+.carousel .item {
+    height: 95%;
+}
+.carousel .item img {
+    width: 100%;
+    /*max-height:1000px;*/
+    /*max-width:1000px;*/
+}
+
+
+#welcome{
+    margin-left: 80%;
+}
+
+#sub{
+    position: absolute;
+    top: 10%;
+    right: 5%;
+    color: #365a5a;
+}
+
+
+
+.messageT{
+    font-size: 20px;
+    font-weight: bolder;
+}
+
+.messageD{
+    font-weight: bold;
+}
+.read{
+    font-size: 17px;
+    color: red;
+}
+
+.gauge {
+    width: 130px;
+    height: 130px;
+}
+
+#sys{
+    position: absolute;
+    top: 15%;
+    right: 1%;
+}
+
+.messageB{
+    position: relative;
+    right: 17%;
+    top:28%;
+    margin-top: 5px;
+}
+
+
+#userTitle{
+    font-weight: bold;
+    font-size: 14px;
+    color: #1ab394;
+}
+
+
+.carousel-indicators{
+    bottom: 20%;
+}
+
+.carousel-caption p{
+    margin-bottom: 30%;
+}
+
+.carousel-inner{
+    height: 100% !important;
+}
+
+#titleLogo{
+    font-weight: bolder;
+    color: #365a5a;
+    font-size: 16px;
+}

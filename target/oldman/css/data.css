@@ -1,0 +1,78 @@
+/*.admin{*/
+    /*display: none;*/
+/*}*/
+#search{
+    display: inline-block;
+    margin-top: 15px;
+    width: 100%;
+    margin-left: 7%;
+}
+
+/*.admin{*/
+    /*margin: 20px;*/
+/*}*/
+
+#buttonTool{
+    margin-left: 30%;
+    margin-top: 1%;
+}
+
+label{
+    font: 12px/1.5 Tahoma,Helvetica,Arial,'宋体',sans-serif;
+    margin-left: 10px;
+}
+
+#searchB{
+    margin-left: 20px;
+}
+
+.toolB{
+    margin-right: 2%;
+    background-color: #1ab394;
+}
+
+span{
+    font: 14px/1.5 Tahoma,Helvetica,Arial,Helvetica,sans-serif;
+    font-weight: bold;
+}
+
+.aaa{
+    display: inline;
+}
+
+.cC .quanxian{
+    margin-left: 2px;
+}
+
+#toolbar + .datagrid-view{
+    height: 70% !important;
+    width: 100% !important;
+    /*margin-bottom: 5% !important;*/
+}
+
+/*.datagrid-row:last-child{*/
+    /*margin-bottom: 10% !important;*/
+/*}*/
+.jump{
+    margin: 8px;
+    padding: 3px;
+    background:rgba(26,179,148,1);
+    color: white;
+    border-radius: 6px;
+    border: none;
+    font-weight: 200;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.addButton{
+    color: #365a5a;
+}
+
+.messager-button .l-btn {
+    color: #365a5a !important;
+}
+
+.datagrid-view{
+    margin: 0 8px 2px !important;
+}

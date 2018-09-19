@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.EquipDao">
+
+    <!--<resultMap id="resultEquipment" type="com.warn.entity.Equipment">-->
+        <!--<id property="eid" column="eid"/>-->
+        <!--<result property="eName" column="eName"/>-->
+        <!--<result property="eRegtime" column="eRegtime"/>-->
+        <!--<association property="room" javaType="com.warn.entity.Room">-->
+            <!--<id property="rid" column="rid"/>-->
+            <!--<result property="roomName" column="roomName"/>-->
+            <!--<result property="rRegtime" column="rRegtime"/>-->
+            <!--<result property="nerRoom" column="nerRoom"/>-->
+            <!--<result property="collectId" column="collectId"/>-->
+            <!--<result property="oldId" column="oldId"/>-->
+        <!--</association>-->
+    <!--</resultMap>-->
+
+
+    <select id="getDatagridTotal" resultType="long" parameterType="com.warn.entity.Equipment">
+        select
+        count(1)
+        from equip
+        where 1=1
+        <if test="eid != null and eid != ''">
+            and eid=#{eid}
+        </if>
+        <if test="eName != null and eName != ''">
+            and eName=#{eName}
+        </if>
+        <if test="eRegtime != null and eRegtime != ''">
+            and eRegtime=#{eRegtime}
+        </if>
+        <if test="roomId != null and roomId != ''">
+            and roomId=#{roomId}
+        </if>
+        <if test="oldId != null and oldId != ''">
+            and oldId=#{oldId}
+        </if>
+
+    </select>
+
+    <select id="datagridEquip" resultType="com.warn.entity.Equipment">
+        select
+        e.eid,e.eName,e.eRegtime,e.oldId,e.roomId,o.gatewayID,o.segment
+        FROM equip e,oldman o
+        WHERE e.oldId=o.oid
+        <if test="equipment.eid != null and equipment.eid != ''">
+            and eid=#{equipment.eid}
+        </if>
+        <if test="equipment.eName != null and equipment.eName != ''">
+            and eName=#{equipment.eName}
+        </if>
+        <if test="equipment.eRegtime != null and equipment.eRegtime != ''">
+            and eRegtime=#{equipment.eRegtime}
+        </if>
+        <if test="equipment.roomId != null and equipment.roomId != ''">
+            and roomId=#{equipment.roomId}
+        </if>
+        <if test="equipment.oldId != null and equipment.oldId != ''">
+            and oldId=#{equipment.oldId}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+    
+    <insert id="addEquip" parameterType="com.warn.entity.Equipment">
+        INSERT INTO equip(eid,eName,eRegtime,roomId,oldId) VALUES (#{eid},#{eName},#{eRegtime},#{roomId},#{oldId})
+    </insert>
+
+    <update id="editEquip" parameterType="com.warn.entity.Equipment">
+        UPDATE equip SET eName=#{equip.eName},roomId=#{equip.roomId},oldId=#{equip.oldId} WHERE eid=#{equip.eid} AND oldId=#{preOid}
+    </update>
+
+    <delete id="deleteEquipById">
+      delete from equip where eid=#{eid} AND oldId=#{oid}
+    </delete>
+
+    <update id="deleteRoom">
+        UPDATE equip SET roomId=0 WHERE roomId=#{id}
+    </update>
+
+    <update id="deleteOldMan">
+        UPDATE equip SET oldId=0,roomId=0 WHERE oldId=#{id}
+    </update>
+
+
+    <select id="getAllEquipByOldManId" resultType="com.warn.entity.Equipment">
+        SELECT
+        eid,eName,eRegtime,oldId,roomId
+        FROM equip WHERE oldId=#{id}
+    </select>
+
+    <select id="getEquipmentByEid" resultType="com.warn.entity.Equipment">
+        SELECT eid,eName,eRegtime,oldId,roomId
+        FROM equip WHERE eid=#{id}
+    </select>
+    <select id="getCount" resultType="int">
+        select
+        count(1)
+        from equip
+    </select>
+
+
+    <select id="getEquipmentByGateWayId_SensorId" resultType="com.warn.entity.Equipment">
+        select
+        e.eid,e.eName,e.eRegtime,e.oldId,e.roomId
+        FROM equip e,oldman o
+        WHERE e.eid=#{sid} AND e.oldId=o.oid AND o.gatewayID=#{gid}
+    </select>
+</mapper>

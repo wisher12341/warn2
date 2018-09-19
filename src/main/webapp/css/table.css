@@ -1,0 +1,148 @@
+table.hovertable {
+    width:100%;
+    max-width: 100%;
+    margin-bottom: 10px;
+    border-spacing: 0;
+    border-collapse: collapse;
+    background-color: transparent;
+    font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-align: center;
+    color:  #03515f;
+}
+table.hovertable tr {
+    background-color:#ffffff;
+    border-width: 1px;
+    font-size: 0.5em;
+    font-weight: 300;
+}
+table.hovertable thead tr{
+    font-size:0.75em;
+    font-weight:500;
+    border-bottom-style: solid;
+    border-bottom-color: #719a70;
+    border-bottom-width: 2px;
+}
+table.hovertable tbody tr:nth-child(even){
+    background-color:#bed8bc;
+}
+table.hovertable tbody td {
+    border-left: 0px;
+    border-right:0px;
+    padding: 0.2em;
+}
+table.hovertable thead td{
+    padding: 0.4em;
+}
+table.hovertable td:first-child{
+    width: 20%;
+}
+
+.district td:first-child{
+    text-align: left;
+    font-size:1.4em;
+    font-weight: 500;
+    font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #03515f;
+    background-color: #bed8bc;
+    cursor: pointer;
+    padding-left: 1em;
+}
+
+.street td:first-child {
+    text-align: right;
+    font-size: 1.25em;
+    font-weight: 400;
+    font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #039baf;
+    cursor: pointer;
+    background-color: #bed8bc;
+    padding-right: 0.7em;
+}
+.district td:first-child:hover{
+    color:#ffffff;
+}
+
+.street td:first-child:hover{
+    color: #d8ffe1;
+}
+
+table.tableOldMan{
+    width:96%;
+    margin-left: 2%;
+    font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    text-align: center;
+    border-collapse: collapse;
+    color:#03515f ;
+    margin-top:3%;
+    font-size:1.25em;
+}
+
+table.tableOldMan thead tr{
+    border-bottom-style: solid;
+    border-bottom-color: #10a3a3;
+    border-bottom-width: 2px;
+    font-weight: 500;
+}
+table.tableOldMan tbody tr{
+    border-bottom-style: solid;
+    border-bottom-color: #a8d8d4;
+    border-bottom-width: 1px;
+    font-weight:400;
+
+}
+
+table.tableOldMan tbody tr:nth-child(even){
+    background-color: #c4e6ee;
+}
+
+.btn{
+    margin-top: 5px;
+    font-family: "open sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 0.3em;
+    display: inline-block;
+    background-color: #1ab394;
+    border: none;
+    border-bottom-left-radius: 0.25em;
+    border-bottom-right-radius: 0.25em;
+    border-top-left-radius: 0.25em;
+    border-top-right-radius: 0.25em;
+}
+.btn:hover{
+
+    border-bottom-left-radius: 0.5em;
+    border-bottom-right-radius: 0.5em;
+    border-top-left-radius: 0.5em;
+    border-top-right-radius: 0.5em;
+}
+
+.map{
+    margin-left: 0em;
+    width:65%;
+    height: 96%;
+    text-align: left;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    float: left;
+}
+
+.divtable{
+    width:28%;
+    height:32%;
+    display:inline;
+    position: absolute;
+    z-index: 1;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    overflow-y: auto;
+    margin-top: -7%;
+    margin-left: 1%;
+}
+.divtable2{
+    margin-top: 3%;
+    width:28%;
+    height:30%;
+    display:inline;
+    float: right;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    overflow-y: auto;
+}

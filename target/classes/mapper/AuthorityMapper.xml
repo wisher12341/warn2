@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.AuthorityDao">
+
+
+
+    <select id="getDatagridTotal" resultType="long">
+        select
+        count(1)
+        from sysmenu
+    </select>
+
+
+    <insert id="editAuthority" parameterType="java.util.List">
+        insert into role_menu (id,roleId,menuId,flagBack)
+        values
+        <foreach collection="list" item="item" index="index" separator="," >
+            (#{item.id},#{item.roleId},#{item.menuId},#{item.flagBack})
+        </foreach>
+    </insert>
+
+    <delete id="clearAuthority">
+        DELETE FROM role_menu
+    </delete>
+
+    <insert id="recoverAuthority">
+        insert into role_menu (roleId,menuId,flagBack)
+        values(1,3,1,'0'),(2,3,2,'0'),(3,3,6,'01'),(4,3,101,'0'),(5,3,102,'0'),(6,3,103,'0'),(7,3,1103,'0'),(8,3,201,'0'),
+        (9,3,602,'0'),(10,3,4,'1'),(11,3,5,'1'),(13,3,7,'1'),(14,3,8,'1'),(15,3,401,'1'),(16,3,402,'1'),(17,3,403,'1'),
+        (18,3,501,'1'),(19,3,502,'1'),(20,3,503,'1'),(21,3,601,'1'),(22,3,701,'1'),(23,3,702,'1'),(24,3,801,'1'),(25,3,802,'1'),
+        (26,3,9,'1'),(27,3,901,'1'),(28,3,10,'1'),(29,3,1001,'1'),(30,3,1104,'0'),(31,3,11,'01'),(32,3,902,'1'),(34,3,1101,'1'),
+        (35,3,1102,'1'),(36,3,404,'1'),(37,3,104,'0'),(38,3,803,'1'),(39,1,1,'0'),(40,1,2,'0'),(41,1,6,'01'),(42,1,101,'0'),
+        (43,1,102,'0'),(44,1,103,'0'),(45,1,1103,'0'),(46,1,201,'0'),(47,1,602,'0'),(48,1,104,'0'),(49,1,1104,'0'),(50,1,11,'01'),
+        (51,1,4,'1'),(52,1,5,'1'),(54,1,401,'1'),(55,1,402,'1'),(56,1,403,'1'),(57,1,501,'1'),(58,1,502,'1'),(59,1,503,'1'),
+        (60,1,601,'1'),(61,1,9,'1'),(62,1,901,'1'),(63,1,10,'1'),(64,1,1001,'1'),(65,1,902,'1'),(67,1,1101,'1'),(68,1,1102,'1'),
+        (69,1,7,'1'),(70,1,702,'1'),(71,1,8,'1'),(72,1,803,'1'),(73,2,1,'0'),(74,2,2,'0'),(75,2,6,'0'),(76,2,101,'0'),(77,2,102,'0'),
+        (78,2,103,'0'),(79,2,1103,'0'),(80,2,201,'0'),(81,2,602,'0'),(82,2,1104,'0'),(83,2,11,'0'),(84,2,104,'0'),(85,1,404,'1');
+
+
+    </insert>
+
+    <!--&lt;!&ndash;参数只有一个的话 可以直接用对象的属性值，但是有两个以上的话 就要 对象名.属性名&ndash;&gt;-->
+    <!--<select id="datagridAccount" resultType="com.warn.entity.Account">-->
+        <!--select-->
+          <!--u.id,u.username,u.password,ur.roleId,r.name-->
+        <!--FROM sysuser u,user_role ur,sysrole r WHERE ur.userId=u.id AND ur.roleId=r.id-->
+    <!--</select>-->
+    <!--&lt;!&ndash;插入后返回老人的主键 以便于给relatives的oldId赋值&ndash;&gt;-->
+    <!--<insert id="addUser" parameterType="com.warn.entity.User"  useGeneratedKeys="true" keyProperty="id">-->
+        <!--INSERT INTO sysuser(username,password) VALUES (#{username},#{password})-->
+    <!--</insert>-->
+
+    <!--<insert id="addUser_Role">-->
+        <!--INSERT INTO user_role(userId,roleId) VALUES (#{uid},#{rid})-->
+    <!--</insert>-->
+
+    <!--<update id="editUserByUid" parameterType="com.warn.entity.User">-->
+        <!--UPDATE sysuser SET username=#{username},password=#{password} WHERE id=#{id}-->
+    <!--</update>-->
+
+    <!--<update id="editUser_Role">-->
+        <!--UPDATE user_role SET roleId=#{rid} WHERE userId=#{uid}-->
+    <!--</update>-->
+    <!---->
+    <!--<delete id="deleteUserByUid">-->
+      <!--delete from sysuser where id=#{id}-->
+    <!--</delete>-->
+
+    <!--<delete id="deleteUser_RoleByUid">-->
+        <!--delete from user_role where userId=#{id}-->
+    <!--</delete>-->
+
+
+</mapper>

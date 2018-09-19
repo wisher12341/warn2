@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.MenuDao">
+
+
+    <insert id="addMenu" parameterType="com.warn.entity.Menu">
+        INSERT INTO sysmenu(id,name,parentid,url,sequence) VALUES (#{id},#{name},#{parentid},#{url},#{id})
+    </insert>
+
+    <update id="editMenu">
+        UPDATE sysmenu SET id=#{menu.id},parentid=#{menu.parentid},name=#{menu.name},url=#{menu.url},sequence=#{menu.id} WHERE id=#{preId}
+    </update>
+
+
+    <delete id="deleteMenuById">
+      delete from sysmenu where id=#{id}
+    </delete>
+
+
+</mapper>
