@@ -2,7 +2,7 @@
 <%@include file="/WEB-INF/jsp/common/easyui.jsp" %>
 <html>
 <head>
-  <title>传感器信息</title>
+  <title>设备信息</title>
   <script type="text/javascript" src="${path}/js/sensor.js"></script>
     <link href="${path}/css/raw_user.css" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="${path}/js/common.js"></script>

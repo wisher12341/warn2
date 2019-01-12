@@ -7,12 +7,14 @@ import com.warn.exception.WarnException;
 import com.warn.mongodb.dao.SensorMogoDao;
 import com.warn.mongodb.model.SensorCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,9 +22,11 @@ import java.util.List;
  * Created by admin on 2017/5/5.
  */
 @Repository
+
 public class SensorMogoDaoImpl implements SensorMogoDao {
 
     @Autowired
+    @Resource(name="mongoTemplate")
     private MongoTemplate mongoTemplate;
 
 

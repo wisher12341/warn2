@@ -39,7 +39,6 @@
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-mongodb:1.7.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.springframework.data:spring-data-commons:1.10.1.RELEASE" />
           <element id="library" level="project" name="Maven: org.slf4j:jcl-over-slf4j:1.7.10" />
-          <element id="library" level="project" name="Maven: com.ganshane.specs:taobao-sdk-java-auto-20160607:1.0.0" />
           <element id="library" level="project" name="Maven: com.alibaba:fastjson:1.1.41" />
         </element>
       </element>

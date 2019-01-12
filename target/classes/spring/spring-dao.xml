@@ -50,4 +50,10 @@
         <constructor-arg   name="password" value="testforread555" />
     </bean>
     <import resource="classpath*:mongodb-context.xml"/>
+
+    <bean id="userCredentials2" class="org.springframework.data.authentication.UserCredentials">
+        <constructor-arg   name="username" value="userRead" />
+        <constructor-arg   name="password" value="pwdlab555" />
+    </bean>
+    <import resource="classpath*:mongodbSec-context.xml"/>
 </beans>

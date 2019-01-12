@@ -11,6 +11,7 @@
         <result property="oldPhone" column="oldPhone"/>
         <result property="oldAddress" column="oldAddress"/>
         <result property="oldRegtime" column="oldRegtime"/>
+        <result property="version" column="version"/>
         <association property="relatives" javaType="com.warn.entity.Relatives">
             <id property="relid" column="relid"/>
             <result property="rName" column="rName"/>
@@ -171,12 +172,12 @@
     </select>
 
     <select id="getOldManByOid" resultType="com.warn.entity.OldMan">
-        SELECT oid,oldName,gatewayID,oldPhone,oldAddress
+        SELECT oid,oldName,gatewayID,oldPhone,oldAddress,version
         FROM oldman WHERE oid=#{id}
     </select>
 
     <select id="getOldManByGatewayID" resultType="com.warn.entity.OldMan">
-        SELECT oid,oldName,gatewayID,segment,oldPhone,oldAddress
+        SELECT oid,oldName,gatewayID,segment,oldPhone,oldAddress,version
         FROM oldman WHERE gatewayID=#{gatewayID}
     </select>
 

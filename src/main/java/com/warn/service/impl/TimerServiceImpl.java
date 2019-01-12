@@ -13,6 +13,8 @@ import com.warn.exception.NullFromDBException;
 import com.warn.exception.WarnException;
 import com.warn.mongodb.dao.SensorMogoDao;
 import com.warn.mongodb.model.SensorCollection;
+import com.warn.mongodbSec.dao.SensorMogoSecDao;
+import com.warn.mongodbSec.model.SecSensorCollection;
 import com.warn.service.DownHistoryService;
 import com.warn.service.SensorService;
 import com.warn.service.TimerService;
@@ -44,9 +46,11 @@ public class TimerServiceImpl implements TimerService {
     EquipDao equipDao;
     @Autowired
     DownHistoryService downHistoryService;
+    @Autowired
+    SensorMogoSecDao sensorMogoSecDao;
 
     public static List<SensorCollection> preSensorCollections=new ArrayList<>();//存取 上一次获得的传感器记录 因为加了一分钟的延迟 所以在最新的检测时间段中删除之前进行过预警的数据
-
+   // public static List<SensorCollection> preSecSensorCollections = new ArrayList<>();
     public static Map<OldMan,ScheduledExecutorService> databaseTimer=new HashMap<>();//存放各个老人读取数据库的定时任务
 
     public static Map<OldMan,String> oldManGatewayDown=new HashMap<>();//存放各个老人网关传的数据量为0的开始时间  用于网关故障  如果 值为 ‘0’则表示已经报过警 避免重复报警
@@ -100,6 +104,7 @@ public class TimerServiceImpl implements TimerService {
             try {
                 StaticVal.oldManTimer.put(timeDto.getOldMan(), true);
                 final OldMan oldMan=dataDao.getOldManByOid(timeDto.getOldMan().getOid());
+                Integer version = oldMan.getVersion();
 
                 //设备故障 预处理操作
                 List<Equipment> equipmentList=equipDao.getAllEquipByOldManId(timeDto.getOldMan().getOid());
@@ -108,6 +113,7 @@ public class TimerServiceImpl implements TimerService {
 //                SimpleDateFormat sdfDown = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 //                sdfDown.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
 //                String currentTimeDown = sdfDown.format(dDown);
+                if(version == 1)
                 for(Equipment equipment:equipmentList){
                     for(int i=2;i<5;i++) {
                         EquipDown equipDown=new EquipDown();
@@ -119,6 +125,7 @@ public class TimerServiceImpl implements TimerService {
 //                        oldManEquipDown.put(equipDown, currentTimeDown);
                     }
                 }
+
 //                EquipDown equipDown=new EquipDown();
 //                equipDown.setEid("0");
 //                equipDown.setGatewayID(oldMan.getGatewayID());
@@ -159,9 +166,13 @@ public class TimerServiceImpl implements TimerService {
 
                         SystemController.logger.info("当前检测时间段：" + startTime + "-------" + currentTime);
                         List<SensorCollection> sensorCollectionListAll = null;
+                     //   List<SensorCollection> secSensorCollectionListALL = null;
                         try {
                             //从mongodb数据库获得该时间段 该老人的数据
 //                            OldMan oldMan=dataDao.getOldManByOid(timeDto.getOldMan().getOid());
+                            if(oldMan.getVersion() == 2)
+                            sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns);
+                            else
                             sensorCollectionListAll = sensorMogoDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns);
                         } catch (GetMDBException e1) {
                             SystemController.logger.info(e1.getMessage());
@@ -171,20 +182,24 @@ public class TimerServiceImpl implements TimerService {
                             SystemController.logger.info(e.getMessage());
                             closeTimer(timeDto);
                         }
+                      //  sensorCollectionListAll.addAll(secSensorCollectionListALL);
 
                         List<SensorCollection> sensorCollectionList=null;
+                       // List<SensorCollection> secSensorCollectionList=null;
                         if(closeWarns.size()>0) {
 //                            SystemController.logger.info("处理前：");
 //                            for(SensorCollection sensorCollection:sensorCollectionListAll){
 //                                SystemController.logger.info(sensorCollection.toString());
 //                            }
                             sensorCollectionList = heartDeal(sensorCollectionListAll, closeWarns);
+                           // secSensorCollectionList = heartDeal(secSensorCollectionListALL, closeWarns);
 //                            SystemController.logger.info("处理后：");
 //                            for(SensorCollection sensorCollection:sensorCollectionList){
 //                                SystemController.logger.info(sensorCollection.toString());
 //                            }
                         }else{
                             sensorCollectionList=sensorCollectionListAll;
+                          //  secSensorCollectionList = secSensorCollectionListALL;
                         }
 
                         //删除之前 已检测的重复数据
@@ -195,6 +210,13 @@ public class TimerServiceImpl implements TimerService {
                                 }
                             }
                         }
+//                        if (preSecSensorCollections.size() > 0) {
+//                            for (SensorCollection sensorCollection : preSecSensorCollections) {
+//                                if (secSensorCollectionList.contains(sensorCollection)) {
+//                                    secSensorCollectionList.remove(sensorCollection);
+//                                }
+//                            }
+//                        }
 
 //                    List<SensorCollection> sensorCollectionList=sensorMogoDao.findByTime("2017-05-07 18:48:05","2017-05-07 18:54:05",equipments);
                         if (sensorCollectionList != null) {
@@ -203,14 +225,29 @@ public class TimerServiceImpl implements TimerService {
                             gatewayDown(currentTime,sensorCollectionList.size(),oldMan,equipDownList);//判断该老人的网关是否故障
                             if(sensorCollectionList.size()>0) {
                                 equipDown(currentTime, sensorCollectionList, oldMan,equipDownList);//判断该老人的设备是否故障  只判断 温度、湿度、光强
+                                lowBattery(sensorCollectionList,oldMan);
                             }
                         } else {
 //                            SystemController.logger.info("传感器数据为空");
                         }
+//                        if (secSensorCollectionList != null) {
+////                            SystemController.logger.info("传感器数据数量：" + sensorCollectionList.size());
+//                            //故障处理
+//                            gatewayDown(currentTime,secSensorCollectionList.size(),oldMan,equipDownList);//判断该老人的网关是否故障
+//                            if(secSensorCollectionList.size()>0) {
+//                                equipDown(currentTime, secSensorCollectionList, oldMan,equipDownList);//判断该老人的设备是否故障  只判断 温度、湿度、光强
+//                            }
+//                        }
                         SensorCollections sensorCollections = new SensorCollections();
                         sensorCollections.setSensorCollections(sensorCollectionList);
-
-                        SensorType sensorType = sensorService.conType(sensorCollections);
+//                        SensorCollections secSensorCollections = new SensorCollections();
+//                        secSensorCollections.setSensorCollections(secSensorCollectionList);
+                        SensorType sensorType = new SensorType();
+                        if(oldMan.getVersion() == 1)
+                            sensorType = sensorService.conType(sensorCollections);
+                        if(oldMan.getVersion() == 2)
+                            sensorType = sensorService.conSecType(sensorCollections);
+                      //  SensorType sensorType1 = sensorService.conType(secSensorCollections);
 //                        OldMan oldMan = null;
 //                        if (sensorCollectionList.size() > 0) {
 //                            oldMan = dataDao.getOldManByGatewayID(sensorCollectionList.get(0).getGatewayID());
@@ -218,6 +255,7 @@ public class TimerServiceImpl implements TimerService {
                         try {
                             if (oldMan != null && SensorServiceImpl.outdoorY.get(oldMan) != null && SensorServiceImpl.outdoorY.get(oldMan) == true) {
                                 //门
+                               // List<SensorCollection> doorSensorCollectionLis1 = sensorType1.getDoorSensorCollection();
                                 List<SensorCollection> doorSensorCollectionLis = sensorType.getDoorSensorCollection();
                                 if (doorSensorCollectionLis.size() > 0) {
                                     sensorService.checkDoorData(doorSensorCollectionLis);
@@ -228,6 +266,7 @@ public class TimerServiceImpl implements TimerService {
                                         e.printStackTrace();
                                     }
                                 }
+
                                 //温度预警
                                 List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
                                 if (wenduSensorCollectionLis.size() > 0) {
@@ -238,16 +277,22 @@ public class TimerServiceImpl implements TimerService {
                                 if (lightSensorCollectionLis.size() > 0) {
                                     sensorService.checkLightData(lightSensorCollectionLis);
                                 }
-                                //行为预警
+                                //行为预警/位置预警
                                 List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
                                 if (moveSensorCollectionLis.size() > 0) {
+                                    if(oldMan.getVersion() == 1)
                                     sensorService.checkMoveData(moveSensorCollectionLis);
+                                    else
+                                        sensorService.checkPositionData(moveSensorCollectionLis);
                                 }
                             } else {
-                                //行为预警
+                                //行为预警/位置预警
                                 List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
                                 if (moveSensorCollectionLis.size() > 0) {
+                                    if(oldMan.getVersion() == 1)
                                     sensorService.checkMoveData(moveSensorCollectionLis);
+                                    else
+                                        sensorService.checkPositionData(moveSensorCollectionLis);
                                 }
                                 //温度预警
                                 List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
@@ -296,6 +341,38 @@ public class TimerServiceImpl implements TimerService {
             }
         }
 
+    }
+    //门磁电量
+    public void lowBattery(List<SensorCollection> sensorCollectionList, OldMan oldman) {
+        for(SensorCollection sensorCollection : sensorCollectionList){
+            EquipDown equipDown = new EquipDown();
+            equipDown.setEid(sensorCollection.getSensorPointID());
+            equipDown.setType(5);
+            equipDown.setGatewayID(sensorCollection.getGatewayID()+"");
+            if(sensorCollection.getSensorID() == 6){
+                DownData downData=new DownData();
+                downData.setOldMan(oldman);
+                downData.setTypeDown("门磁电量低");
+                Date d1 = new Date();
+                SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                sdf1.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+                String dateNowStr = sdf1.format(d1);
+                downData.setTimeDown(dateNowStr);
+                downData.setReadDown("否");
+                downData.setDataDown("网关："+sensorCollection.getGatewayID()+"  设备ID："+sensorCollection.getSensorPointID()+"  设备种类：门磁");
+                downHistoryService.addDownData(downData);
+
+                DwrData dwrData = new DwrData();
+                dwrData.setType("equipDown");
+                dwrData.setOldMan(oldman);
+                dwrData.setEquipDown(equipDown);
+                //推送前台  提示设备故障
+                Remote.noticeNewOrder(dwrData);
+                SystemController.logger.info("门磁电量报警");
+
+            }
+
+        }
     }
 
     //设备故障
@@ -417,6 +494,21 @@ public class TimerServiceImpl implements TimerService {
         return sensorCollectionListAll;
     }
 
+    private List<SecSensorCollection> heartDealSec(List<SecSensorCollection> sensorCollectionListAll, List<Integer> closeWarns) {
+        for(Integer gatewayID:closeWarns) {
+            for (SecSensorCollection secSensorCollection : sensorCollectionListAll) {
+                if(secSensorCollection.getGatewayID().intValue()==gatewayID.intValue()){
+                    OldMan oldMan=dataDao.getOldManByGatewayID(gatewayID);
+                    if(StaticVal.oldManTimer.get(oldMan)==null||StaticVal.oldManTimer.get(oldMan)==false){
+                        TimeDto timeDto=new TimeDto(1,oldMan);
+                        updateTimer(timeDto);
+                    }
+                    sensorCollectionListAll.remove(secSensorCollection);
+                }
+            }
+        }
+        return sensorCollectionListAll;
+    }
     @Override
     public void addSwitch() {
         List<OldMan> oldMans=dataDao.getAllOldMan();

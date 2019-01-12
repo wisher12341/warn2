@@ -12,6 +12,7 @@ import com.warn.mongodb.model.SensorPointCollection;
 import com.warn.mongodb.model.UsersCollection;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.authentication.UserCredentials;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import java.util.List;
  * Created by admin on 2017/5/6.
  */
 @Repository
+
 public class RawDataDaoImpl implements RawDataDao{
 
 

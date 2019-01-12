@@ -7,6 +7,7 @@ import com.warn.dto.SenSorDto;
 import com.warn.mongodb.model.SensorPointCollection;
 import com.warn.mongodb.model.UsersCollection;
 import com.warn.service.RawDataService;
+import com.warn.service.RawDataServiceSec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,9 @@ public class RawDataController {
 
     @Autowired
     RawDataService rawDataService;
+
+    @Autowired
+    RawDataServiceSec rawDataServiceSec;
 
 
     /**
@@ -49,6 +53,26 @@ public class RawDataController {
         dg.setRows(sensorCollections);
         return dg;
     }
+
+    @RequestMapping(value = "/sensorSec",method = RequestMethod.GET)
+    public String sensorSec_list(){
+        return "raw/sensorSec_list";
+    }
+    /**
+     * 获得传感器表格
+     * @param senSorDto 条件查询
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping(value="/sensorSec/datagrid", method = RequestMethod.POST)
+    public DataGrid sensorSecdatagrid(PageHelper page, SenSorDto senSorDto) {
+        DataGrid dg = new DataGrid();
+        dg.setTotal(rawDataServiceSec.getsensorDatagridTotal(senSorDto));
+        List<SenSorDto> sensorCollections = rawDataServiceSec.datagridSensor(page,senSorDto);
+        dg.setRows(sensorCollections);
+        return dg;
+    }
+
 
     /**
      * 跳转至user列表页面
@@ -80,7 +104,7 @@ public class RawDataController {
      */
     @RequestMapping(value = "/sensorPoint",method = RequestMethod.GET)
     public String sensorPoint_list(){
-        return "raw/sensorPoint_list_noUse";
+        return "raw/sensorPoint_list";
     }
     /**
      * 获得sensorPoint表格

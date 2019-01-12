@@ -16,6 +16,8 @@ import java.util.List;
 public interface SensorService {
     void checkMoveData(List<SensorCollection> sensorCollections);
 
+    void checkPositionData(List<SensorCollection> sensorCollections);
+
     void urgency(Equipment equip,Integer gatewayID);
 
 //    SensorType conType(SensorCollections sensorCollections);
@@ -37,6 +39,8 @@ public interface SensorService {
     Boolean checkSwitch(SensorCollections sensorCollections);
 
     SensorType conType(SensorCollections sensorCollections);
+
+    SensorType conSecType(SensorCollections sensorCollections);
 
     void mapUpdate(OldMan oldMan);
 }

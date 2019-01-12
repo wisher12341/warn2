@@ -169,11 +169,11 @@
     <!-- mongodb结束 -->
 
     <!--阿里大于   短信通知服务-->
-    <dependency>
-      <groupId>com.ganshane.specs</groupId>
-      <artifactId>taobao-sdk-java-auto-20160607</artifactId>
-      <version>1.0.0</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>com.ganshane.specs</groupId>-->
+      <!--<artifactId>taobao-sdk-java-auto-20160607</artifactId>-->
+      <!--<version>1.0</version>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>fastjson</artifactId>
