@@ -19,6 +19,7 @@ public class Warn {
     private String inTime;//是否在该房间的生活规律模型中   不能用布尔值 否则前端接受不到
     private String times;//在该房间的生活规律模型中的  规律时间段
     private String flag;//针对 times 的类型  a表示活动 r休息
+    private String position;//位置信息
 
 
 
@@ -86,6 +87,14 @@ public class Warn {
         this.flag = flag;
     }
 
+    public String getPositon() {
+        return position;
+    }
+
+    public void setPositon(String positon) {
+        this.position = positon;
+    }
+
     @Override
     public String toString() {
         return "Warn{" +
@@ -97,6 +106,7 @@ public class Warn {
                 ", inTime='" + inTime + '\'' +
                 ", times='" + times + '\'' +
                 ", flag='" + flag + '\'' +
+                ", position='"+ position + '\''+
                 '}';
     }
 }

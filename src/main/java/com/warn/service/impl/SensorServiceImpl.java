@@ -328,8 +328,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                     break;
                 }
             }
-            //就算全为0也不能判断出门，因为有多个房间。
-//        如果没有非240的数据 就取最后一条 直接返回 不作处理
+
             if (sensorCollection == null) {
                 SystemController.logger.info("没有位置改变的数据");
                 return;
@@ -340,6 +339,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 throw new NullFromDBException("行为预警：找不到房间");
             }
             sensorDataDeal.setActivityRoom(room);
+            String position = getPositionInfo(sensorCollection.getSensorData(),room);
             OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollection.getGatewayID());
             if(oldMan==null){
                 throw new NullFromDBException("行为预警：找不到老人");
@@ -466,6 +466,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
             warn.setRoom(sensorDataDeal.getActivityRoom());
             warn.setOldMan(sensorDataDeal.getOldMan());
             warn.setTime(sensorDataDeal.getTime());
+            warn.setPositon(position);
             //在规律模型中
             if (!inTime.equals("")) {
                 warn.setInTime("true");
@@ -535,7 +536,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 warn.setWarnLevel(1);
                                 warn.setNoMoveTime(value / 60);
                                 DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_move");
+                                dwrData.setType("warn_position");
                                 dwrData.setWarn(warn);
                                 SystemController.logger.info(warn.toString());
                                 //存入历史消息
@@ -569,7 +570,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 warn.setWarnLevel(2);
                                 warn.setNoMoveTime(value / 60);
                                 DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_move");
+                                dwrData.setType("warn_position");
                                 dwrData.setWarn(warn);
                                 //存入历史消息
                                 warnHistoryService.addWarnHistory(dwrData);
@@ -1714,6 +1715,34 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
         }else{
             return false;
         }
+    }
+
+    public String getPositionInfo(int data, Room room){
+        if(data != 0)
+            switch (data){
+                case 1:
+                    return room.getNumOne();
+                case 2:
+                    return room.getNumTwo();
+                case 3:
+                    return room.getNumThree();
+                case 4:
+                    return room.getNumFour();
+                case 5:
+                    return room.getNumFive();
+                case 6:
+                    return room.getNumSix();
+                case 7:
+                    return room.getNumSeven();
+                case 8:
+                    return room.getNumEight();
+                case 9:
+                    return room.getNumNine();
+                default:
+                    return "地板";
+            }
+        return "无人";
+
     }
 
 }

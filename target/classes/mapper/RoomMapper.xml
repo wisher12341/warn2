@@ -27,6 +27,28 @@
 
     </select>
 
+    <select id="getDatagridTotal1" resultType="long">
+        SELECT
+        count(1)
+        from room r,oldman o where o.version = 2
+        and o.oid = r.oldId
+        <if test="rid != null and rid != ''">
+            and r.rid=#{rid}
+        </if>
+        <if test="roomName != null and roomName != ''">
+            and r.roomName=#{roomName}
+        </if>
+        <if test="rRegtime != null and rRegtime != ''">
+            and r.rRegtime=#{rRegtime}
+        </if>
+        <if test="collectId != null and collectId != ''">
+            and r.collectId=#{collectId}
+        </if>
+        <if test="oldId != null and oldId != ''">
+            and r.oldId=#{oldId}
+        </if>
+    </select>
+
     <select id="datagridRoom" resultType="com.warn.entity.Room">
         select
         rid,roomName,collectId,nerRoom,oldId,rRegtime
@@ -57,6 +79,34 @@
             limit #{page.start},#{page.rows}
         </if>
     </select>
+
+    <select id="datagridArea" resultType="com.warn.entity.Room">
+        select
+        *
+        FROM room r,oldman o
+        WHERE o.version = 2 and o.oid = r.oldId
+        <if test="room.rid != null and room.rid != ''">
+            and r.rid=#{room.rid}
+        </if>
+        <if test="room.roomName != null and room.roomName != ''">
+            and r.roomName=#{room.roomName}
+        </if>
+        <if test="room.rRegtime != null and room.rRegtime != ''">
+            and r.rRegtime=#{room.rRegtime}
+        </if>
+        <if test="room.collectId != null and room.collectId != ''">
+            and r.collectId=#{room.collectId}
+        </if>
+        <if test="room.oldId != null and room.oldId != ''">
+            and r.oldId=#{room.oldId}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
     
     <insert id="addRoom" parameterType="com.warn.entity.Room" useGeneratedKeys="true" keyProperty="rid">
         INSERT INTO room(roomName,nerRoom,rRegtime,oldId) VALUES (#{roomName},#{nerRoom},#{rRegtime},#{oldId})
@@ -64,6 +114,11 @@
 
     <update id="editRoom" parameterType="com.warn.entity.Room">
         UPDATE room SET roomName=#{roomName},collectId=#{collectId},nerRoom=#{nerRoom},rRegtime=#{rRegtime},oldId=#{oldId} WHERE rid=#{rid}
+    </update>
+
+    <update id="editArea" parameterType="com.warn.entity.Room">
+        UPDATE room SET roomName=#{roomName},collectId=#{collectId},rRegtime=#{rRegtime},oldId=#{oldId},num_one=#{numOne},num_nine=#{numNine}
+         ,num_two=#{numTwo},num_three=#{numThree},num_four=#{numFour},num_five=#{numFive},num_six=#{numSix},num_seven=#{numSeven},num_eight=#{numEight}WHERE rid=#{rid}
     </update>
 
     <delete id="deleteRoomById">
@@ -92,7 +147,7 @@
     </select>
 
     <select id="getRoomById" resultType="com.warn.entity.Room">
-        SELECT rid,roomName,nerRoom,rRegtime,oldId,collectId FROM room WHERE rid=#{id}
+        SELECT * FROM room WHERE rid=#{id}
     </select>
 
     <select id="getRoomByName" resultType="com.warn.entity.Room">
@@ -109,7 +164,7 @@
 
     <select id="getRoomByGateWayId_SensorId" resultType="com.warn.entity.Room">
         select
-        r.rid,r.roomName,r.collectId,r.nerRoom,r.oldId,r.rRegtime
+        r.rid,r.roomName,r.collectId,r.nerRoom,r.oldId,r.rRegtime,r.num_one,r.num_two,r.num_three,r.num_four,r.num_five,r.num_six,r.num_seven,r.num_eight,r.num_nine
         FROM room r,oldman o
         WHERE r.collectId=#{sid} AND o.gatewayID=#{gid} AND r.oldId=o.oid
     </select>

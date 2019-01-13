@@ -47,6 +47,10 @@
         SELECT mid,oldId,live from manmodel WHERE oldId=#{id}
     </select>
 
+    <select id="getRoomAreaModelByRid" resultType="com.warn.entity.model.roomAreaModel">
+        SELECT id,room_id,room_live FROM room_area_model WHERE room_id = #{id}
+    </select>
+
     <delete id="deleteByoldId">
         DELETE FROM manmodel WHERE oldId=#{id}
     </delete>
@@ -55,10 +59,26 @@
         INSERT INTO manmodel(oldId,live) VALUES (#{oldMan.oid},#{live})
     </insert>
 
+    <insert id="addAreaModel" parameterType="com.warn.entity.model.AreaModel">
+        INSERT INTO area_model(room_id,area,area_info,area_active_time,area_rest_time) VALUES (#{roomId},#{area},#{areaInfo},#{areaActiveTime},#{areaRestTime})
+    </insert>
+
+    <insert id="addRoomAreaModel" parameterType="com.warn.entity.model.roomAreaModel">
+        INSERT INTO room_area_model(room_id,room_live) VALUES (#{room.rid},#{roomLive})
+    </insert>
+
     <delete id="deleteByRoomIds">
         DELETE FROM roommodel WHERE roomId in
         <foreach collection="list" item="room" index="index" open="(" close=")" separator=",">
             #{room.rid}
         </foreach>
+    </delete>
+
+    <delete id="deleteAreaModelByRid">
+        DELETE FROM area_model where room_id = #{rid}
+    </delete>
+
+    <delete id="deleteRoomAreaModelByRid">
+        DELETE FROM room_area_model where room_id = #{rid}
     </delete>
 </mapper>

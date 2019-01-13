@@ -2,6 +2,7 @@ package com.warn.controller;
 
 import com.warn.dto.DataGrid;
 import com.warn.dto.Result;
+import com.warn.entity.AutoValue;
 import com.warn.entity.Room;
 import com.warn.dto.PageHelper;
 import com.warn.service.RoomService;
@@ -34,6 +35,9 @@ public class RoomController {
     public String list(){
         return "room/list";
     }
+
+    @RequestMapping(value = "/area/list", method =RequestMethod.GET )
+    public String list_area(){return "area/list";}
 
     /**
      * 跳转至用户列表页面
@@ -80,6 +84,21 @@ public class RoomController {
         return dg;
     }
 
+    @ResponseBody
+    @RequestMapping(value="/area/datagrid", method = RequestMethod.POST)
+    public DataGrid dataGrid(PageHelper page,Room room,HttpServletRequest request){
+        if(request.getSession().getAttribute("oid")!=null){
+            //是从老人页面跳转过来
+            room.setOldId((Integer) request.getSession().getAttribute("oid"));
+            request.getSession().removeAttribute("oid");
+        }
+        DataGrid dg = new DataGrid();
+        dg.setTotal(roomService.getDatagridTotal1(room));
+        List<Room> roomList = roomService.datagridArea(page,room);
+        dg.setRows(roomList);
+        return dg;
+    }
+
 //    /**
 //     * 跳转至房间信息注册页面
 //     */
@@ -109,6 +128,13 @@ public class RoomController {
     @RequestMapping(value = "/editRoom",method = RequestMethod.POST)
     public Result editRoom(Room room,@RequestParam Integer gatewayTwo_Ten){
         roomService.editRoom(room,gatewayTwo_Ten);
+        return new Result(true);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/editArea", method = RequestMethod.POST)
+    public Result editArea(Room room,@RequestParam Integer gatewayTwo_Ten){
+        roomService.editArea(room,gatewayTwo_Ten);
         return new Result(true);
     }
 
@@ -146,6 +172,13 @@ public class RoomController {
     public Result nerRoom(@RequestParam Integer oldId){
         List<Room> rooms=roomService.getAllRoomByOldManId(oldId);
         return new Result(true,rooms);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/allArea", method = RequestMethod.POST)
+    public Result getArea(@RequestParam Integer rid){
+        List<AutoValue> autoValues= roomService.getAreasByRoomId(rid);
+        return new Result(true,autoValues);
     }
 
 }

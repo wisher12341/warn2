@@ -2,6 +2,7 @@ package com.warn.service;
 
 import com.warn.dto.ManModelDto;
 import com.warn.dto.ManModelDtos;
+import com.warn.dto.RoomModelDtos;
 import com.warn.entity.model.RoomModel;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface ModelService {
     List<ManModelDto> getManModelByOid(Integer oid);
 
     void addManModel(ManModelDtos manModelDtos);
+
+    void addRoomModel(RoomModelDtos roomModelDtos);
 }

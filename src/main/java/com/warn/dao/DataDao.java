@@ -13,7 +13,11 @@ public interface DataDao {
 
     Long getDatagridTotal(@Param("oldMan")OldMan oldMan);
 
+    Long getDatagridTotalNG(@Param("oldMan")OldMan oldMan);
+
     List<OldMan> datagridUser(@Param("page")PageHelper page,@Param("oldMan")OldMan oldMan);//两个参数的话 要加Param
+
+    List<OldMan> datagridNGUser(@Param("page")PageHelper page,@Param("oldMan")OldMan oldMan);
 
     Integer addOldman(OldMan oldMan);
 
@@ -33,6 +37,8 @@ public interface DataDao {
     OldMan getOldManByOid(@Param("id")Integer oid);
 
     List<OldMan> getAllOldMan();
+
+    List<OldMan> getOldManNG();
 
     Integer getCount();
 

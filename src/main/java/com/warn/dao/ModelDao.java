@@ -1,8 +1,10 @@
 package com.warn.dao;
 
 import com.warn.entity.Room;
+import com.warn.entity.model.AreaModel;
 import com.warn.entity.model.ManModel;
 import com.warn.entity.model.RoomModel;
+import com.warn.entity.model.roomAreaModel;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,11 +26,21 @@ public interface ModelDao {
 
     ManModel getManModelByOid(@Param("id")Integer oid);
 
+    roomAreaModel getRoomAreaModelByRid(@Param("id") Integer rid);
+
+    void deleteAreaModelByRid(Integer rid);
+
+    void deleteRoomAreaModelByRid(Integer rid);
+
     void deleteByoldId(@Param("id")Integer oldManId);
 
     void addManModel(ManModel manModel);
 
     void addRoomModel(RoomModel roomModel);
 
+    void addRoomAreaModel(roomAreaModel rAreaModel);
+
     void deleteByRoomIds(List<Room> rooms);
+
+    void addAreaModel(AreaModel areaModel);
 }

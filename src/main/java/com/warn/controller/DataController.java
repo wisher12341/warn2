@@ -59,6 +59,16 @@ public class DataController {
         return dg;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/area/datagrid", method = RequestMethod.POST)
+    public DataGrid dataGrid(PageHelper page, OldMan oldMan){
+        DataGrid dg = new DataGrid();
+        dg.setTotal(dataService.getDatagridTotalNG(oldMan));
+        List<OldMan> oldList = dataService.datagridNGUser(page,oldMan);
+        dg.setRows(oldList);
+        return dg;
+    }
+
 //    /**
 //     * 跳转至老人信息注册页面
 //     */
@@ -112,6 +122,13 @@ public class DataController {
     @RequestMapping(value = "/getAllOldmanID_Name",method = RequestMethod.GET)
     public Result getAllOldmanID_Name(){
         List<OldMan> oldManList=dataService.getAllOldmanID_Name();
+        return new Result(true,oldManList);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getOldmanId_NG" , method = RequestMethod.GET)
+    public Result getOldmanID_NG(){
+        List<OldMan> oldManList = dataService.getOldmanId_NG();
         return new Result(true,oldManList);
     }
 

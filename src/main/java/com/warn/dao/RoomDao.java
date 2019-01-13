@@ -13,11 +13,17 @@ import java.util.List;
 public interface RoomDao {
     Long getDatagridTotal(Room room);
 
+    Long getDatagridTotal1(Room room);
+
     List<Room> datagridRoom(@Param("page")PageHelper page,@Param("room")Room room);
+
+    List<Room> datagridArea(@Param("page")PageHelper page,@Param("room")Room room);
 
     void addRoom(Room room);
 
     void editRoom(Room room);
+
+    void editArea(Room room);
 
     void deleteRoomById(@Param("id")Integer rid);
 

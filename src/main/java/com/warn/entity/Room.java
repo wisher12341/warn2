@@ -14,6 +14,15 @@ public class Room {
     private String nerRoom;//相邻房间ID，以 , 隔开
     private Integer oldId;//对应老人的ID
     private String rRegtime;//注册时间
+    private String numOne;
+    private String numTwo;
+    private String numThree;
+    private String numFour;
+    private String numFive;
+    private String numSix;
+    private String numSeven;
+    private String numEight;
+    private String numNine;
 
     public String getNerRoom() {
         return nerRoom;
@@ -61,6 +70,78 @@ public class Room {
 
     public void setOldId(Integer oldId) {
         this.oldId = oldId;
+    }
+
+    public String getNumOne() {
+        return numOne;
+    }
+
+    public void setNumOne(String numOne) {
+        this.numOne = numOne;
+    }
+
+    public String getNumTwo() {
+        return numTwo;
+    }
+
+    public void setNumTwo(String numTwo) {
+        this.numTwo = numTwo;
+    }
+
+    public String getNumThree() {
+        return numThree;
+    }
+
+    public void setNumThree(String numThree) {
+        this.numThree = numThree;
+    }
+
+    public String getNumFour() {
+        return numFour;
+    }
+
+    public void setNumFour(String numFour) {
+        this.numFour = numFour;
+    }
+
+    public String getNumFive() {
+        return numFive;
+    }
+
+    public void setNumFive(String numFive) {
+        this.numFive = numFive;
+    }
+
+    public String getNumSix() {
+        return numSix;
+    }
+
+    public void setNumSix(String numSix) {
+        this.numSix = numSix;
+    }
+
+    public String getNumSeven() {
+        return numSeven;
+    }
+
+    public void setNumSeven(String numSeven) {
+        this.numSeven = numSeven;
+    }
+
+    public String getNumEight() {
+        return numEight;
+    }
+
+    public void setNumEight(String numEight) {
+        this.numEight = numEight;
+    }
+
+    public String getNumNine() {
+        return numNine;
+    }
+
+    public void setNumNine(String numNine) {
+        this.numNine = numNine;
     }
 
     //重写equals hashcode 不然获得不了以oldman为键的map的值

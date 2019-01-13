@@ -71,6 +71,26 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
                 warnData.setDataW(data_warn);
                 warnData.setReadW("否");
                 break;
+            case "warn_position":
+                warnData.setTypeW("行为预警");
+                warnData.setOid(dwrData.getWarn().getOldMan().getOid());
+                warnData.setOldName(dwrData.getWarn().getOldMan().getOldName());
+                String data_position="老人信息：" +
+                        "%老人ID：" + dwrData.getWarn().getOldMan().getOid() +
+                        "%老人姓名：" + dwrData.getWarn().getOldMan().getOldName() +
+                        "%老人电话：" + dwrData.getWarn().getOldMan().getOldPhone() +
+                        "%老人住址：" + dwrData.getWarn().getOldMan().getOldAddress() +
+                        "@行为信息：" +
+                        "%预警级别：" + dwrData.getWarn().getWarnLevel() +
+                        "%已经不动：" + dwrData.getWarn().getNoMoveTime() + " 分钟" +
+                        "%所处房间：" + dwrData.getWarn().getRoom().getRoomName() +"-"+dwrData.getWarn().getPositon()+
+                        "%最初不动的时间：" + dwrData.getWarn().getTime() +
+                        "%是否在该房间的生活规律模型中：" + (dwrData.getWarn().getInTime().equals("true") ? "在%模型所在时间段：" + dwrData.getWarn().getTimes() +
+                        "%规律类型：" + (dwrData.getWarn().getFlag().equals("a") ?"活动" : ((dwrData.getWarn().getFlag().equals("r")) ? "休息" : "活动、休息"))  :
+                        "不在");
+                warnData.setDataW(data_position);
+                warnData.setReadW("否");
+                break;
             case "warn_wendu":
                 warnData.setTypeW("温度预警");
                 warnData.setOid(dwrData.getWarn_wendu().getOldMan().getOid());

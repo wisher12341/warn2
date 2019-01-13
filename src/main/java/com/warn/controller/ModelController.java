@@ -1,9 +1,6 @@
 package com.warn.controller;
 
-import com.warn.dto.DataGrid;
-import com.warn.dto.ManModelDto;
-import com.warn.dto.ManModelDtos;
-import com.warn.dto.Result;
+import com.warn.dto.*;
 import com.warn.entity.model.RoomModel;
 import com.warn.service.ModelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,8 @@ public class ModelController {
         return "model/list";
     }
 
-
+    @RequestMapping(value="/next", method = RequestMethod.GET)
+    public String list_next() {return "model/next_list";}
     /**
      * 根据老人id获得其各房间的规律模型
      * @param oid
@@ -101,6 +99,13 @@ public class ModelController {
     @RequestMapping(value = "/addManModel",method = RequestMethod.POST)
     public Result addManModel(ManModelDtos manModelDtos){
         modelService.addManModel(manModelDtos);
+        return new Result(true);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/addRoomModel", method = RequestMethod.POST)
+    public Result addRoomModel(RoomModelDtos roomModelDtos){
+        modelService.addRoomModel(roomModelDtos);
         return new Result(true);
     }
 }

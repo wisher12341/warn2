@@ -52,6 +52,17 @@ public class DataServiceImpl implements DataService{
         return dataDao.getDatagridTotal(oldMan);
     }
 
+    public Long getDatagridTotalNG(OldMan oldMan){
+        if(oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
+            //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
+            if(oldMan.getSegment().length()>=4&&isBinary(oldMan.getSegment())){
+                //查询以二进制的方式
+                oldMan.setSegment(Integer.valueOf(oldMan.getSegment(),2).toString());
+            }
+        }
+        return dataDao.getDatagridTotalNG(oldMan);
+    }
+
     public List<OldMan> datagridUser(PageHelper page,OldMan oldMan) {
 //        if(oldMan.getGatewayID()!=null&&!oldMan.getGatewayID().equals("")){
 //            //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
@@ -69,6 +80,24 @@ public class DataServiceImpl implements DataService{
         }
         page.setStart((page.getPage() - 1) * page.getRows());
         return dataDao.datagridUser(page,oldMan);
+    }
+    public List<OldMan> datagridNGUser(PageHelper page,OldMan oldMan) {
+//        if(oldMan.getGatewayID()!=null&&!oldMan.getGatewayID().equals("")){
+//            //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
+//            if(oldMan.getGatewayID().length()>=4&&isBinary(oldMan.getGatewayID())){
+//                //查询以二进制的方式
+//                oldMan.setGatewayID(Integer.valueOf(oldMan.getGatewayID(),2).toString());
+//            }
+//        }
+        if(oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
+            //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
+            if(oldMan.getSegment().length()>=4&&isBinary(oldMan.getSegment())){
+                //查询以二进制的方式
+                oldMan.setSegment(Integer.valueOf(oldMan.getSegment(),2).toString());
+            }
+        }
+        page.setStart((page.getPage() - 1) * page.getRows());
+        return dataDao.datagridNGUser(page,oldMan);
     }
 
     //简单判断是不是二进制数
@@ -167,6 +196,9 @@ public class DataServiceImpl implements DataService{
     public List<OldMan> getAllOldmanID_Name() {
         return dataDao.getAllOldMan();
     }
+
+    @Override
+    public List<OldMan> getOldmanId_NG(){return dataDao.getOldManNG();}
 
     @Override
     public List<OldMan> datagridUserMap(PageHelper page, OldMan oldMan) {

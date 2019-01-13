@@ -78,6 +78,19 @@
         </if>
     </select>
 
+    <select id="getDatagridTotalNG" resultType="long">
+        select
+        count(1)
+        from oldman where version = 2
+        <if test="oldMan.oid != null and oldMan.oid != ''">
+            and oid=#{oldMan.oid}
+        </if>
+        <if test="oldMan.oldName != null and oldMan.oldName != ''">
+            and oldName=#{oldMan.oldName}
+        </if>
+    </select>
+
+
     <!--参数只有一个的话 可以直接用对象的属性值，但是有两个以上的话 就要 对象名.属性名-->
     <select id="datagridUser" resultMap="resultOldMan">
         select
@@ -112,7 +125,39 @@
             limit #{page.start},#{page.rows}
         </if>
     </select>
-
+    <select id="datagridNGUser" resultMap="resultOldMan">
+        select
+        old.oid,old.gatewayID,old.segment,old.oldName,old.oldPhone,old.oldAddress,old.oldRegtime,rel.relid,rel.rName,rel.rPhone,rel.rAddress,rel.oldId
+        FROM oldman old,relatives rel
+        WHERE rel.oldId=old.oid and old.version = 2
+        <if test="oldMan.oid != null and oldMan.oid != ''">
+            and oid=#{oldMan.oid}
+        </if>
+        <if test="oldMan.gatewayID != null and oldMan.gatewayID != ''">
+            and gatewayID=#{oldMan.gatewayID}
+        </if>
+        <if test="oldMan.segment != null and oldMan.segment != ''">
+            and segment=#{oldMan.segment}
+        </if>
+        <if test="oldMan.oldName != null and oldMan.oldName != ''">
+            and oldName=#{oldMan.oldName}
+        </if>
+        <if test="oldMan.oldRegtime != null and oldMan.oldRegtime != ''">
+            and oldRegtime=#{oldMan.oldRegtime}
+        </if>
+        <if test="oldMan.oldPhone != null and oldMan.oldPhone != ''">
+            and oldPhone=#{oldMan.oldPhone}
+        </if>
+        <if test="oldMan.oldAddress != null and oldMan.oldAddress != ''">
+            and oldAddress like concat('%',#{oldMan.oldAddress},'%')
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
     <select id="datagridUserMap" resultMap="resultOldMan">
         select
         old.oid,old.oldName,q.id qid,q.qName,j.id jid,j.jName,l.id lid,l.info
@@ -191,6 +236,11 @@
         FROM oldman
     </select>
 
+    <select id="getOldManNG" resultType="com.warn.entity.OldMan">
+        SELECT oid,oldName,gatewayID
+        FROM oldman
+        where version = 2
+    </select>
 
     <select id="getCount" resultType="int">
     select
