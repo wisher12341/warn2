@@ -4,6 +4,7 @@ import com.warn.dao.ModelDao;
 import com.warn.dao.RoomDao;
 import com.warn.dto.ManModelDto;
 import com.warn.dto.ManModelDtos;
+import com.warn.dto.RoomModelDto;
 import com.warn.dto.RoomModelDtos;
 import com.warn.entity.Room;
 import com.warn.entity.model.AreaModel;
@@ -42,6 +43,20 @@ public class ModelServiceImpl implements ModelService {
         }
         return roomModels;
     }
+    @Override
+    public List<AreaModel> getAreaModelByRid(Integer rid){
+        Room room = roomDao.getRoomById(rid);
+        List<AreaModel> areaModels = new ArrayList<>();
+        if(room != null){
+            areaModels = modelDao.getAreaModelByRid(rid);
+            for(AreaModel areaModel:areaModels){
+                areaModel.setAreaInfo(getPositionInfo(areaModel.getArea(),room));
+                areaModel.setAreaActiveTime(areaModel.getAreaActiveTime().replaceAll("#","<br>"));
+                areaModel.setAreaRestTime(areaModel.getAreaRestTime().replaceAll("#","<br>"));
+            }
+        }
+        return areaModels;
+    }
 //    @Override
 //    public void updateRoomModel(RoomModel roomModel) {
 //        modelDao.updateRooModel(roomModel);
@@ -72,6 +87,30 @@ public class ModelServiceImpl implements ModelService {
             manModelDtos.add(manModelDto);
         }
         return manModelDtos;
+    }
+
+    @Override
+    public List<RoomModelDto> getRoomModelById(Integer id){
+        roomAreaModel rAreaModel = modelDao.getRoomAreaModelByRid(id);
+        List<RoomModelDto> roomModelDtos = new ArrayList<>();
+        if(rAreaModel == null)
+            return roomModelDtos;
+        for(String str : rAreaModel.getRoomLive().split("#")){
+            RoomModelDto roomModelDto = new RoomModelDto();
+            roomModelDto.setId(rAreaModel.getId());
+            roomModelDto.setTimes(str.split("@")[0]);
+            String st = "";
+            for(String s : str.split("@")[1].split("%")){
+                if(s.split("\\$")[0].equals("0"))
+                    st+="户外";
+                else
+                    st += getPositionInfo(Integer.parseInt(s.split("\\$")[0]),roomDao.getRoomById(id)) + ",";
+            }
+            st = st.substring(0, st.length() - 1);
+            roomModelDto.setTimeArea(st);
+            roomModelDtos.add(roomModelDto);
+        }
+        return roomModelDtos;
     }
 
     @Transactional

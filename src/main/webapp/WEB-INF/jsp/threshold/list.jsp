@@ -64,7 +64,7 @@
       <th data-options="field:'tid',hidden:true" rowspan="2">ID</th>
       <th data-options="field:'room',width:fixHtmlWidth(0.2),align:'center',formatter: function(value,row,index){ if (value.roomName){return value.roomName;} else {return ''; }}," rowspan="2">房间</th>
       <th colspan="2">活动时（分钟）</th>
-      <th colspan="2">休息时（百分比）</th>
+      <th colspan="2">休息时（分钟）</th>
       <th colspan="2">不在房间规律时段时（分钟）</th>
       <th data-options="field:'action',width:fixHtmlWidth(0.25),align:'center'"  formatter="formatAction" rowspan="2"></th>
     </tr>

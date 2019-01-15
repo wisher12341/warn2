@@ -1,11 +1,15 @@
 package com.warn.controller;
 
+import com.warn.dao.DataDao;
 import com.warn.dto.DataGrid;
 import com.warn.dto.Result;
 import com.warn.entity.AutoValue;
+import com.warn.entity.OldMan;
+import com.warn.entity.OldRoom;
 import com.warn.entity.Room;
 import com.warn.dto.PageHelper;
 import com.warn.service.RoomService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +31,9 @@ public class RoomController {
 
     @Autowired
     RoomService roomService;
+
+    @Autowired
+    DataDao dataDao;
 
     /**
      * 跳转至列表页面
@@ -47,6 +55,9 @@ public class RoomController {
     public String list_user(){
         return "user/table_room";
     }
+
+    @RequestMapping(value = "/area/user/list", method = RequestMethod.GET)
+    public String list_area_list(){return "user/table_area";}
 
     /**
      * 跳转至某个老人的用户列表页面
@@ -96,6 +107,28 @@ public class RoomController {
         dg.setTotal(roomService.getDatagridTotal1(room));
         List<Room> roomList = roomService.datagridArea(page,room);
         dg.setRows(roomList);
+        return dg;
+    }
+    @ResponseBody
+    @RequestMapping(value="/area/datagrid1", method = RequestMethod.POST)
+    public DataGrid dataGrid1(PageHelper page,Room room,HttpServletRequest request){
+        if(request.getSession().getAttribute("oid")!=null){
+            //是从老人页面跳转过来
+            room.setOldId((Integer) request.getSession().getAttribute("oid"));
+            request.getSession().removeAttribute("oid");
+        }
+        DataGrid dg = new DataGrid();
+        List<Room> roomList = roomService.datagridArea(page,room);
+        List<OldRoom> oldRooms = new ArrayList<>();
+        for(Room room1:roomList){
+            OldRoom oldRoom = new OldRoom();
+            BeanUtils.copyProperties(room1,oldRoom);
+            OldMan oldMan = dataDao.getOldManByOid(room1.getOldId());
+            oldRoom.setOldName(oldMan.getOldName());
+            oldRooms.add(oldRoom);
+        }
+        dg.setTotal(roomService.getDatagridTotal1(room));
+        dg.setRows(oldRooms);
         return dg;
     }
 

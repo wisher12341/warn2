@@ -26,9 +26,9 @@ $(function(){
             //}
 
             var row = $('#datagrid').datagrid('getSelected');
-            $('#tt').datagrid('load',{oid:row.oldId});
+            $('#tt').datagrid('load',{rid:row.rid});
             $('#tt').datagrid('reload');
-            $('#oldman').datagrid('load',{oid:row.oldId});
+            $('#oldman').datagrid('load',{rid:row.rid});
             $('#oldman').datagrid('reload');
 
             oldId=row.oldId;
@@ -115,7 +115,7 @@ function addDialog(){
     //老人Id 要在clear之后设置
     $('.oid').val(roomId);
     url = pathJs + "/model/addRoomModel";
-    alert(roomId);
+   // alert(roomId);
 }
 
 function saveModel(){
@@ -142,9 +142,9 @@ function saveModel(){
                 //$(".alt").show();
                 //$(".add").hide();
                 $('#dlg_addModel').dialog('close');
-                $('#oldman').datagrid('load',{oid:oldId});
+                $('#oldman').datagrid('load',{rid:roomId});
                 $('#oldman').datagrid('reload');
-                $('#tt').datagrid('load',{oid:oldId});
+                $('#tt').datagrid('load',{rid:roomId});
                 $('#tt').datagrid('reload');
             } else {
                 mesTitle = '新增失败';

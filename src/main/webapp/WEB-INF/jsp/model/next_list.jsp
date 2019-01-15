@@ -27,7 +27,7 @@
 </head>
 <body class="easyui-layout" fit="true">
 <div region="west" border="true" style="width: 28%">
-    <table id="datagrid" class="easyui-datagrid" fit="true" url="${path}/room/area/datagrid" title="人员列表"
+    <table id="datagrid" class="easyui-datagrid" fit="true" url="${path}/room/area/datagrid1" title="人员列表"
            toolbar="#toolbar"
            pagination="true"
            fitColumns="true"
@@ -40,16 +40,16 @@
         <tr>
             <th data-options="field:'oldId',width:fixWidth(0.08),align:'center'" >对应人员ID</th>
             <%--<th data-options="field:'oid',width:fixWidth(0.3),align:'center'" >ID</th>--%>
-            <%--<th data-options="field:'oldName',width:fixWidth(0.3),align:'center'" >姓名</th>--%>
-            <th data-options="field:'rid',width:fixWidth(0.08),align:'center'">房间ID</th>
+            <th data-options="field:'oldName',width:fixWidth(0.3),align:'center'" >姓名</th>
+            <th data-options="field:'rid',width:fixWidth(0.08),align:'center',hidden:true">房间ID</th>
             <th data-options="field:'roomName',width:fixWidth(0.12),align:'center'" >房间名</th>
         </tr>
         </thead>
     </table>
     <div id="toolbar">
-        <form id="search" method="post" action="${paht}/data/area/datagrid" novalidate>
-            <input class="easyui-searchbox" data-options="prompt:'ID'"  id="searchOid" name="oid" /><br/>
-            <input class="easyui-searchbox" data-options="prompt:'姓名'" name="oldName" />
+        <form id="search" method="post" action="${paht}/data/area/datagrid1" novalidate>
+            <input class="easyui-searchbox" data-options="prompt:'ID'"  id="searchOid" name="oldId" /><br/>
+            <%--<input class="easyui-searchbox" data-options="prompt:'姓名'" name="oldName" />--%>
         </form>
         <div id="buttonTool">
             <a href="javascript:void(0);" class="easyui-linkbutton fa fa-search aaa toolB"
@@ -61,13 +61,13 @@
 </div>
 
 <div region="center" border="true" singleSelect="true" >
-    <table id="oldman" class="easyui-datagrid" fitColumns="true" singleSelect="true" url="${path}/model/getManModel" title="人员生活规律" toolbar="#toolbar2"
+    <table id="oldman" class="easyui-datagrid" fitColumns="true" singleSelect="true" url="${path}/model/getAreaRoomModel" title="人员生活规律" toolbar="#toolbar2"
            striped="true" style="overflow: hidden;">
         <thead>
         <tr>
-            <th data-options="field:'mid',hidden:true">ID</th>
+            <th data-options="field:'id',hidden:true">ID</th>
             <th data-options="field:'times',width:fixHtmlWidth(0.55),align:'center'" >活动时间</th>
-            <th data-options="field:'timeRoom',width:fixHtmlWidth(0.55),align:'center'" >活动房间</th>
+            <th data-options="field:'timeArea',width:fixHtmlWidth(0.55),align:'center'" >活动区域</th>
         </tr>
         </thead>
     </table>
@@ -80,14 +80,14 @@
         </div>
     </div>
 
-    <table id="tt" class="easyui-datagrid" fitColumns="true" singleSelect="true" url="${path}/model/getRoomModel" title="房间活动规律" striped="true"
+    <table id="tt" class="easyui-datagrid" fitColumns="true" singleSelect="true" url="${path}/model/getAreaModel" title="区域活动规律" striped="true"
            style="overflow: hidden;">
         <thead>
         <tr>
-            <th data-options="field:'rmid',hidden:true">ID</th>
-            <th data-options="field:'room',width:fixHtmlWidth(0.2),align:'center',formatter: function(value,row,index){ if (value.roomName){return value.roomName;} else {return ''; }}">房间</th>
-            <th data-options="field:'active',width:fixHtmlWidth(0.45),align:'center'" >在该房间活动的时间段</th>
-            <th data-options="field:'rest',width:fixHtmlWidth(0.45),align:'center'" >在该房间休息的时间段</th>
+            <th data-options="field:'aid',hidden:true">ID</th>
+            <th data-options="field:'areaInfo',width:fixHtmlWidth(0.2),align:'center'">区域</th>
+            <th data-options="field:'areaActiveTime',width:fixHtmlWidth(0.45),align:'center'" >在该区域活动的时间段</th>
+            <th data-options="field:'areaRestTime',width:fixHtmlWidth(0.45),align:'center'" >在该区域休息的时间段</th>
             <%--<th field="action" width="80" align="center" formatter="formatAction"></th>--%>
         </tr>
         </thead>

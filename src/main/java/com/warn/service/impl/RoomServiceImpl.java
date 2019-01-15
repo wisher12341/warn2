@@ -7,6 +7,7 @@ import com.warn.dao.ThresholdDao;
 import com.warn.entity.AutoValue;
 import com.warn.entity.Room;
 import com.warn.dto.PageHelper;
+import com.warn.entity.Threshold_area;
 import com.warn.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -100,6 +101,13 @@ public class RoomServiceImpl implements RoomService{
         roomDao.addRoom(room);
         //想threshold添加默认记录
         thresholdDao.addThreshold(room.getRid());
+        Threshold_area threshold_area = new Threshold_area();
+        threshold_area.setRoomId(room.getRid());
+        for(int i=1 ;i<=9;i++){
+            threshold_area.setArea(i);
+            thresholdDao.addThresholdArea(threshold_area);
+        }
+
 //        modelDao.addRoomModel(room.getRid());
     }
 

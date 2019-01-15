@@ -1,9 +1,6 @@
 package com.warn.service;
 
-import com.warn.entity.Threshold;
-import com.warn.entity.Threshold_light;
-import com.warn.entity.Threshold_out;
-import com.warn.entity.Threshold_wendu;
+import com.warn.entity.*;
 
 import java.util.List;
 
@@ -13,7 +10,11 @@ import java.util.List;
 public interface ThresholdService {
     List<Threshold> getThresholdByOid(Integer oid);
 
+    List<Threshold_area> getThresholdByRid(Integer rid);
+
     void updateThreshold(Threshold threshold);
+
+    void updateThresholdArea(Threshold_area threshold_area);
 
     List<Threshold_wendu> getThreshold_wByOid(Integer oid);
 

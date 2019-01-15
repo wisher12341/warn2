@@ -59,6 +59,15 @@
             #{room.rid}
         </foreach>
     </select>
+
+    <select id="getThresholdAreaByRidAndNum" resultType="com.warn.entity.Threshold_area">
+        select * from threshold_area where room_id = #{roomId} and area = {area}
+    </select>
+
+    <select id="getThresholdByRid" resultType="com.warn.entity.Threshold_area">
+        SELECT * FROM threshold_area where room_id = #{rid}
+    </select>
+
     <select id="getThreshold_wByRooms" resultMap="resultThreshold_wendu">
         SELECT w.wid,w.wThreshold,r.rid,r.roomName
         FROM threshold_wendu w,room r
@@ -82,10 +91,20 @@
         INSERT INTO threshold_light(roomId) VALUES (#{rid});
     </insert>
 
+    <insert id="addThresholdArea">
+        INSERT INTO threshold_area(room_id,area) VALUES (#{roomId},#{area})
+    </insert>
+
     <update id="updateThreshold" parameterType="com.warn.entity.Threshold">
         UPDATE threshold
         SET a1Threshold=#{a1Threshold},r1Threshold=#{r1Threshold},a2Threshold=#{a2Threshold},r2Threshold=#{r2Threshold},n1Threshold=#{n1Threshold},n2Threshold=#{n2Threshold}
          WHERE tid=#{tid}
+    </update>
+
+    <update id="updateThresholdArea" parameterType="com.warn.entity.Threshold_area">
+        UPDATE threshold_area
+        SET a1_threshold=#{a1Threshold},r1_threshold=#{r1Threshold},a2_threshold=#{a2Threshold},r2_threshold=#{r2Threshold},n1_threshold=#{n1Threshold},n2_threshold=#{n2Threshold}
+        where id=#{id} and area=#{area}
     </update>
     <update id="updateThreshold_w" parameterType="com.warn.entity.Threshold_wendu">
         UPDATE threshold_wendu

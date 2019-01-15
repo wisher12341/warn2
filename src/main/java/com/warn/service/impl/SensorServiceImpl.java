@@ -5,6 +5,7 @@ import com.warn.dao.*;
 import com.warn.dto.*;
 import com.warn.dwr.Remote;
 import com.warn.entity.*;
+import com.warn.entity.model.AreaModel;
 import com.warn.entity.model.RoomModel;
 import com.warn.exception.NullFromDBException;
 import com.warn.exception.WarnException;
@@ -1744,5 +1745,309 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
         return "无人";
 
     }
+
+    public void checkPositionData1(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
+        SystemController.logger.info("======================================行为预警2.0=========================================================");
+        try {
+            final SensorDataDeal sensorDataDeal = new SensorDataDeal();
+            SensorCollection sensorCollection = null;
+            //只记录最后一个动的数据 显示的房间数据
+            if(sensorCollections.size() >= 2)
+                for (int i = sensorCollections.size() - 1; i >= 1; i--) {
+                    if ((sensorCollections.get(i).getSensorData()-sensorCollections.get(i-1).getSensorData()) != 0 && sensorCollections.get(i).getSensorData() != 0 ) {
+                        sensorCollection = sensorCollections.get(i);
+                        break;
+                    }
+                }
+
+            if (sensorCollection == null) {
+                SystemController.logger.info("没有位置改变的数据");
+                return;
+//                sensorCollection = sensorCollections.get(sensorCollections.size() - 1);
+            }
+            Room room=roomDao.getRoomByGateWayId_SensorId(sensorCollection.getGatewayID(),sensorCollection.getSensorPointID());
+            if(room==null){
+                throw new NullFromDBException("行为预警：找不到房间");
+            }
+            sensorDataDeal.setActivityRoom(room);
+            String position = getPositionInfo(sensorCollection.getSensorData(),room);
+            OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollection.getGatewayID());
+            if(oldMan==null){
+                throw new NullFromDBException("行为预警：找不到老人");
+            }
+            sensorDataDeal.setOldMan(oldMan);
+            String ctime[] = sensorCollection.getTime().split(" ");
+            sensorDataDeal.setTime(ctime[1]);
+            SystemController.logger.info(sensorDataDeal.toString());
+            if (warn1.get(sensorDataDeal.getOldMan()) != null) {
+                warn1.remove(sensorDataDeal.getOldMan());
+            }
+            if (warn2.get(sensorDataDeal.getOldMan()) != null) {
+                warn2.remove(sensorDataDeal.getOldMan());
+            }
+            if (timer.get(sensorDataDeal.getOldMan()) != null) {
+                timer.get(sensorDataDeal.getOldMan()).shutdown();
+                timer.remove(sensorDataDeal.getOldMan());
+            }
+            if (door.get(sensorDataDeal.getOldMan()) != null) {
+                door.remove(sensorDataDeal.getOldMan());
+            }
+            if (warnNoCome.get(sensorDataDeal.getOldMan()) == null) {
+                warnNoCome.remove(sensorDataDeal.getOldMan());
+            }
+            if (outdoorY.get(sensorDataDeal.getOldMan()) != null) {
+                outdoorY.remove(sensorDataDeal.getOldMan());
+            }
+            if (timerDoor.get(sensorDataDeal.getOldMan()) != null) {
+                timerDoor.get(sensorDataDeal.getOldMan()).shutdown();
+                timerDoor.remove(sensorDataDeal.getOldMan());
+            }
+            Threshold_area threshold_area = new Threshold_area();
+            threshold_area.setArea(sensorCollection.getSensorData());
+            threshold_area.setRoomId(sensorDataDeal.getActivityRoom().getRid());
+            Threshold_area threshold = thresholdDao.getThresholdAreaByRidAndNum(threshold_area);
+
+            //Threshold threshold = thresholdDao.getThresholdByRoomId(sensorDataDeal.getActivityRoom().getRid());
+            if(threshold==null){
+                throw new NullFromDBException("行为预警：找不到阈值");
+            }
+
+            //判断 该时间是否在 该房间活动规律时间段内
+            //活动该房间的活动规律信息
+            AreaModel aModel = new AreaModel();
+            aModel.setArea(sensorCollection.getSensorData());
+            aModel.setRoomId(sensorDataDeal.getActivityRoom().getRid());
+            AreaModel areaModel = modelDao.getAreaModelByRidAndArea(aModel);
+          //  RoomModel roomModel = modelDao.getRoomModelByRoomId(sensorDataDeal.getActivityRoom().getRid());
+            if(areaModel==null){
+                //如果没有该房间的活动模型的话  new 一个空
+               AreaModel areaModel1 = new AreaModel();
+            }
+            //暂不考虑 该时间段有时活动 有时休息
+            MomentInTime momentInTime = new MomentInTime();
+            MomentInTime momentInTimeA = new MomentInTime();
+            MomentInTime momentInTimeR = new MomentInTime();
+            String inTime = "";//在规律模型中的哪个时间段
+            String active = areaModel.getAreaActiveTime();
+            //遍历  房间规律模型的 活动时间段
+            if (active != null && !active.equals("")) {
+                ArrayList<String> activeTimes = new ArrayList<String>(Arrays.asList(areaModel.getAreaActiveTime().split("#"))); //xx:xx-yy:yy
+                //判断是否第一个时间段与最后一个连着  比如睡觉00:00:00-06:30:00   20:30:00-24:00:00
+                if (activeTimes.size() > 0) {
+                    if (activeTimes.get(activeTimes.size() - 1).split("-")[1].equals("24:00") && activeTimes.get(0).split("-")[0].equals("00:00")) {
+                        String time = activeTimes.get(activeTimes.size() - 1).split("-")[0] + "-" + activeTimes.get(0).split("-")[1];
+                        activeTimes.remove(activeTimes.size() - 1);
+                        activeTimes.remove(0);
+                        activeTimes.add(time);
+                    }
+                    for (String activeTime : activeTimes) {
+                        momentInTimeA = moment_timeDeal(sensorDataDeal.getTime(), activeTime);
+                        if (!momentInTimeA.isInTime()) {
+                            continue;
+                        }
+                        //在该时间段内  各时间段是没有重合的 所以只要一个时间段符合  其他时间段一定不符合 但是活动时间段可能与休息时间段重叠
+                        else {
+                            inTime = activeTime;
+                            momentInTimeA.setFlag("a");
+                            break;
+                        }
+                    }
+                }
+            }
+            if (momentInTimeA.isInTime() == null) {
+                momentInTimeA.setInTime(false);
+            }
+            if (!momentInTimeA.isInTime()) {
+                String rest = areaModel.getAreaRestTime();
+                //遍历  房间规律模型的 休息时间段  活动时间段可能与休息时间段重叠
+                if (rest != null && !rest.equals("")) {
+                    ArrayList<String> restTimes = new ArrayList<String>(Arrays.asList(areaModel.getAreaRestTime().split("#"))); //xx:xx-yy:yy
+                    //判断是否第一个时间段与最后一个连着  比如睡觉00:00:00-06:30:00   20:30:00-24:00:00
+                    if (restTimes.size() > 0) {
+                        if (restTimes.get(restTimes.size() - 1).split("-")[1].equals("24:00") && restTimes.get(0).split("-")[0].equals("00:00")) {
+                            String time = restTimes.get(restTimes.size() - 1).split("-")[0] + "-" + restTimes.get(0).split("-")[1];
+                            restTimes.remove(restTimes.size() - 1);
+                            restTimes.remove(0);
+                            restTimes.add(time);
+                        }
+                        for (String restTime : restTimes) {
+                            momentInTimeR = moment_timeDeal(sensorDataDeal.getTime(), restTime);
+                            if (!momentInTimeR.isInTime()) {
+                                continue;
+                            }
+                            //在该时间段内  各时间段是没有重合的 所以只要一个时间段符合  其他时间段一定不符合 但是活动时间段可能与休息时间段重叠
+                            else {
+                                inTime = restTime;
+                                momentInTimeR.setFlag("r");
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (momentInTimeR.isInTime() == null) {
+                    momentInTimeR.setInTime(false);
+                }
+            }
+            if (momentInTimeA != null && momentInTimeA.isInTime()) {
+                momentInTime.setFlag("a");
+                momentInTime.setInTime(true);
+            } else if (momentInTimeR != null && momentInTimeR.isInTime()) {
+//            if(momentInTime.getFlag().equals("a")){
+//                momentInTime.setFlag("a&r");
+//            }else{
+                momentInTime.setFlag("r");
+                momentInTime.setInTime(true);
+//            }
+            } else {
+                momentInTime.setInTime(false);
+            }
+            Warn warn = new Warn();
+            warn.setRoom(sensorDataDeal.getActivityRoom());
+            warn.setOldMan(sensorDataDeal.getOldMan());
+            warn.setTime(sensorDataDeal.getTime());
+            warn.setPositon(position);
+            //在规律模型中
+            if (!inTime.equals("")) {
+                warn.setInTime("true");
+                warn.setTimes(inTime);
+            } else {
+                warn.setInTime("false");
+            }
+
+            //设置 阈值
+            if (momentInTime.isInTime()) {
+                //老人不动时 处于该房间规律模型的时间段内
+                switch (momentInTime.getFlag()) {
+                    case "a":
+                        warn.setFlag("a");
+                        threshold1.put(sensorDataDeal.getOldMan(), threshold.getA1Threshold() * 60);
+                        threshold2.put(sensorDataDeal.getOldMan(), threshold.getA2Threshold() * 60);
+                        break;
+                    case "r":
+                        warn.setFlag("r");
+                        threshold1.put(sensorDataDeal.getOldMan(), threshold.getR1Threshold() * momentInTimeR.getTime() / 100);
+                        threshold2.put(sensorDataDeal.getOldMan(), threshold.getR2Threshold() * momentInTimeR.getTime() / 100);
+//                    break;
+//                case "a&r":
+//                    warn.setFlag("a&r");
+//                    //该时间段 既可能休息又可能活动 去两者 值小的
+//                    int a=threshold.getA1Threshold()*60;
+//                    int r=threshold.getR1Threshold()*momentInTimeR.getTime();
+//                    threshold1.put(sensorDataDeal.getOldMan(),(a>=r?r:a));
+//                    int a2=threshold.getA2Threshold()*60;
+//                    int r2=threshold.getR2Threshold()*momentInTime.getTime();
+//                    threshold2.put(sensorDataDeal.getOldMan(),(a2>=r2?r2:a2));
+                }
+            } else {
+                //不在规律模型的时间段
+                threshold1.put(sensorDataDeal.getOldMan(), threshold.getN1Threshold() * 60);
+                threshold2.put(sensorDataDeal.getOldMan(), threshold.getN2Threshold() * 60);
+            }
+
+            warnMap.put(sensorDataDeal.getOldMan(), warn);
+
+
+            Runnable runnable = new Runnable() {
+                public void run() {
+                    Date d = new Date();
+                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+                    String currentTime = sdf.format(d);
+                    SystemController.logger.info("当前时间：" + currentTime + "   最初不动时间：" + sensorDataDeal.getTime());
+                    int value = intervalTime(currentTime, sensorDataDeal.getTime());
+                    SystemController.logger.info("老人已经不动：" + (value / 60) + "分钟");
+                    if (warn2.get(sensorDataDeal.getOldMan()) != null || outdoorY.get(sensorDataDeal.getOldMan()) != null) {
+                        //进行了二级预警 或者 老人出门 停止定时任务
+                        SystemController.logger.info("已进行了二级预警 或者 老人出门 停止定时任务");
+                        if (timer.get(sensorDataDeal.getOldMan()) != null) {
+                            timer.get(sensorDataDeal.getOldMan()).shutdown();
+                            SystemController.logger.info("已停止定时器");
+                        }
+
+                    } else {
+                        //一级预警
+                        SystemController.logger.info("还没进行二级预警且没有出门");
+                        if (warn1.get(sensorDataDeal.getOldMan()) == null) {
+                            SystemController.logger.info("还没进行一级预警  value=" + value + "  一级阈值=" + threshold1.get(sensorDataDeal.getOldMan()));
+                            if (value >= threshold1.get(sensorDataDeal.getOldMan())) {
+                                SystemController.logger.info("一级报警");
+                                Warn warn = warnMap.get(sensorDataDeal.getOldMan());
+                                warn.setWarnLevel(1);
+                                warn.setNoMoveTime(value / 60);
+                                DwrData dwrData = new DwrData();
+                                dwrData.setType("warn_position");
+                                dwrData.setWarn(warn);
+                                SystemController.logger.info(warn.toString());
+                                //存入历史消息
+                                warnHistoryService.addWarnHistory(dwrData);
+                                SystemController.logger.info("已存入历史消息");
+                                //推送
+                                Remote.noticeNewOrder(dwrData);
+
+                                //地图更新
+//                                HouseMarker houseMarker=new HouseMarker();
+//                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
+//                                houseMarker.setStyleIndex(8); //红色
+//                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
+//                                mapUpdate(houseMarker);
+
+                                sensorDataDeal.getOldMan().setStatus(2);
+                                mapUpdate(sensorDataDeal.getOldMan());
+
+                                //启动短信定时任务
+                                smsService.smsSwitch();
+                                SystemController.logger.info("已进行报警");
+                                //设置已经进行了一级报警
+                                warn1.put(sensorDataDeal.getOldMan(), true);
+                            }
+                        } else {
+                            //二级预警
+                            SystemController.logger.info("还没进行二级预警  value=" + value + "  二级阈值=" + threshold2.get(sensorDataDeal.getOldMan()));
+                            if (value >= threshold2.get(sensorDataDeal.getOldMan())) {
+                                SystemController.logger.info("二级报警");
+                                Warn warn = warnMap.get(sensorDataDeal.getOldMan());
+                                warn.setWarnLevel(2);
+                                warn.setNoMoveTime(value / 60);
+                                DwrData dwrData = new DwrData();
+                                dwrData.setType("warn_position");
+                                dwrData.setWarn(warn);
+                                //存入历史消息
+                                warnHistoryService.addWarnHistory(dwrData);
+                                //推送
+                                Remote.noticeNewOrder(dwrData);
+
+                                //地图更新
+//                                HouseMarker houseMarker=new HouseMarker();
+//                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
+//                                houseMarker.setStyleIndex(8); //红色
+//                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
+//                                mapUpdate(houseMarker);
+                                sensorDataDeal.getOldMan().setStatus(2);
+                                mapUpdate(sensorDataDeal.getOldMan());
+
+                                //启动短信定时任务
+                                smsService.smsSwitch();
+                                //设置已经进行了二级报警.2
+                                warn2.put(sensorDataDeal.getOldMan(), true);
+                            }
+                        }
+                    }
+                }
+            };
+
+            ScheduledExecutorService service = Executors
+                    .newSingleThreadScheduledExecutor();
+            // 第二个参数为首次执行的延时时间，第三个参数为定时执行的间隔时间
+            service.scheduleAtFixedRate(runnable, 1, 60, TimeUnit.SECONDS);
+
+            timer.put(sensorDataDeal.getOldMan(), service);
+//具体过程为如果在最后一个动的时间之后，老人一直不动话，此线程不会被停止，所以会继续计时知道超出阈值。如果老人再次有动作后，删除之前的线程，重新开始计时线程，转353.
+        }catch (NullFromDBException e1){
+            throw e1;
+        }catch (Exception e){
+            throw new WarnException("move inner error:"+e.getMessage());
+        }
+    }
+
 
 }

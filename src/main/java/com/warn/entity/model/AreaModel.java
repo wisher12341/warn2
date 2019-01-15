@@ -1,5 +1,7 @@
 package com.warn.entity.model;
 
+import com.warn.entity.Room;
+
 public class AreaModel {
     private Integer aid;
     private Integer roomId;
@@ -7,6 +9,7 @@ public class AreaModel {
     private String areaInfo;
     private String areaActiveTime;
     private String areaRestTime;
+    private Room room;
 
     public Integer getAid() {
         return aid;
@@ -54,5 +57,13 @@ public class AreaModel {
 
     public void setAreaRestTime(String areaRestTime) {
         this.areaRestTime = areaRestTime;
+    }
+
+    public Room getRoom() {
+        return room;
+    }
+
+    public void setRoom(Room room) {
+        this.room = room;
     }
 }

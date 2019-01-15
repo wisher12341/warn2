@@ -3,6 +3,7 @@ package com.warn.service.impl;
 import com.warn.dao.RoomDao;
 import com.warn.dao.ThresholdDao;
 import com.warn.entity.*;
+import com.warn.service.CommonService;
 import com.warn.service.ThresholdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,8 @@ import java.util.List;
  */
 @Service
 public class ThresholdServiceImpl implements ThresholdService{
+    @Autowired
+    CommonService commonService;
 
     @Autowired
     RoomDao roomDao;
@@ -26,8 +29,21 @@ public class ThresholdServiceImpl implements ThresholdService{
         return thresholds;
     }
 
+    public List<Threshold_area> getThresholdByRid(Integer rid){
+        Room room = roomDao.getRoomById(rid);
+        List<Threshold_area> threshold_areas = thresholdDao.getThresholdByRid(rid);
+        for(Threshold_area threshold_area:threshold_areas){
+            threshold_area.setAreaInfo(commonService.getPositionInfo(threshold_area.getArea(),room));
+        }
+        return threshold_areas;
+    }
+
     public void updateThreshold(Threshold threshold) {
         thresholdDao.updateThreshold(threshold);
+    }
+
+    public void updateThresholdArea(Threshold_area threshold_area){
+        thresholdDao.updateThresholdArea(threshold_area);
     }
 
     @Override

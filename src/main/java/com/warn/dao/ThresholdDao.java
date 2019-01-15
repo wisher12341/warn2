@@ -11,11 +11,19 @@ import java.util.List;
 public interface ThresholdDao {
     List<Threshold> getThresholdByRooms(List<Room> rooms);
 
+    List<Threshold_area> getThresholdByRid(Integer rid);
+
     void addThreshold(Integer rid);
+
+    void addThresholdArea(Threshold_area threshold_area);
 
     void updateThreshold(Threshold threshold);
 
+    void updateThresholdArea(Threshold_area threshold_area);
+
     void deleteByRoomId(Integer rid);
+
+    Threshold_area getThresholdAreaByRidAndNum(Threshold_area threshold_area);
 
     Threshold getThresholdByRoomId(@Param("id")Integer rid);
 

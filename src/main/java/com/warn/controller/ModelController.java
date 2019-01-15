@@ -1,6 +1,7 @@
 package com.warn.controller;
 
 import com.warn.dto.*;
+import com.warn.entity.model.AreaModel;
 import com.warn.entity.model.RoomModel;
 import com.warn.service.ModelService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,25 @@ public class ModelController {
         dg.setRows(roomModels);
         return dg;
     }
-
+    /**
+     * 根据房间id
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getAreaModel", method = RequestMethod.POST)
+    public DataGrid getAreaModel(Integer rid){
+        DataGrid dg = new DataGrid();
+        if(rid==null){
+            //传一个控制回去  使前端不报rows is null的错误
+            dg.setTotal(0L);
+            List<RoomModel> th=new ArrayList();
+            dg.setRows(th);
+            return dg;
+        }
+        List<AreaModel> areaModels = modelService.getAreaModelByRid(rid);
+        dg.setTotal((long) areaModels.size());
+        dg.setRows(areaModels);
+        return dg;
+    }
 //    /**
 //     * 更新房间模型
 //     * @param roomModel
@@ -87,6 +106,24 @@ public class ModelController {
         List<ManModelDto> manModelDtos=modelService.getManModelByOid(oid);
         dg.setTotal((long) manModelDtos.size());
         dg.setRows(manModelDtos);
+        return dg;
+    }
+    /**
+     * 根据房间id获得房间内具体区域模型
+     */
+    @ResponseBody
+    @RequestMapping(value = "/getAreaRoomModel", method = RequestMethod.POST)
+    public DataGrid getAreaRoomModel(Integer rid){//rid在这里指房间id
+        DataGrid dg = new DataGrid();
+        if(rid == null){
+            dg.setTotal(0L);
+            List<RoomModel> th=new ArrayList();
+            dg.setRows(th);
+            return dg;
+        }
+        List<RoomModelDto> roomModelDtos = modelService.getRoomModelById(rid);
+        dg.setTotal((long)roomModelDtos.size());
+        dg.setRows(roomModelDtos);
         return dg;
     }
 

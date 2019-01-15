@@ -12,6 +12,24 @@
         </association>
     </resultMap>
 
+    <resultMap id="resultAreaModel" type="com.warn.entity.model.AreaModel">
+        <id property="aid" column="aid"/>
+        <result property="areaActiveTime" column="area_active_time"/>
+        <result property="areaRestTime" column="area_rest_time"/>
+        <association property="room" javaType="com.warn.entity.Room">
+            <id property="rid" column="rid"/>
+            <result property="numOne" column="num_one"/>
+            <result property="numTwo" column="num_two"/>
+            <result property="numThree" column="num_three"/>
+            <result property="numFour" column="num_four"/>
+            <result property="numFive" column="num_five"/>
+            <result property="numSix" column="num_six"/>
+            <result property="numSeven" column="num_seven"/>
+            <result property="numEight" column="num_eight"/>
+            <result property="numNine" column="num_nine"/>
+        </association>
+    </resultMap>
+
 
     <select id="getRoomModelByRoomId" resultMap="resultRoomModel">
         SELECT model.rmid,model.active,model.rest,r.rid,r.roomName
@@ -27,6 +45,14 @@
         <foreach collection="list" item="room" index="index" open="(" close=")" separator=",">
             #{room.rid}
         </foreach>
+    </select>
+
+    <select id="getAreaModelByRidAndArea" resultType="com.warn.entity.model.AreaModel">
+        SELECT * FROM area_model where room_id = #{roomId} and area = #{area}
+    </select>
+
+    <select id="getAreaModelByRid" resultType="com.warn.entity.model.AreaModel">
+        SELECT * FROM area_model where room_id = #{rid}
     </select>
 
     <update id="updateRooModel" parameterType="com.warn.entity.model.RoomModel">
@@ -60,7 +86,7 @@
     </insert>
 
     <insert id="addAreaModel" parameterType="com.warn.entity.model.AreaModel">
-        INSERT INTO area_model(room_id,area,area_info,area_active_time,area_rest_time) VALUES (#{roomId},#{area},#{areaInfo},#{areaActiveTime},#{areaRestTime})
+        INSERT INTO area_model(room_id,area,area_active_time,area_rest_time) VALUES (#{roomId},#{area},#{areaActiveTime},#{areaRestTime})
     </insert>
 
     <insert id="addRoomAreaModel" parameterType="com.warn.entity.model.roomAreaModel">

@@ -2,10 +2,7 @@ package com.warn.controller;
 
 import com.warn.dto.DataGrid;
 import com.warn.dto.Result;
-import com.warn.entity.Threshold;
-import com.warn.entity.Threshold_light;
-import com.warn.entity.Threshold_out;
-import com.warn.entity.Threshold_wendu;
+import com.warn.entity.*;
 import com.warn.service.ThresholdService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +34,8 @@ public class ThresholdController {
         return "threshold/list";
     }
 
-
+     @RequestMapping(value = "/area/list", method = RequestMethod.GET)
+     public String list_area() {return "threshold/area_list";}
     /**
      * 根据老人id获得其各房间的行为阈值
      * @param oid
@@ -60,6 +58,23 @@ public class ThresholdController {
         return dg;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/getThreshold_area", method  = RequestMethod.POST)
+    public DataGrid getThresholdArea(Integer rid){
+        DataGrid dg = new DataGrid();
+        if(rid==null){
+            //传一个控制回去  使前端不报rows is null的错误
+            dg.setTotal(0L);
+            List<Threshold> th=new ArrayList();
+            dg.setRows(th);
+            return dg;
+        }
+        List<Threshold_area> thresholdPlays=thresholdService.getThresholdByRid(rid);
+        dg.setTotal((long) thresholdPlays.size());
+        dg.setRows(thresholdPlays);
+        return dg;
+    }
+
     /**
      * 更新行为阈值 一开始都是默认值 0
      * @param threshold
@@ -69,6 +84,13 @@ public class ThresholdController {
     @RequestMapping(value = "updateThreshold",method = RequestMethod.POST)
     public Result updateThreshold(Threshold threshold){
         thresholdService.updateThreshold(threshold);
+        return new Result(true);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "updateThresholdArea", method = RequestMethod.POST)
+    public Result updateThresholdArea(Threshold_area threshold_area){
+        thresholdService.updateThresholdArea(threshold_area);
         return new Result(true);
     }
 

@@ -18,6 +18,10 @@ public interface ModelDao {
 
     List<RoomModel> getRoomModelByRoomIds(List<Room> rooms);
 
+    AreaModel getAreaModelByRidAndArea(AreaModel areaModel);
+
+    List<AreaModel> getAreaModelByRid(Integer rid);
+
     void updateRooModel(RoomModel roomModel);
 
 //    void addRoomModel(@Param("id")Integer rid);

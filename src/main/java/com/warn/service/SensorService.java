@@ -42,5 +42,7 @@ public interface SensorService {
 
     SensorType conSecType(SensorCollections sensorCollections);
 
+    void checkPositionData1(List<SensorCollection> sensorCollections);
+
     void mapUpdate(OldMan oldMan);
 }
