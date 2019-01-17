@@ -306,6 +306,22 @@ function warn(data){
                 "老人住址：<span class='messageD'>" + data.outdoor.oldMan.oldAddress + "</span></p></div>" +
                 "<div class='detail'><span class='messageT'>回来信息：</span><br><p>" +
                 "出门时间段：<span class='messageD read'>" + data.outdoor.dataD + "</span></p><p></div><input name="+data.id+" type='button' value='已读' onclick='readB(event)'/>"
+        }else if(data.type=="warn_position"){
+            title="位置预警";
+            warnMessage = "<div class='oldMan'><span class='messageT'>老人信息：</span><br><p>" +
+                "老人ID：<span class='messageD'>" + data.warn.oldMan.oid + "</span></p><p>" +
+                "老人姓名：<span class='messageD'>" + data.warn.oldMan.oldName + "</span></p><p>" +
+                "老人电话：<span class='messageD'>" + data.warn.oldMan.oldPhone + "</span></p><p>" +
+                "老人住址：<span class='messageD'>" + data.warn.oldMan.oldAddress + "</span></p></div>" +
+                "<div class='detail'><span class='messageT'>行为信息：</span><br><p>" +
+                "预警级别：<span class='messageD read'>" + data.warn.warnLevel + "</span></p><p>" +
+                "已经不动：<span class='messageD read'>" + data.warn.noMoveTime + " </span>分钟</p><p>" +
+                "所处房间：<span class='messageD'>" + data.warn.room.roomName + "</span></p><p>" +
+                "所处位置：<span class='messageD'>" + data.warn.room.position + "</span></p><p>" +
+                "最初不动的时间：<span class='messageD'>" + data.warn.time + "</span></p><p>" +
+                "是否在该房间的生活规律模型中：<span class='messageD'>" + (data.warn.inTime == 'true' ? "在<p>模型所在时间段：<span class='messageD'>" + data.warn.times + "</span></p><p>" +
+                    "规律类型：<span class='messageD'>" + (data.warn.flag == "a" ? "活动" : ((data.warn.flag == "r") ? "休息" : "活动、休息")) + "</span></p>" :
+                    "不在") + "</span></p></div><input name="+data.id+" type='button' value='已读' onclick='readA(event)'/>";
         }
         $.messager.show({
             title:title,

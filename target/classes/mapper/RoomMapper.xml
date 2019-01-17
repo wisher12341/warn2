@@ -117,7 +117,7 @@
     </update>
 
     <update id="editArea" parameterType="com.warn.entity.Room">
-        UPDATE room SET roomName=#{roomName},collectId=#{collectId},rRegtime=#{rRegtime},oldId=#{oldId},num_one=#{numOne},num_nine=#{numNine}
+        UPDATE room SET roomName=#{roomName},collectId=#{collectId},rRegtime=#{rRegtime},oldId=#{oldId},num_one=#{numOne},num_nine=#{numNine},num_ten=#{numTen}
          ,num_two=#{numTwo},num_three=#{numThree},num_four=#{numFour},num_five=#{numFive},num_six=#{numSix},num_seven=#{numSeven},num_eight=#{numEight}WHERE rid=#{rid}
     </update>
 
@@ -164,7 +164,7 @@
 
     <select id="getRoomByGateWayId_SensorId" resultType="com.warn.entity.Room">
         select
-        r.rid,r.roomName,r.collectId,r.nerRoom,r.oldId,r.rRegtime,r.num_one,r.num_two,r.num_three,r.num_four,r.num_five,r.num_six,r.num_seven,r.num_eight,r.num_nine
+        r.rid,r.roomName,r.collectId,r.nerRoom,r.oldId,r.rRegtime,r.num_one,r.num_two,r.num_three,r.num_four,r.num_five,r.num_six,r.num_seven,r.num_eight,r.num_nine,r.num_ten
         FROM room r,oldman o
         WHERE r.collectId=#{sid} AND o.gatewayID=#{gid} AND r.oldId=o.oid
     </select>

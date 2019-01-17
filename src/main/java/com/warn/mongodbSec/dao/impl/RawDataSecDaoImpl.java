@@ -48,7 +48,7 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
             criteria=Criteria.where("gatewayID").is(Integer.parseInt(oldMan.getGatewayID()));
 //            in(eids).and("gatewayID").is(oldMan.getOid());
         }
-        if(oldMan!=null&&oldMan.getOid()!=null){
+        else if(oldMan!=null&&oldMan.getOid()!=null){
             OldMan oldManSearch=dataDao.getOldManByOid(oldMan.getOid());
             if(criteria==null){
                 criteria=Criteria.where("gatewayID").is(Integer.parseInt(oldManSearch.getGatewayID()));
@@ -56,7 +56,7 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
                 criteria=criteria.and("gatewayID").is(Integer.parseInt(oldManSearch.getGatewayID()));
             }
         }
-        if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
+        else if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
             List<OldMan> oldManSearchs=dataDao.getOldManBySegment(oldMan.getSegment());
             List<Integer> gateways=new ArrayList<>();
             for(OldMan oldManSearch:oldManSearchs) {
@@ -124,11 +124,9 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
             OldMan oldManSearch=dataDao.getOldManByOid(oldMan.getOid());
             if(criteria==null){
                 criteria=Criteria.where("gatewayID").is(Integer.parseInt(oldManSearch.getGatewayID()));
-            }else{
-                criteria=criteria.and("gatewayID").is(Integer.parseInt(oldManSearch.getGatewayID()));
             }
         }
-        if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
+       if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
             List<OldMan> oldManSearchs=dataDao.getOldManBySegment(oldMan.getSegment());
             List<Integer> gateways=new ArrayList<>();
             for(OldMan oldManSearch:oldManSearchs) {

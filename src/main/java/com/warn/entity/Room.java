@@ -23,6 +23,7 @@ public class Room {
     private String numSeven;
     private String numEight;
     private String numNine;
+    private String numTen;
 
     public String getNerRoom() {
         return nerRoom;
@@ -142,6 +143,14 @@ public class Room {
 
     public void setNumNine(String numNine) {
         this.numNine = numNine;
+    }
+
+    public String getNumTen() {
+        return numTen;
+    }
+
+    public void setNumTen(String numTen) {
+        this.numTen = numTen;
     }
 
     //重写equals hashcode 不然获得不了以oldman为键的map的值

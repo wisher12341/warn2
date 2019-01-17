@@ -32,12 +32,17 @@ public class SensorServiceImpl implements SensorService{
     @Autowired
     MapDao mapDao;
 
+    @Autowired
+    CommonService commonService;
+
     //行为
     public static Map<OldMan,ScheduledExecutorService> timer=new HashMap<>();//存放各个老人行为的定时任务
     public static Map<OldMan,Integer> threshold1=new HashMap<>();//存放一级预警的阈值
     public static Map<OldMan,Integer> threshold2=new HashMap<>();//存放二级预警的阈值
     public static Map<OldMan,Warn> warnMap=new HashMap<>();//存放老人的预警模型
 //    private static Map<OldMan,String> noMove=new HashMap<OldMan,String>();//存储老人不动的最初时间 时 分 秒;
+    private static Map<OldMan,Integer> prePosition = new HashMap<>();//存放老人的上一个位置
+    private static Map<Integer,Integer> roomPosition = new HashMap<>();//房间内的位置信息
 //    private static Map<OldMan,Room> noMovaRoom=new HashMap<OldMan, Room>();//存储老人不动之前所在的房间
 public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储是否对该老人已经进行一级报警 如果已经报过警，则不重复一级报警
     public static Map<OldMan,Boolean> warn2=new HashMap<OldMan,Boolean>();//存储是否对该老人已经进行二级报警 如果已经报过警，则不重复二级报警
@@ -47,6 +52,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
     public static Map<Room,Boolean> light=new HashMap<Room,Boolean>();//存储是否对该老人已经进行光强报警 如果已经报过警，则不重复报警
     public static Map<Room,String> lightRoom=new HashMap<Room,String>();//存储可能要预警的房间的最初时间
     public static Map<Room,ScheduledExecutorService> lightTimer=new HashMap<>();//存放各个老人房间光强持续时间的定时任务
+
 
     //出门
     public static Map<OldMan,String> door=new HashMap<OldMan,String>();//存储老人是否出门了（门动的时间）  出门了就不用进行行为预警了;
@@ -97,7 +103,11 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                     if(oldMan.getVersion() == 1)
                         time = sensorCollection.getHour() + ":" + sensorCollection.getMinute() + ":" + sensorCollection.getSecond();
                     else
-                        time = sensorCollection.getTime();
+                    {
+                        String ctime[] = sensorCollection.getTime().split(" ");
+                        time = ctime[1];
+                    }
+
                     final Threshold_out threshold_out = thresholdDao.getDoorThresholdByOid(oldMan.getOid());
                     if (threshold_out == null) {
                         throw new NullFromDBException("门动预警：找不到阈值");
@@ -316,7 +326,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 //        }
 //    }
 
-    public void checkPositionData(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
+    public void checkPositionData1(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
         SystemController.logger.info("======================================行为预警2.0=========================================================");
         try {
             final SensorDataDeal sensorDataDeal = new SensorDataDeal();
@@ -340,7 +350,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 throw new NullFromDBException("行为预警：找不到房间");
             }
             sensorDataDeal.setActivityRoom(room);
-            String position = getPositionInfo(sensorCollection.getSensorData(),room);
+            String position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
             OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollection.getGatewayID());
             if(oldMan==null){
                 throw new NullFromDBException("行为预警：找不到老人");
@@ -1746,35 +1756,67 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 
     }
 
-    public void checkPositionData1(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
+    public void checkPositionData(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
         SystemController.logger.info("======================================行为预警2.0=========================================================");
         try {
             final SensorDataDeal sensorDataDeal = new SensorDataDeal();
             SensorCollection sensorCollection = null;
-            //只记录最后一个动的数据 显示的房间数据
-            if(sensorCollections.size() >= 2)
-                for (int i = sensorCollections.size() - 1; i >= 1; i--) {
-                    if ((sensorCollections.get(i).getSensorData()-sensorCollections.get(i-1).getSensorData()) != 0 && sensorCollections.get(i).getSensorData() != 0 ) {
-                        sensorCollection = sensorCollections.get(i);
-                        break;
-                    }
+            OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollections.get(0).getGatewayID());
+            if(oldMan==null){
+                throw new NullFromDBException("行为预警：找不到老人");
+            }
+            List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
+            if(roomPosition.size() == 0)
+            for(Room room:roomList){
+                roomPosition.put(room.getRid(),11);//赋予初始值，没有位置的值为11
+            }
+            Map<Integer,Integer> roomPositionTmp = roomPosition;
+            List<String> roomPos = new ArrayList<>();
+            for(SensorCollection sensorCollection1:sensorCollections){
+                Room room=roomDao.getRoomByGateWayId_SensorId(sensorCollection1.getGatewayID(),sensorCollection1.getSensorPointID());
+                roomPos.add(room.getRid().toString()+"#"+sensorCollection1.getSensorData().toString());
+            }
+            Integer numOfChange = 0;
+            for(String roomPs:roomPos){
+                String tmp[] = roomPs.split("#");
+                Integer room_id = Integer.parseInt(tmp[0]);
+                Integer pos = Integer.parseInt(tmp[1]);
+                if(!roomPosition.get(room_id).equals(pos)){
+                    roomPosition.remove(room_id);
+                    roomPosition.put(room_id,pos);
+                    ++numOfChange;
                 }
-
+            }
+            Set<Integer> setId = new HashSet<>();
+            if(numOfChange >= 1){
+                int num = 0;
+                for(int i = sensorCollections.size()-1;i>=0 ;i--){
+                    if(sensorCollections.get(i).getSensorData() != 0)
+                        if(setId.add(sensorCollections.get(i).getSensorID()))
+                            num++;
+                        if(num <= roomPosition.size()) {
+                            sensorCollection = sensorCollections.get(i);
+                            break;
+                        }
+                }
+            }
+                if(numOfChange == 0) {
+                    SystemController.logger.info("位置没有变化");
+                    return;
+                }
             if (sensorCollection == null) {
-                SystemController.logger.info("没有位置改变的数据");
-                return;
+                SystemController.logger.info("可探测范围内没有老人位置，可能在其他区域或者出门");
+                sensorCollection = sensorCollections.get(sensorCollections.size()-1);
 //                sensorCollection = sensorCollections.get(sensorCollections.size() - 1);
             }
+
             Room room=roomDao.getRoomByGateWayId_SensorId(sensorCollection.getGatewayID(),sensorCollection.getSensorPointID());
+
             if(room==null){
                 throw new NullFromDBException("行为预警：找不到房间");
             }
             sensorDataDeal.setActivityRoom(room);
-            String position = getPositionInfo(sensorCollection.getSensorData(),room);
-            OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollection.getGatewayID());
-            if(oldMan==null){
-                throw new NullFromDBException("行为预警：找不到老人");
-            }
+            String position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
             sensorDataDeal.setOldMan(oldMan);
             String ctime[] = sensorCollection.getTime().split(" ");
             sensorDataDeal.setTime(ctime[1]);
@@ -1803,7 +1845,10 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 timerDoor.remove(sensorDataDeal.getOldMan());
             }
             Threshold_area threshold_area = new Threshold_area();
-            threshold_area.setArea(sensorCollection.getSensorData());
+            if(sensorCollection.getSensorData() == 0)
+            threshold_area.setArea(sensorCollection.getSensorData()+10);
+            else
+                threshold_area.setArea(sensorCollection.getSensorData());
             threshold_area.setRoomId(sensorDataDeal.getActivityRoom().getRid());
             Threshold_area threshold = thresholdDao.getThresholdAreaByRidAndNum(threshold_area);
 
@@ -1815,13 +1860,16 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
             //判断 该时间是否在 该房间活动规律时间段内
             //活动该房间的活动规律信息
             AreaModel aModel = new AreaModel();
-            aModel.setArea(sensorCollection.getSensorData());
+            if(sensorCollection.getSensorData() == 0)
+            aModel.setArea(10);
+            else
+                aModel.setArea(sensorCollection.getSensorData());
             aModel.setRoomId(sensorDataDeal.getActivityRoom().getRid());
             AreaModel areaModel = modelDao.getAreaModelByRidAndArea(aModel);
           //  RoomModel roomModel = modelDao.getRoomModelByRoomId(sensorDataDeal.getActivityRoom().getRid());
             if(areaModel==null){
                 //如果没有该房间的活动模型的话  new 一个空
-               AreaModel areaModel1 = new AreaModel();
+               areaModel = new AreaModel();
             }
             //暂不考虑 该时间段有时活动 有时休息
             MomentInTime momentInTime = new MomentInTime();
@@ -2045,7 +2093,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
         }catch (NullFromDBException e1){
             throw e1;
         }catch (Exception e){
-            throw new WarnException("move inner error:"+e.getMessage());
+            throw new WarnException("move inner error:"+e.getLocalizedMessage());
         }
     }
 

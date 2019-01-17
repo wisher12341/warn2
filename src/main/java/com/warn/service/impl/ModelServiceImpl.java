@@ -11,6 +11,7 @@ import com.warn.entity.model.AreaModel;
 import com.warn.entity.model.ManModel;
 import com.warn.entity.model.RoomModel;
 import com.warn.entity.model.roomAreaModel;
+import com.warn.service.CommonService;
 import com.warn.service.ModelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class ModelServiceImpl implements ModelService {
     ModelDao modelDao;
     @Autowired
     RoomDao roomDao;
+    @Autowired
+    CommonService commonService;
 
     @Override
     public List<RoomModel> getRoomModelByOid(Integer oid) {
@@ -50,7 +53,7 @@ public class ModelServiceImpl implements ModelService {
         if(room != null){
             areaModels = modelDao.getAreaModelByRid(rid);
             for(AreaModel areaModel:areaModels){
-                areaModel.setAreaInfo(getPositionInfo(areaModel.getArea(),room));
+                areaModel.setAreaInfo(commonService.getPositionInfo(areaModel.getArea(),room));
                 areaModel.setAreaActiveTime(areaModel.getAreaActiveTime().replaceAll("#","<br>"));
                 areaModel.setAreaRestTime(areaModel.getAreaRestTime().replaceAll("#","<br>"));
             }
@@ -104,7 +107,7 @@ public class ModelServiceImpl implements ModelService {
                 if(s.split("\\$")[0].equals("0"))
                     st+="户外";
                 else
-                    st += getPositionInfo(Integer.parseInt(s.split("\\$")[0]),roomDao.getRoomById(id)) + ",";
+                    st += commonService.getPositionInfo(Integer.parseInt(s.split("\\$")[0]),roomDao.getRoomById(id)) + ",";
             }
             st = st.substring(0, st.length() - 1);
             roomModelDto.setTimeArea(st);
@@ -239,7 +242,7 @@ public class ModelServiceImpl implements ModelService {
             if(areaModel1.getArea() != 0)
             {
                 areaModel1.setRoomId(roomModelDtos.getOid());
-                areaModel1.setAreaInfo(getPositionInfo(num,room));
+                areaModel1.setAreaInfo(commonService.getPositionInfo(num,room));
                 areaModel1.setAreaActiveTime(active);
                 areaModel1.setAreaRestTime(rest);
                 modelDao.addAreaModel(areaModel1);

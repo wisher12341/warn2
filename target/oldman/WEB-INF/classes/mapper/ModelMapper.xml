@@ -81,6 +81,7 @@
         DELETE FROM manmodel WHERE oldId=#{id}
     </delete>
 
+
     <insert id="addManModel" parameterType="com.warn.entity.model.ManModel">
         INSERT INTO manmodel(oldId,live) VALUES (#{oldMan.oid},#{live})
     </insert>

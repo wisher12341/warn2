@@ -61,7 +61,7 @@
     </select>
 
     <select id="getThresholdAreaByRidAndNum" resultType="com.warn.entity.Threshold_area">
-        select * from threshold_area where room_id = #{roomId} and area = {area}
+        select * from threshold_area where room_id = #{roomId} and area = #{area}
     </select>
 
     <select id="getThresholdByRid" resultType="com.warn.entity.Threshold_area">
@@ -121,6 +121,7 @@
         delete from threshold where roomId=#{rid};
         delete from threshold_wendu where roomId=#{rid};
         delete from threshold_light where roomId=#{rid};
+        delete from threshold_area where room_id = #{rid};
     </delete>
 
     <select id="getThresholdByRoomId" resultType="com.warn.entity.Threshold">

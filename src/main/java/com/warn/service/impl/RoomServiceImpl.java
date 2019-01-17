@@ -103,7 +103,7 @@ public class RoomServiceImpl implements RoomService{
         thresholdDao.addThreshold(room.getRid());
         Threshold_area threshold_area = new Threshold_area();
         threshold_area.setRoomId(room.getRid());
-        for(int i=1 ;i<=9;i++){
+        for(int i=1 ;i<=10;i++){
             threshold_area.setArea(i);
             thresholdDao.addThresholdArea(threshold_area);
         }
@@ -163,6 +163,8 @@ public class RoomServiceImpl implements RoomService{
 //        thresholdDao.deleteByRoomId(room.getRid());
 //        modelDao.deleteByRoomId(room.getRid());
         modelDao.deleteByoldId(room.getOldId());
+        modelDao.deleteAreaModelByRid(room.getRid());
+        modelDao.deleteRoomAreaModelByRid(room.getRid());
         roomDao.deleteRoomById(room.getRid());
     }
 
@@ -233,6 +235,12 @@ public class RoomServiceImpl implements RoomService{
             autoValue8.setInfo(room.getNumNine());
             autoValue8.setNum(9);
             autoValues.add(autoValue8);
+        }
+        if(room.getNumTen() != null && !room.getNumTen().equals("")){
+            AutoValue autoValue9 = new AutoValue();
+            autoValue9.setInfo(room.getNumTen());
+            autoValue9.setNum(10);
+            autoValues.add(autoValue9);
         }
         return autoValues;
 

@@ -28,8 +28,8 @@
         <thead>
         <tr>
             <th data-options="field:'rid',width:fixWidth(0.08),align:'center'">房间ID</th>
-            <th data-options="field:'roomName',width:fixWidth(0.12),align:'center'" >房间名</th>
-            <th data-options="field:'collectId',width:fixWidth(0.12),align:'center',formatter:formatActionSensor" >对应设备ID</th>
+            <th data-options="field:'roomName',width:fixWidth(0.08),align:'center'" >房间名</th>
+            <th data-options="field:'collectId',width:fixWidth(0.08),align:'center',formatter:formatActionSensor" >对应设备ID</th>
             <th data-options="field:'oldId',width:fixWidth(0.08),align:'center'" >对应人员ID</th>
             <th data-options="field:'numOne',width:fixWidth(0.05),align:'center'">区域1</th>
             <th data-options="field:'numTwo',width:fixWidth(0.05),align:'center'">区域2</th>
@@ -40,6 +40,7 @@
             <th data-options="field:'numSeven',width:fixWidth(0.05),align:'center'">区域7</th>
             <th data-options="field:'numEight',width:fixWidth(0.05),align:'center'">区域8</th>
             <th data-options="field:'numNine',width:fixWidth(0.05),align:'center'">区域9</th>
+            <th data-options="field:'numTen',width:fixWidth(0.05),align:'center'">区域10</th>
             <th data-options="field:'rRegtime',width:fixWidth(0.16),align:'center'">注册时间</th>
         </tr>
         </thead>
