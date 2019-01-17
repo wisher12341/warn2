@@ -26,7 +26,7 @@ public class CommonService {
                 return room.getNumEight();
             case 9:
                 return room.getNumNine();
-            case 0:
+            case 10:
                 return room.getNumTen();
             default:
                 return "floor";

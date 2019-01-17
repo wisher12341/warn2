@@ -350,7 +350,11 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 throw new NullFromDBException("行为预警：找不到房间");
             }
             sensorDataDeal.setActivityRoom(room);
-            String position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
+            String position = null;
+            if(sensorCollection.getSensorData() != 0)
+            position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
+            else
+                position = commonService.getPositionInfo(10,room);
             OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollection.getGatewayID());
             if(oldMan==null){
                 throw new NullFromDBException("行为预警：找不到老人");
@@ -1440,7 +1444,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
     @Override
     public void checkLightData(List<SensorCollection> lightSensorCollectionLis) throws NullFromDBException,WarnException{
         SystemController.logger.info("======================================光强预警=========================================================");
-        try {
+
             final OldMan oldMan = dataDao.getOldManByGatewayID(lightSensorCollectionLis.get(0).getGatewayID());
             if(oldMan==null){
                 throw new NullFromDBException("光强预警：找不到老人");
@@ -1550,11 +1554,11 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                     }
                 }
             }
-        }catch (NullFromDBException e1){
-            throw e1;
-        }catch (Exception e){
-            throw new WarnException("light inner error:"+e.getMessage());
-        }
+//        }catch (NullFromDBException e1){
+//            throw e1;
+//        }catch (Exception e){
+//            throw new WarnException("light inner error:"+e.getCause());
+//        }
     }
 
 
@@ -1788,6 +1792,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 }
             }
             Set<Integer> setId = new HashSet<>();
+            Boolean situation2 = true;
             if(numOfChange >= 1){
                 int num = 0;
                 for(int i = sensorCollections.size()-1;i>=0 ;i--){
@@ -1807,6 +1812,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
             if (sensorCollection == null) {
                 SystemController.logger.info("可探测范围内没有老人位置，可能在其他区域或者出门");
                 sensorCollection = sensorCollections.get(sensorCollections.size()-1);
+                situation2 = false;
 //                sensorCollection = sensorCollections.get(sensorCollections.size() - 1);
             }
 
@@ -1816,7 +1822,11 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 throw new NullFromDBException("行为预警：找不到房间");
             }
             sensorDataDeal.setActivityRoom(room);
-            String position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
+            String position = null;
+            if(sensorCollection.getSensorData() != 0)
+                position = commonService.getPositionInfo(sensorCollection.getSensorData(),room);
+            else
+                position = commonService.getPositionInfo(10,room);
             sensorDataDeal.setOldMan(oldMan);
             String ctime[] = sensorCollection.getTime().split(" ");
             sensorDataDeal.setTime(ctime[1]);
@@ -1831,24 +1841,21 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 timer.get(sensorDataDeal.getOldMan()).shutdown();
                 timer.remove(sensorDataDeal.getOldMan());
             }
-            if (door.get(sensorDataDeal.getOldMan()) != null) {
+            if (door.get(sensorDataDeal.getOldMan()) != null && situation2) {
                 door.remove(sensorDataDeal.getOldMan());
             }
-            if (warnNoCome.get(sensorDataDeal.getOldMan()) == null) {
+            if (warnNoCome.get(sensorDataDeal.getOldMan()) == null && situation2) {
                 warnNoCome.remove(sensorDataDeal.getOldMan());
             }
-            if (outdoorY.get(sensorDataDeal.getOldMan()) != null) {
+            if (outdoorY.get(sensorDataDeal.getOldMan()) != null && situation2) {
                 outdoorY.remove(sensorDataDeal.getOldMan());
             }
-            if (timerDoor.get(sensorDataDeal.getOldMan()) != null) {
+            if (timerDoor.get(sensorDataDeal.getOldMan()) != null && situation2) {
                 timerDoor.get(sensorDataDeal.getOldMan()).shutdown();
                 timerDoor.remove(sensorDataDeal.getOldMan());
             }
             Threshold_area threshold_area = new Threshold_area();
-            if(sensorCollection.getSensorData() == 0)
-            threshold_area.setArea(sensorCollection.getSensorData()+10);
-            else
-                threshold_area.setArea(sensorCollection.getSensorData());
+            threshold_area.setArea(sensorCollection.getSensorData());
             threshold_area.setRoomId(sensorDataDeal.getActivityRoom().getRid());
             Threshold_area threshold = thresholdDao.getThresholdAreaByRidAndNum(threshold_area);
 

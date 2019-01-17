@@ -205,7 +205,7 @@ public class ModelServiceImpl implements ModelService {
         rAreaModel.setRoomLive(live);
         modelDao.addRoomAreaModel(rAreaModel);
         Room room = roomDao.getRoomById(roomModelDtos.getOid());
-        for (int num = 1; num <= 9; num++) {
+        for (int num = 1; num <= 10; num++) {
             AreaModel areaModel1 = new AreaModel();
             areaModel1.setArea(0);
             String active = "";
