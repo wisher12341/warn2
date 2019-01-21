@@ -217,7 +217,7 @@
     </select>
 
     <select id="getOldManByOid" resultType="com.warn.entity.OldMan">
-        SELECT oid,oldName,gatewayID,oldPhone,oldAddress,version
+        SELECT oid,oldName,gatewayID,oldPhone,oldAddress,version,oldRegtime
         FROM oldman WHERE oid=#{id}
     </select>
 

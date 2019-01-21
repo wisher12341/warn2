@@ -158,7 +158,15 @@ function warn(data){
             });
         });
         playSound("urgency");
-    }else if(data.type=="gatewayDown"){
+    }else if(data.type=="Face"){
+        var faceMessage="<div class='eauip'><span class='messageT'>报警设备信息：" +
+            "</span><br><p>设备ID：<span class='messageD'>"+data.warn.flag+"</span></p>"+
+            "<p>设备所在位置：<span class='messageD'>"+data.warn.position+"</span></p></div>"+
+            "<div class='oldMan'><span class='messageT'>老人信息：</span><br><p>" +
+            "老人姓名：<span class='messageD'>"+ data.oldMan.oldName+"</span></p></div>" ;
+        $.messager.alert('紧急报警！',faceMessage,'danger');
+    }
+    else if(data.type=="gatewayDown"){
         var downid=data.downid;
         //网关故障
         var gatewayDownMessage="<div class='eauip'><span class='messageT'>网关故障信息：" +

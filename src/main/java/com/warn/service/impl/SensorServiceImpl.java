@@ -1855,6 +1855,9 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 timerDoor.remove(sensorDataDeal.getOldMan());
             }
             Threshold_area threshold_area = new Threshold_area();
+            if(sensorCollection.getSensorData() == 0)
+                threshold_area.setArea(10);
+            else
             threshold_area.setArea(sensorCollection.getSensorData());
             threshold_area.setRoomId(sensorDataDeal.getActivityRoom().getRid());
             Threshold_area threshold = thresholdDao.getThresholdAreaByRidAndNum(threshold_area);

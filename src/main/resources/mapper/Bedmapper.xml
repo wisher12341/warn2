@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.warn.dao.BedDao">
+    <select id="datagridBed" resultType="com.warn.entity.Bed">
+        SELECT id,number,voice_id,gravity_id,TIME,oid
+        from bed
+        where 1=1
+        <if test="bed.status != null">
+            and status = #{bed.status}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+
+    <select id="datagridBedOldTotal" resultType="Long">
+        SELECT count(1)
+        from bed
+        where 1=1
+        <if test="bed.oid != null and bed.oid != ''">
+            and oid = #{bed.oid}
+        </if>
+        <if test="bed.status != null and bed.status != '' ">
+            and status = #{bed.status}
+        </if>
+    </select>
+
+    <select id="datagridBedOld" resultType="com.warn.entity.Bed">
+        select number,oid,id
+        from bed
+        where oid != 0
+        <if test="bed.oid != null and bed.oid != ''">
+            and oid = #{bed.oid}
+        </if>
+        <if test="bed.status != null and bed.status != '' ">
+            and status = #{bed.status}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+</mapper>

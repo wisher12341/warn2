@@ -20,6 +20,7 @@
         <convert converter="bean" match="com.warn.entity.Threshold_wendu"/>
         <convert converter="bean" match="com.warn.entity.Threshold_light"/>
         <convert converter="bean" match="com.warn.entity.Threshold_out"/>
+        <convert converter="bean" match="com.warn.entity.Threshold_area"/>
         <convert converter="bean" match="com.warn.entity.Outdoor"/>
         <convert converter="bean" match="com.warn.entity.EquipDown"/>
 

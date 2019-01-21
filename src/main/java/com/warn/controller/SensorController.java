@@ -3,6 +3,7 @@ package com.warn.controller;
 import com.warn.dto.*;
 import com.warn.dwr.Remote;
 import com.warn.entity.Equipment;
+import com.warn.entity.OldMan;
 import com.warn.exception.NullFromDBException;
 import com.warn.mongodb.model.SensorCollection;
 import com.warn.service.SensorService;
@@ -250,6 +251,24 @@ public class SensorController {
             SystemController.logger.info(e.getMessage());
             return new Result(false);
         }
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/sensorFace", method = RequestMethod.GET)
+    public Result sensorFace(String name,String equipId,String position){
+        OldMan oldMan = new OldMan();
+        oldMan.setOldName(name);
+        oldMan.setGatewayID(position);
+        Warn warn = new Warn();
+        warn.setPositon(position);
+        warn.setOldMan(oldMan);
+        warn.setFlag(equipId);
+        DwrData dwrData = new DwrData();
+        dwrData.setType("Face");
+        dwrData.setOldMan(oldMan);
+        dwrData.setWarn(warn);
+        Remote.noticeNewOrder(dwrData);
+        return new Result(true);
     }
 
 //    @ResponseBody

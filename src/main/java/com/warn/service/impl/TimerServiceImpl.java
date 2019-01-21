@@ -159,7 +159,7 @@ public class TimerServiceImpl implements TimerService {
                         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
                         String currentTime = sdf.format(d);
 
-                        Date s = new Date(d.getTime() - (StaticVal.accessDatabaseTime + 1) * 60 * 1000); //开始的时间 当前时间推迟一分钟秒   因为传感器发送到数据库 有 1-59秒不等的延迟
+                        Date s = new Date(d.getTime() - (StaticVal.accessDatabaseTime + 5) * 60 * 1000); //开始的时间 当前时间推迟5分钟   因为传感器发送到数据库 有 1-59秒不等的延迟
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//可以方便地修改日期格式
                         dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
                         String startTime = dateFormat.format(s);
