@@ -18,7 +18,7 @@ public class StaticVal {
     //系统刚启动时，由于各个老人的预警开关都是关闭的， 再打开总开关后，就会启动 所有在当前检测时间段内 有数据的 老人的开关
 
     public static Map<OldMan,Boolean> oldManTimer=new HashMap<>(); //此处存储管理每个老人预警开关的Map
-    public static Integer accessDatabaseTime=5;//此处存储每过几分钟 访问一次数据库 （默认6  单位 分钟）
+    public static Integer accessDatabaseTime=1;//此处存储每过几分钟 访问一次数据库 （默认6  单位 分钟）
 
     public static Integer gatewayDown=5; //网关故障的阈值   单位：分钟
     public static Integer equipDown=5; //设备故障的阈值   单位：分钟

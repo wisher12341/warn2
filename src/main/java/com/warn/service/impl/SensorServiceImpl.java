@@ -12,9 +12,17 @@ import com.warn.exception.WarnException;
 import com.warn.mongodb.model.SensorCollection;
 import com.warn.service.*;
 import com.warn.util.StaticVal;
+import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -327,7 +335,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 //    }
 
     public void checkPositionData1(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
-        SystemController.logger.info("======================================行为预警2.0=========================================================");
+        SystemController.logger.info("======================================行为预警1.0=========================================================");
         try {
             final SensorDataDeal sensorDataDeal = new SensorDataDeal();
             SensorCollection sensorCollection = null;
@@ -1806,6 +1814,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 }
             }
                 if(numOfChange == 0) {
+
                     SystemController.logger.info("位置没有变化");
                     return;
                 }
@@ -2029,32 +2038,38 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                             SystemController.logger.info("还没进行一级预警  value=" + value + "  一级阈值=" + threshold1.get(sensorDataDeal.getOldMan()));
                             if (value >= threshold1.get(sensorDataDeal.getOldMan())) {
                                 SystemController.logger.info("一级报警");
+
                                 Warn warn = warnMap.get(sensorDataDeal.getOldMan());
                                 warn.setWarnLevel(1);
                                 warn.setNoMoveTime(value / 60);
-                                DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_position");
-                                dwrData.setWarn(warn);
-                                SystemController.logger.info(warn.toString());
-                                //存入历史消息
-                                warnHistoryService.addWarnHistory(dwrData);
-                                SystemController.logger.info("已存入历史消息");
-                                //推送
-                                Remote.noticeNewOrder(dwrData);
+                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43"))
+                                    sendPost(warn);
+                                else{
+                                    DwrData dwrData = new DwrData();
+                                    dwrData.setType("warn_position");
+                                    dwrData.setWarn(warn);
+                                    SystemController.logger.info(warn.toString());
+                                    //存入历史消息
+                                    warnHistoryService.addWarnHistory(dwrData);
+                                    SystemController.logger.info("已存入历史消息");
+                                    //推送
+                                    Remote.noticeNewOrder(dwrData);
 
-                                //地图更新
+                                    //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
 //                                houseMarker.setStyleIndex(8); //红色
 //                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
 //                                mapUpdate(houseMarker);
 
-                                sensorDataDeal.getOldMan().setStatus(2);
-                                mapUpdate(sensorDataDeal.getOldMan());
+                                    sensorDataDeal.getOldMan().setStatus(2);
+                                    mapUpdate(sensorDataDeal.getOldMan());
 
-                                //启动短信定时任务
-                                smsService.smsSwitch();
-                                SystemController.logger.info("已进行报警");
+                                    //启动短信定时任务
+                                    smsService.smsSwitch();
+                                    SystemController.logger.info("已进行报警");
+                                }
+
                                 //设置已经进行了一级报警
                                 warn1.put(sensorDataDeal.getOldMan(), true);
                             }
@@ -2066,25 +2081,31 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 Warn warn = warnMap.get(sensorDataDeal.getOldMan());
                                 warn.setWarnLevel(2);
                                 warn.setNoMoveTime(value / 60);
-                                DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_position");
-                                dwrData.setWarn(warn);
-                                //存入历史消息
-                                warnHistoryService.addWarnHistory(dwrData);
-                                //推送
-                                Remote.noticeNewOrder(dwrData);
+                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43"))
+                                    sendPost(warn);
+                                else{
+                                    DwrData dwrData = new DwrData();
+                                    dwrData.setType("warn_position");
+                                    dwrData.setWarn(warn);
+                                    //存入历史消息
+                                    warnHistoryService.addWarnHistory(dwrData);
+                                    //推送
+                                    Remote.noticeNewOrder(dwrData);
 
-                                //地图更新
+                                    //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
 //                                houseMarker.setStyleIndex(8); //红色
 //                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
 //                                mapUpdate(houseMarker);
-                                sensorDataDeal.getOldMan().setStatus(2);
-                                mapUpdate(sensorDataDeal.getOldMan());
+                                    sensorDataDeal.getOldMan().setStatus(2);
+                                    mapUpdate(sensorDataDeal.getOldMan());
+                                    smsService.smsSwitch();
+                                }
+
 
                                 //启动短信定时任务
-                                smsService.smsSwitch();
+
                                 //设置已经进行了二级报警.2
                                 warn2.put(sensorDataDeal.getOldMan(), true);
                             }
@@ -2106,6 +2127,57 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
             throw new WarnException("move inner error:"+e.getLocalizedMessage());
         }
     }
+    private void  sendPost(Warn warn){
+        JSONObject json = new JSONObject();
+        json.put("time",warn.getTime());
+        json.put("position",warn.getPositon());
+        json.put("noMoveTime",warn.getNoMoveTime());
+        json.put("level",warn.getWarnLevel().toString());
+        BufferedReader in = null;
+        String status = "";
+        String response = "";
+        String content = json.toString();
+        DataOutputStream out = null;
+        try {
+            URL url = new URL("http://192.168.0.144:8085/alarm/Forbidden");
+            // 打开和URL之间的连接
+            URLConnection conn = url.openConnection();
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) conn;
+            // 设置请求属性
+            httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+            // 发送POST请求必须设置如下两行
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setRequestMethod("POST");
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.connect();
+            out = new DataOutputStream(httpUrlConnection.getOutputStream());
+            // 获取URLConnection对象对应的输出流
 
+            out.writeBytes(content);
+            // 发送请求参数
+            // flush输出流的缓冲
+            out.flush();
+
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                response += line;
+            }
+            status = new Integer(httpUrlConnection.getResponseCode()).toString();
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！" + e);
+        }
+        // 使用finally块来关闭输出流、输入流
+        finally {
+            try {
+                if (out != null) { out.close();}
+                if (in != null) {in.close();}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
 
 }
