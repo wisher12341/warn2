@@ -152,4 +152,8 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
     public MongoTemplate getMongoTemplate() {
         return mongoTemplate;
     }
+
+    public List<SensorCollection> findToStatistic(Integer gateWayId,Integer sensorPointId){
+
+    }
 }

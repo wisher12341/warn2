@@ -1682,12 +1682,25 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 SystemController.logger.info("温度报警");
                                 warn_wendu.setThreshold_wendu(threshold_wendu);
                                 warn_wendu.setWendu(w);
-                                DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_wendu");
-                                dwrData.setWarn_wendu(warn_wendu);
-                                wendu.put(threshold_wendu.getRoom(), true);
-                                warnHistoryService.addWarnHistory(dwrData);
-                                Remote.noticeNewOrder(dwrData);
+                                if(wenduSensorCollectionLis.get(0).getGatewayID().equals("43")){
+                                    SendAlarm sendAlarm = new SendAlarm();
+                                    sendAlarm.setInfo(warn_wendu.getWendu().toString());
+                                    sendAlarm.setTime(sensorCollection.getTime());
+                                    sendAlarm.setLevel(warn_wendu.getThreshold_wendu().toString());
+                                    sendAlarm.setType("wendu");
+                                    sendPost(sendAlarm);
+                                }else{
+                                    DwrData dwrData = new DwrData();
+                                    dwrData.setType("warn_wendu");
+                                    dwrData.setWarn_wendu(warn_wendu);
+                                    wendu.put(threshold_wendu.getRoom(), true);
+                                    warnHistoryService.addWarnHistory(dwrData);
+                                    Remote.noticeNewOrder(dwrData);
+                                    oldMan.setStatus(2);
+                                    mapUpdate(oldMan);
+                                    //启动短信定时任务
+                                    smsService.smsSwitch();
+                                }
 
                                 //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
@@ -1695,10 +1708,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 //                                houseMarker.setStyleIndex(8); //红色
 //                                houseMarker.setDetail("温度预警&nbsp;&nbsp;&nbsp;预警房间："+room.getRoomName()+";&nbsp;&nbsp;当前温度："+w);
 //                                mapUpdate(houseMarker);
-                                oldMan.setStatus(2);
-                                mapUpdate(oldMan);
-                                //启动短信定时任务
-                                smsService.smsSwitch();
+
                             }
                         }
                         break;
@@ -1799,22 +1809,25 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                     ++numOfChange;
                 }
             }
-            Set<Integer> setId = new HashSet<>();
+            Set<String> setId = new HashSet<>();
             Boolean situation2 = true;
             if(numOfChange >= 1){
                 int num = 0;
-                for(int i = sensorCollections.size()-1;i>=0 ;i--){
-                    if(sensorCollections.get(i).getSensorData() != 0)
-                        if(setId.add(sensorCollections.get(i).getSensorID()))
-                            num++;
-                        if(num <= roomPosition.size()) {
-                            sensorCollection = sensorCollections.get(i);
+                for(int i = sensorCollections.size()-1;i>=0 ;i--){//考虑从覆盖区域离开的情况
+                        if(setId.add(sensorCollections.get(i).getSensorPointID())){
+                          if(sensorCollections.get(i).getSensorData() != 0) {
+                              sensorCollection = sensorCollections.get(i);
+                              break;
+                          }
+                          else
+                              ++num;
+                        }
+                        if (num == roomPosition.size()) {
                             break;
                         }
                 }
             }
                 if(numOfChange == 0) {
-
                     SystemController.logger.info("位置没有变化");
                     return;
                 }
@@ -1822,6 +1835,18 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 SystemController.logger.info("可探测范围内没有老人位置，可能在其他区域或者出门");
                 sensorCollection = sensorCollections.get(sensorCollections.size()-1);
                 situation2 = false;
+                if(sensorCollection.getGatewayID().equals(43)){
+                    if (warn1.get(sensorDataDeal.getOldMan()) != null) {
+                        warn1.remove(sensorDataDeal.getOldMan());
+                    }
+                    if (warn2.get(sensorDataDeal.getOldMan()) != null) {
+                        warn2.remove(sensorDataDeal.getOldMan());
+                    }
+                    if (timer.get(sensorDataDeal.getOldMan()) != null) {
+                        timer.get(sensorDataDeal.getOldMan()).shutdown();
+                        timer.remove(sensorDataDeal.getOldMan());
+                    }
+                }
 //                sensorCollection = sensorCollections.get(sensorCollections.size() - 1);
             }
 
@@ -2042,8 +2067,14 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 Warn warn = warnMap.get(sensorDataDeal.getOldMan());
                                 warn.setWarnLevel(1);
                                 warn.setNoMoveTime(value / 60);
-                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43"))
-                                    sendPost(warn);
+                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43")){
+                                    SendAlarm sendAlarm = new SendAlarm();
+                                    sendAlarm.setInfo(warn.getNoMoveTime().toString());
+                                    sendAlarm.setTime(warn.getTime());
+                                    sendAlarm.setLevel(warn.getWarnLevel().toString());
+                                    sendAlarm.setType("position");
+                                    sendPost(sendAlarm);
+                                }
                                 else{
                                     DwrData dwrData = new DwrData();
                                     dwrData.setType("warn_position");
@@ -2081,8 +2112,14 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                 Warn warn = warnMap.get(sensorDataDeal.getOldMan());
                                 warn.setWarnLevel(2);
                                 warn.setNoMoveTime(value / 60);
-                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43"))
-                                    sendPost(warn);
+                                if(sensorDataDeal.getOldMan().getGatewayID().equals("43")){
+                                    SendAlarm sendAlarm = new SendAlarm();
+                                    sendAlarm.setInfo(warn.getNoMoveTime().toString());
+                                    sendAlarm.setTime(warn.getTime());
+                                    sendAlarm.setLevel(warn.getWarnLevel().toString());
+                                    sendAlarm.setType("position");
+                                    sendPost(sendAlarm);
+                                }
                                 else{
                                     DwrData dwrData = new DwrData();
                                     dwrData.setType("warn_position");
@@ -2127,19 +2164,19 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
             throw new WarnException("move inner error:"+e.getLocalizedMessage());
         }
     }
-    private void  sendPost(Warn warn){
+    private void  sendPost(SendAlarm sendAlarm){
         JSONObject json = new JSONObject();
-        json.put("time",warn.getTime());
-        json.put("position",warn.getPositon());
-        json.put("noMoveTime",warn.getNoMoveTime());
-        json.put("level",warn.getWarnLevel().toString());
+        json.put("time",sendAlarm.getTime());
+        json.put("info",sendAlarm.getInfo());
+        json.put("type",sendAlarm.getType());
+        json.put("level",sendAlarm.getLevel());
         BufferedReader in = null;
         String status = "";
         String response = "";
         String content = json.toString();
         DataOutputStream out = null;
         try {
-            URL url = new URL("http://192.168.0.144:8085/alarm/Forbidden");
+            URL url = new URL("http://106.15.201.132:81/alarm/Forbidden");
             // 打开和URL之间的连接
             URLConnection conn = url.openConnection();
             HttpURLConnection httpUrlConnection = (HttpURLConnection) conn;

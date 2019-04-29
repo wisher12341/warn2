@@ -8,6 +8,7 @@ import com.warn.mongodb.dao.SensorMogoDao;
 import com.warn.mongodb.model.SensorCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -68,7 +69,7 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
 
 
             //构造查询语句
-            Query query;
+            Query query = new Query();
             Criteria c;
             //正常时间区间
             Criteria c1;
@@ -80,8 +81,10 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
             Criteria c1_2;
             Criteria c2_1;
             Criteria c2_2;
-
-
+            query.with(new Sort(Sort.Direction.DESC, "_id"));
+            c = Criteria.where("gatewayID").in(gatewayIDs);
+            query.addCriteria(c);
+            int limit = gatewayIDs.size() * 10;
             //由于 数据库的的时间 分成了一个个字段
             //时间间隔：几分钟
             if (startMonth > endMonth) {
@@ -91,9 +94,10 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
                 c2_1 = Criteria.where("year").gte(startYear).lte(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").lt(endMinute).and("gatewayID").in(gatewayIDs);
                 c2_2 = Criteria.where("year").gte(startYear).lte(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").is(endMinute).and("second").lte(endSecond).and("gatewayID").in(gatewayIDs);
 
-                c = new Criteria();
+                //c = new Criteria();
 
-                query = new Query(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+               // query.addCriteria(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+
             } else {
                 //同年  月：endMonth>=startMonth
                 if (startDay > endDay) {
@@ -103,7 +107,8 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
                     c2_1 = Criteria.where("year").is(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").lt(endMinute).and("gatewayID").in(gatewayIDs);
                     c2_2 = Criteria.where("year").is(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").is(endMinute).and("second").lte(endSecond).and("gatewayID").in(gatewayIDs);
                     c = new Criteria();
-                    query = new Query(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+                  //  query.addCriteria(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+
                 } else {
                     //同年 月：endMonth>=startMonth  日：endDay>=startDay
                     if (startHour > endHour) {
@@ -114,7 +119,8 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
                         c2_2 = Criteria.where("year").is(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").is(endMinute).and("second").lte(endSecond).and("gatewayID").in(gatewayIDs);
                         c = new Criteria();
 
-                        query = new Query(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+                       // query.addCriteria(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+
                     } else {
                         //同年 月：endMonth>=startMonth  日：endDay>=startDay 时：endHour>=startHour
                         if (startMinute > endMinute) {
@@ -125,7 +131,8 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
                             c2_2 = Criteria.where("year").is(endYear).and("month").is(endMonth).and("day").is(endDay).and("hour").is(endHour).and("minute").is(endMinute).and("second").lte(endSecond).and("gatewayID").in(gatewayIDs);
                             c = new Criteria();
 
-                            query = new Query(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+                            //query = new Query(c.orOperator(c1_1, c1_2, c2_1, c2_2));
+
                         } else {
                             //同年 月：endMonth>=startMonth  日：endDay>=startDay 时：endHour>=startHour 分：endMinute>=startMinute
                             c1 = Criteria.where("year").gte(startYear).lte(endYear).and("month").gte(startMonth).lte(endMonth).and("day").gte(startDay).lte(endDay)
@@ -136,7 +143,7 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
                                     .and("hour").gte(startHour).lte(endHour).and("minute").gt(startMinute).lt(endMinute).and("gatewayID").in(gatewayIDs);
                             c = new Criteria();
 
-                            query = new Query(c.orOperator(c1, c2, c3));
+                          //  query.addCriteria(c.orOperator(c1, c2, c3));
                         }
                     }
                 }
@@ -145,7 +152,7 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
             if(query==null){
                 throw new GetMDBException("query为null");
             }
-            return getMongoTemplate().find(query, SensorCollection.class);
+            return getMongoTemplate().find(query.skip(0).limit(limit), SensorCollection.class);
         }catch (GetMDBException e1){
             throw e1;
         }catch (Exception e){

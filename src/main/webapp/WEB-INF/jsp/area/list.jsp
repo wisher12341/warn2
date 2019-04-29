@@ -156,7 +156,10 @@
                     <td><span class="addButton">区域9：</span></td>
                     <td><input name="numNine" class="auto" type="text"/></td>
                 </tr>
-
+                <tr>
+                    <td><span class="addButton">区域10：</span></td>
+                    <td><input name="numTen" class="auto" type="text"/></td>
+                </tr>
                 <tr>
                     <td><input name="rRegtime" class="auto" type="hidden"/></td>
                 </tr>

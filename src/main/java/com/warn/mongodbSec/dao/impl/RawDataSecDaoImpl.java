@@ -84,9 +84,9 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         }
         if(sensorCollection.getTime()!=null&&!sensorCollection.getTime().equals("")){
             if(criteria==null){
-                criteria=Criteria.where("timeString").is(sensorCollection.getTime());
+                criteria=Criteria.where("timeString").gte(sensorCollection.getTime()+" "+"00:00:00").lte(sensorCollection.getTime()+" "+"23:59:59");
             }else{
-                criteria=criteria.and("timeString").is(sensorCollection.getTime());
+                criteria=criteria.and("timeString").gte(sensorCollection.getTime()+" "+"00:00:00").lte(sensorCollection.getTime()+" "+"23:59:59");
             }
 //            String[] t=sensorCollection.getTime().split("-");
 //            Integer year=Integer.parseInt(t[0]);
@@ -154,9 +154,9 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         }
         if(sensorCollection.getTime()!=null&&!sensorCollection.getTime().equals("")){
             if(criteria==null){
-                criteria=Criteria.where("timeString").gte(sensorCollection.getTime());
+                criteria=Criteria.where("timeString").gte(sensorCollection.getTime()+" "+"00:00:00").lte(sensorCollection.getTime()+" "+"23:59:59");
             }else{
-                criteria=criteria.and("timeString").gte(sensorCollection.getTime());
+                criteria=criteria.and("timeString").gte(sensorCollection.getTime()+" "+"00:00:00").lte(sensorCollection.getTime()+" "+"23:59:59");
             }
 //            String[] t=sensorCollection.getTime().split("-");
 //            Integer year=Integer.parseInt(t[0]);
