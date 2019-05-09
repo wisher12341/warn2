@@ -5,6 +5,7 @@ import com.warn.exception.WarnException;
 import com.warn.mongodbSec.dao.SensorMogoSecDao;
 import com.warn.mongodb.model.SensorCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -153,7 +154,25 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
         return mongoTemplate;
     }
 
-    public List<SensorCollection> findToStatistic(Integer gateWayId,Integer sensorPointId){
+    public List<SensorCollection> findToStatistic(Integer gateWayId,List<Integer> sensorPointIds,Integer limit){
 
+
+        Query query = new Query();
+        query.with(new Sort(Sort.Direction.DESC, "_id"));
+        Criteria c = Criteria.where("gatewayID").is(gateWayId).and("sensorPointID").in(sensorPointIds).and("sensorID").in(1,5);
+        query.addCriteria(c);
+        return getMongoTemplate().find(query.skip(0).limit(limit), SensorCollection.class);
     }
+
+    public List<SensorCollection> findToStatisticBeta(Integer gateWayId,List<Integer> sensorPointIds,String start,String end){
+        Query query;
+        Criteria c;
+        c = Criteria.where("gatewayID").is(gateWayId).and("sensorPointID").in(sensorPointIds).and("sensorID").in(1,5).and("timeString").gte(start).lte(end);
+        query = new Query(c);
+        if(query==null){
+            throw new GetMDBException("query为null");
+        }
+        return getMongoTemplate().find(query, SensorCollection.class);
+    }
+
 }

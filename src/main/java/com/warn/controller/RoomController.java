@@ -109,6 +109,7 @@ public class RoomController {
         dg.setRows(roomList);
         return dg;
     }
+
     @ResponseBody
     @RequestMapping(value="/area/datagrid1", method = RequestMethod.POST)
     public DataGrid dataGrid1(PageHelper page,Room room,HttpServletRequest request){

@@ -15,9 +15,13 @@ public interface RoomDao {
 
     Long getDatagridTotal1(Room room);
 
+    Long getDatagridTotal2(Room room);
+
     List<Room> datagridRoom(@Param("page")PageHelper page,@Param("room")Room room);
 
     List<Room> datagridArea(@Param("page")PageHelper page,@Param("room")Room room);
+
+    List<Room> datagridStatistic(@Param("page")PageHelper page,@Param("room")Room room);
 
     void addRoom(Room room);
 

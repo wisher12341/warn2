@@ -29,6 +29,9 @@ public class VisualController {
         return "user/play";
     }
 
+    @RequestMapping(value = "/Statistic",method = RequestMethod.GET)
+    public String StatisticVisual() {return "user/area_play";}
+
     /**
      * 根据老人id获得  该老人 所有房间活动模型
      */

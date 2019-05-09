@@ -124,10 +124,23 @@ span{
 .tuMain{
     background: white;
     border: solid 1px #cccccc;
-    width: 35%;
+    width: 80%;
     height: 42%;
     margin: 1%;
     margin-top: 0.5%;
+}
+.tuMainLine{
+    background: white;
+    border: solid 1px #cccccc;
+    width: 90%;
+    height: 55%;
+    /*margin: 2%;*/
+    /*margin-top: 10%;*/
+    position: absolute;
+    bottom: 1%;
+    /*right:2% ;*/
+    margin: 0 1%;
+    /*left:150px;*/
 }
 #main{
     z-index: 99;

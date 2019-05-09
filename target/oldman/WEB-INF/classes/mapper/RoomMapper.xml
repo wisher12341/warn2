@@ -48,7 +48,28 @@
             and r.oldId=#{oldId}
         </if>
     </select>
+    <select id="getDatagridTotal2" resultType="long">
+        SELECT
+         count(1)
+        from room r,oldman o,area_statistic s where o.version = 2
+        and s.room_id = r.rid and r.oldId = o.oid
+        <if test="rid != null and rid != ''">
+            and r.rid=#{rid}
+        </if>
+        <if test="roomName != null and roomName != ''">
+            and r.roomName=#{roomName}
+        </if>
+        <if test="rRegtime != null and rRegtime != ''">
+            and r.rRegtime=#{rRegtime}
+        </if>
+        <if test="collectId != null and collectId != ''">
+            and r.collectId=#{collectId}
+        </if>
+        <if test="oldId != null and oldId != ''">
+            and r.oldId=#{oldId}
+        </if>
 
+    </select>
     <select id="datagridRoom" resultType="com.warn.entity.Room">
         select
         rid,roomName,collectId,nerRoom,oldId,rRegtime
@@ -107,7 +128,34 @@
             limit #{page.start},#{page.rows}
         </if>
     </select>
-    
+    <select id="datagridStatistic" resultType="com.warn.entity.Room">
+        select
+        DISTINCT rid,oldId,roomName
+        FROM room r,oldman o,area_statistic s
+        WHERE o.version = 2 and s.room_id = r.rid and r.oldId = o.oid
+        <if test="room.rid != null and room.rid != ''">
+            and r.rid=#{room.rid}
+        </if>
+        <if test="room.roomName != null and room.roomName != ''">
+            and r.roomName=#{room.roomName}
+        </if>
+        <if test="room.rRegtime != null and room.rRegtime != ''">
+            and r.rRegtime=#{room.rRegtime}
+        </if>
+        <if test="room.collectId != null and room.collectId != ''">
+            and r.collectId=#{room.collectId}
+        </if>
+        <if test="room.oldId != null and room.oldId != ''">
+            and r.oldId=#{room.oldId}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+
+    </select>
     <insert id="addRoom" parameterType="com.warn.entity.Room" useGeneratedKeys="true" keyProperty="rid">
         INSERT INTO room(roomName,nerRoom,rRegtime,oldId) VALUES (#{roomName},#{nerRoom},#{rRegtime},#{oldId})
     </insert>

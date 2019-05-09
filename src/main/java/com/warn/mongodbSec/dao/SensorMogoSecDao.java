@@ -16,5 +16,7 @@ public interface SensorMogoSecDao {
 
     List<SensorCollection> findByTime(String start, String end, Integer gatewayID, List<Integer> closeWarns);
 
-    List<SensorCollection> findToStatistic(Integer gateWayId,Integer sensorPointId);
+    List<SensorCollection> findToStatistic(Integer gateWayId,List<Integer> sensorPointIds,Integer limit);
+
+    List<SensorCollection> findToStatisticBeta(Integer gateWayId,List<Integer> sensorPointIds,String start,String end);
 }

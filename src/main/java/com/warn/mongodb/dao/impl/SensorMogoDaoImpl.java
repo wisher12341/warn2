@@ -84,7 +84,7 @@ public class SensorMogoDaoImpl implements SensorMogoDao {
             query.with(new Sort(Sort.Direction.DESC, "_id"));
             c = Criteria.where("gatewayID").in(gatewayIDs);
             query.addCriteria(c);
-            int limit = gatewayIDs.size() * 10;
+            int limit = gatewayIDs.size() * 15;
             //由于 数据库的的时间 分成了一个个字段
             //时间间隔：几分钟
             if (startMonth > endMonth) {

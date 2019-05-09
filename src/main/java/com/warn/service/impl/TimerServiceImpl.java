@@ -172,8 +172,21 @@ public class TimerServiceImpl implements TimerService {
 //                            OldMan oldMan=dataDao.getOldManByOid(timeDto.getOldMan().getOid());
                             if(oldMan.getVersion() == 2)
                             sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns);
-                            else
-                            sensorCollectionListAll = sensorMogoDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns);
+                            else {
+                                sensorCollectionListAll = sensorMogoDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns);
+                                Collections.sort(sensorCollectionListAll, new Comparator<SensorCollection>() {
+                                    @Override
+                                    public int compare(SensorCollection o1, SensorCollection o2) {
+                                        int diff = Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+                                        if(diff > 0)
+                                            return 1;
+                                        else if(diff < 0)
+                                            return -1;
+                                        return 0;
+                                    }
+                                });
+                            }
+
                         } catch (GetMDBException e1) {
                             SystemController.logger.info(e1.getMessage());
                             closeTimer(timeDto);

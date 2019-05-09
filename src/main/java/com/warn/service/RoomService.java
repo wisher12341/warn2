@@ -19,6 +19,7 @@ public interface RoomService {
 
     List<Room> datagridArea(PageHelper page, Room room);
 
+
     void addRoom(Room room);
 
     void editRoom(Room room, Integer gatewayTwo_Ten);
