@@ -33,11 +33,15 @@
             </tr>
             </thead>
         </table>
-        <%--<div id="toolbar">--%>
-            <%--<form id="search" method="post" action="${paht}/area/data/datagrid1" novalidate>--%>
-                <%--<input class="easyui-searchbox" data-options="prompt:'ID'"  id="searchOid" name="oldId" /><br/>--%>
-                <%--&lt;%&ndash;<input class="easyui-searchbox" data-options="prompt:'姓名'" name="oldName" />&ndash;%&gt;--%>
-            <%--</form>--%>
+        <div id="toolbar">
+            <form id="search" method="post" novalidate>
+                <input data-options="prompt:'日期'" style="width:40%" name="time" class="easyui-datebox " id="timeS" />
+                <input type="hidden" name="oldId" class="easyui-textbox"/>
+                <input type="hidden" name="rid" class="easyui-textbox"/>
+                <a href="javascript:void(0);" class="easyui-linkbutton fa fa-search aaa toolB"
+                   plain="true" onclick="timeSearch()"><span>查询</span></a>
+                <%--<input class="easyui-searchbox" data-options="prompt:'姓名'" name="oldName" />--%>
+            </form>
             <%--<div id="buttonTool">--%>
                 <%--<a href="javascript:void(0);" class="easyui-linkbutton fa fa-search toolB"--%>
                    <%--plain="true" onclick="formSearch()" id="searchA"><span>查询</span></a>--%>
@@ -48,7 +52,7 @@
                 <%--<a href="javascript:void(0);" class="easyui-linkbutton roomsButton block disabled"--%>
                    <%--plain="true" onclick="roomsB()"><span>各个房间活动情况</span></a>--%>
             <%--</div>--%>
-        <%--</div>--%>
+        </div>
     </div>
 </div>
 

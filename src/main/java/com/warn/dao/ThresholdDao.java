@@ -13,17 +13,25 @@ public interface ThresholdDao {
 
     List<Threshold_area> getThresholdByRid(Integer rid);
 
+    List<Threshold_statistic> getThresholdSByRid(Integer rid);
+
     void addThreshold(Integer rid);
 
     void addThresholdArea(Threshold_area threshold_area);
+
+    void addThresholdStatistic(List<Threshold_statistic> threshold_statistic);
 
     void updateThreshold(Threshold threshold);
 
     void updateThresholdArea(Threshold_area threshold_area);
 
+    void updateThresholdStatistic(Threshold_statistic threshold_statistic);
+
     void deleteByRoomId(Integer rid);
 
     Threshold_area getThresholdAreaByRidAndNum(Threshold_area threshold_area);
+
+    Threshold_statistic getThresholdStatisticByRidAndNum(Threshold_statistic threshold_statistic);
 
     Threshold getThresholdByRoomId(@Param("id")Integer rid);
 

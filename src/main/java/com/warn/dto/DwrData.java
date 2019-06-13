@@ -13,6 +13,7 @@ public class DwrData {
     private Warn warn;
     private Warn_wendu warn_wendu;
     private Warn_light warn_light;
+    private Warn_statistic warn_statistic;
     private Integer id;//该条预警消息 在历史消息中的id 方便标记为已读  只针对预警  不针对紧急报警
     private Outdoor outdoor;
 
@@ -50,6 +51,14 @@ public class DwrData {
 
     public void setWarn_wendu(Warn_wendu warn_wendu) {
         this.warn_wendu = warn_wendu;
+    }
+
+    public Warn_statistic getWarn_statistic() {
+        return warn_statistic;
+    }
+
+    public void setWarn_statistic(Warn_statistic warn_statistic) {
+        this.warn_statistic = warn_statistic;
     }
 
     public Warn_light getWarn_light() {

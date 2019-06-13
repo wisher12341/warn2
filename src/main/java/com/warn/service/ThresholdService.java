@@ -12,6 +12,8 @@ public interface ThresholdService {
 
     List<Threshold_area> getThresholdByRid(Integer rid);
 
+    List<Threshold_statistic> getThresholdSByRid(Integer rid);
+
     void updateThreshold(Threshold threshold);
 
     void updateThresholdArea(Threshold_area threshold_area);

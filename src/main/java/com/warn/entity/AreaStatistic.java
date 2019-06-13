@@ -7,6 +7,7 @@ public class AreaStatistic {
     private int roomId;
     private String date;
     private String time;
+    private Integer normal;
 
     public int getId() {
         return id;
@@ -54,5 +55,13 @@ public class AreaStatistic {
 
     public void setOid(int oid) {
         this.oid = oid;
+    }
+
+    public Integer getNormal() {
+        return normal;
+    }
+
+    public void setNormal(Integer normal) {
+        this.normal = normal;
     }
 }

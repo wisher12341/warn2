@@ -4,7 +4,6 @@
 var mesTitle;//消息提示
 var room_id;
 $(function(){
-
     $("#datagrid").datagrid({
         onClickRow: function () {
             var row = $('#datagrid').datagrid('getSelected');

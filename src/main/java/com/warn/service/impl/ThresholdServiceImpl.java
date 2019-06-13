@@ -5,8 +5,10 @@ import com.warn.dao.ThresholdDao;
 import com.warn.entity.*;
 import com.warn.service.CommonService;
 import com.warn.service.ThresholdService;
+import com.warn.util.Tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -36,6 +38,27 @@ public class ThresholdServiceImpl implements ThresholdService{
             threshold_area.setAreaInfo(commonService.getPositionInfo(threshold_area.getArea(),room));
         }
         return threshold_areas;
+    }
+
+    @Override
+    @Transactional
+    public List<Threshold_statistic> getThresholdSByRid(Integer rid){
+        Room room = roomDao.getRoomById(rid);
+        List<Threshold_statistic> threshold_statistics = thresholdDao.getThresholdSByRid(rid);
+        if(threshold_statistics.size() == 0){
+            for(int i = 0; i<=10 ; i++){
+                Threshold_statistic threshold_statistic = new Threshold_statistic();
+                threshold_statistic.setArea(i);
+                threshold_statistic.setRoomId(rid);
+                threshold_statistics.add(threshold_statistic);
+            }
+            thresholdDao.addThresholdStatistic(threshold_statistics);
+        }
+        else {
+            for (Threshold_statistic threshold_statistic : threshold_statistics)
+                threshold_statistic.setAreaInfo(Tool.getPositionInfo(threshold_statistic.getArea(), room));
+        }
+        return threshold_statistics;
     }
 
     public void updateThreshold(Threshold threshold) {

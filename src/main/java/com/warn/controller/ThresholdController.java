@@ -1,5 +1,6 @@
 package com.warn.controller;
 
+import com.warn.dao.ThresholdDao;
 import com.warn.dto.DataGrid;
 import com.warn.dto.Result;
 import com.warn.entity.*;
@@ -25,6 +26,9 @@ public class ThresholdController {
     @Autowired
     ThresholdService thresholdService;
 
+    @Autowired
+    ThresholdDao thresholdDao;
+
     /**
      * 跳转至页面
      * @return
@@ -36,6 +40,10 @@ public class ThresholdController {
 
      @RequestMapping(value = "/area/list", method = RequestMethod.GET)
      public String list_area() {return "threshold/area_list";}
+
+     @RequestMapping(value = "/statistic/list",method = RequestMethod.GET)
+     public String list_statistic(){return "threshold/statistic_list";}
+
     /**
      * 根据老人id获得其各房间的行为阈值
      * @param oid
@@ -53,6 +61,23 @@ public class ThresholdController {
             return dg;
         }
         List<Threshold> thresholdPlays=thresholdService.getThresholdByOid(oid);
+        dg.setTotal((long) thresholdPlays.size());
+        dg.setRows(thresholdPlays);
+        return dg;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/getThresholdS",method = RequestMethod.POST)
+    public DataGrid getThresholdS(Integer rid){
+        DataGrid dg = new DataGrid();
+        if(rid==null){
+            //传一个控制回去  使前端不报rows is null的错误
+            dg.setTotal(0L);
+            List<Threshold> th=new ArrayList();
+            dg.setRows(th);
+            return dg;
+        }
+        List<Threshold_statistic> thresholdPlays = thresholdService.getThresholdSByRid(rid);
         dg.setTotal((long) thresholdPlays.size());
         dg.setRows(thresholdPlays);
         return dg;
@@ -91,6 +116,13 @@ public class ThresholdController {
     @RequestMapping(value = "updateThresholdArea", method = RequestMethod.POST)
     public Result updateThresholdArea(Threshold_area threshold_area){
         thresholdService.updateThresholdArea(threshold_area);
+        return new Result(true);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "updateThresholdStatistic",method = RequestMethod.POST)
+    public Result updateThresholdStatistic(Threshold_statistic threshold_statistic){
+        thresholdDao.updateThresholdStatistic(threshold_statistic);
         return new Result(true);
     }
 

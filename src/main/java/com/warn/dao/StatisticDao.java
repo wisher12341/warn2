@@ -13,4 +13,6 @@ public interface StatisticDao {
     void addAreaStatistic(AreaStatistic areaStatistic);
 
     void updateAreaStatistic(AreaStatistic areaStatistic);
+
+    void updateNormal(AreaStatistic areaStatistic);
 }

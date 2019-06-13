@@ -64,8 +64,8 @@ public class StatisticController {
 
     @RequestMapping(value = "/areaVisual",method = RequestMethod.POST)
     @ResponseBody
-    public Result getAreaVisual(Integer oid,Integer rid){
-        List<AreaVisual> areaVisuals = statisticService.getStatisticArea(oid,rid);
+    public Result getAreaVisual(Integer oid,Integer rid,String time){
+        List<AreaVisual> areaVisuals = statisticService.getStatisticArea(oid,rid,time);
         return new Result(true,areaVisuals);
     }
 

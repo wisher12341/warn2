@@ -141,6 +141,24 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
                         "%出门未归阈值："+dwrData.getOutdoor().getThreshold_out().getNoComeThreshold()+"分钟";
                 warnData.setDataW(data_out);
                 warnData.setReadW("否");
+                break;
+            case "warn_statistic":
+                warnData.setTypeW("规律异常预警");
+                warnData.setOid(dwrData.getWarn_statistic().getOldMan().getOid());
+                warnData.setOldName(dwrData.getWarn_statistic().getOldMan().getOldName());
+                String data_statistic = "老人信息：" +
+                        "%老人ID：" + warnData.getOid() +"" +
+                        "%老人姓名：" + warnData.getOldName() +
+                        "%老人电话：" + dwrData.getOutdoor().getOldMan().getOldPhone() +
+                        "%老人住址：" + dwrData.getOutdoor().getOldMan().getOldAddress() +
+                        "@异常信息：" +
+                        "%异常房间：" + dwrData.getWarn_statistic().getRoom() +
+                        "%异常区域：" + dwrData.getWarn_statistic().getAreaInfo() +
+                        "%偏离值：" + dwrData.getWarn_statistic().getDeviation().toString() +
+                        "%日期：" + dwrData.getWarn_statistic().getDate();
+                warnData.setDataW(data_statistic);
+                warnData.setReadW("否");
+
         }
         warnHistoryDao.addWarnHistory(warnData);
         dwrData.setId(warnData.getWdid());

@@ -25,7 +25,7 @@
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
-        <param-value>classpath:spring/spring-*.xml</param-value>
+        <param-value>classpath:spring/spring-*.xml,classpath:spring/spring_task.xml</param-value>
     </context-param>
     <!--要有 不然部署到服务器 会出现找不到配置文件-->
     <listener>

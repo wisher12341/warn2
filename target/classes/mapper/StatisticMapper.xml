@@ -17,5 +17,9 @@
         UPDATE area_statistic SET statistic_info = #{statisticInfo},time = #{time} where oid = #{oid} and date = #{date} and room_id = #{roomId};
     </update>
 
+    <update id="updateNormal" parameterType="com.warn.entity.AreaStatistic">
+        UPDATE area_statistic SET normal = #{normal} where oid = #{oid} and date = #{date} and room_id = #{roomId}
+    </update>
+
 
 </mapper>

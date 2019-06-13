@@ -8,7 +8,9 @@ import java.util.List;
 public interface StatisticService {
     void getStatisticData(Integer gateWayId);
 
-    List<AreaVisual> getStatisticArea(Integer oid,Integer rid);
+    List<AreaVisual> getStatisticArea(Integer oid,Integer rid,String time);
 
     List<AreaVisualList> getStatisticAreaList(Integer oid,Integer rid);
+
+    void checkStatistic(Integer oid,Integer rid);
 }

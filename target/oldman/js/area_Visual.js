@@ -1,4 +1,109 @@
 var rowW;
+function timeSearch() {
+    rowW = $('#datagrid').datagrid('getSelected');
+    if (rowW) {
+        var timeS = document.getElementById("timeS");
+        $.ajax({
+            type: "POST",
+            url: pathJs + "/Statistic/areaVisual",
+            dataType: "json",
+            data: {
+                oid: rowW.oldId,
+                rid: rowW.rid,
+                time:timeS.value
+            },
+            async: false,
+            success: function (data) {
+                if (data.success) {
+                    //柱状图
+                    var xAxisData = [];
+                    var seriesData = [];
+                    var legendLineData = [];
+                    for (var n = 0; n < data.data.length; n++) {
+                        legendLineData.push(data.data[n].areaName);
+                    }
+                    for (var q = 0; q < data.data.length; q++) {
+                        xAxisData.push(data.data[q].areaName);
+                        seriesData.push(data.data[q].sumTime);
+                        //seriesData[s].data.push(0);
+                    }
+                    var optionLine_new = {
+                        title: {
+                            text: '区域时间分布',
+                            color: '#1ab394'
+                        },
+                        tooltip: {
+                            trigger: 'axis'
+                        },
+                        legend: {
+                            data: legendLineData
+                        },
+                        grid: {
+                            left: '3%',
+                            right: '4%',
+                            bottom: '3%',
+                            containLabel: true
+                        },
+                        toolbox: {
+                            feature: {
+                                saveAsImage: {}
+                            }
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: xAxisData
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLabel: {
+                                formatter: '{value} min'
+                            }
+                        },
+                        series: [
+                            {
+                                name: 'ECharts例子个数统计',
+                                type: 'bar',
+                                itemStyle: {
+                                    normal: {
+                                        color: function (params) {
+                                            // build a color map as your need.
+                                            var colorList = [
+                                                '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
+                                            ];
+                                            return colorList[params.dataIndex]
+                                        },
+                                        label: {
+                                            show: true,
+                                            position: 'top',
+                                            formatter: '{b}\n{c}'
+                                        }
+                                    }
+                                },
+                                //  data: [data.data[0].sumTime,data.data[1].sumTime,data.data[2].sumTime,data.data[3].sumTime,data.data[4].sumTime,data.data[5].sumTime,data.data[6].sumTime,data.data[7].sumTime,data.data[8].sumTime,data.data[9].sumTime,data.data[10].sumTime],
+                                data: seriesData,
+                                markPoint: {
+                                    tooltip: {
+                                        trigger: 'item',
+                                        backgroundColor: 'rgba(0,0,0,0)'
+                                    },
+                                    data: []
+                                }
+                            }
+                        ]
+
+                    };
+                    myChartLine.setOption(optionLine_new);
+
+                }
+            }
+        });
+    }else{
+        $.messager.alert('提示', '请选择要修改的条目！', 'error');
+    }
+}
+
 $(function(){
     $(".active",parent.document).removeClass("active");
     $("#index + li + li",parent.document).addClass("active");
@@ -18,36 +123,34 @@ $(function(){
                     rid: row.rid
                 },
                 async:false,
-                success:function(data){
-                    if(data.success){
+                success:function(data) {
+                    if (data.success) {
 
                         //柱状图
-                        var xAxisData=[];
-                        var seriesData=[];
-                        var legendLineData=[];
-                        for(var n=0;n<data.data.length;n++){
-                                legendLineData.push(data.data[n].areaName);
+                        var xAxisData = [];
+                        var seriesData = [];
+                        var legendLineData = [];
+                        for (var n = 0; n < data.data.length; n++) {
+                            legendLineData.push(data.data[n].areaName);
                         }
-                        }
-                        for(var q=0;q<data.data.length;q++){
+
+                        for (var q = 0; q < data.data.length; q++) {
                             xAxisData.push(data.data[q].areaName);
                             seriesData.push(data.data[q].sumTime);
-                                    //seriesData[s].data.push(0);
-                                }
-
-
+                            //seriesData[s].data.push(0);
+                        }
 
 
                         var optionLine = {
                             title: {
-                                text: '柱状图',
-                                color:'#1ab394'
+                                text: '区域时间分布',
+                                color: '#1ab394'
                             },
                             tooltip: {
                                 trigger: 'axis'
                             },
                             legend: {
-                                data:legendLineData
+                                data: legendLineData
                             },
                             grid: {
                                 left: '3%',
@@ -65,7 +168,10 @@ $(function(){
                                 data: xAxisData
                             },
                             yAxis: {
-                                type: 'value'
+                                type: 'value',
+                                axisLabel: {
+                                    formatter: '{value} min'
+                                }
                             },
                             series: [
                                 {
@@ -73,12 +179,12 @@ $(function(){
                                     type: 'bar',
                                     itemStyle: {
                                         normal: {
-                                            color: function(params) {
+                                            color: function (params) {
                                                 // build a color map as your need.
                                                 var colorList = [
-                                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
+                                                    '#C1232B', '#B5C334', '#FCCE10', '#E87C25', '#27727B',
+                                                    '#FE8463', '#9BCA63', '#FAD860', '#F3A43B', '#60C0DD',
+                                                    '#D7504B', '#C6E579', '#F4E001', '#F0805A', '#26C0C0'
                                                 ];
                                                 return colorList[params.dataIndex]
                                             },
@@ -89,15 +195,14 @@ $(function(){
                                             }
                                         }
                                     },
-                                  //  data: [data.data[0].sumTime,data.data[1].sumTime,data.data[2].sumTime,data.data[3].sumTime,data.data[4].sumTime,data.data[5].sumTime,data.data[6].sumTime,data.data[7].sumTime,data.data[8].sumTime,data.data[9].sumTime,data.data[10].sumTime],
-                                    data:seriesData,
+                                    //  data: [data.data[0].sumTime,data.data[1].sumTime,data.data[2].sumTime,data.data[3].sumTime,data.data[4].sumTime,data.data[5].sumTime,data.data[6].sumTime,data.data[7].sumTime,data.data[8].sumTime,data.data[9].sumTime,data.data[10].sumTime],
+                                    data: seriesData,
                                     markPoint: {
                                         tooltip: {
                                             trigger: 'item',
                                             backgroundColor: 'rgba(0,0,0,0)'
                                         },
-                                        data: [
-                                        ]
+                                        data: []
                                     }
                                 }
                             ]
@@ -106,6 +211,7 @@ $(function(){
                         myChartLine.setOption(optionLine);
 
                     }
+                }
                 });
           ajax1 = $.ajax({
               type: "POST",
@@ -125,7 +231,7 @@ $(function(){
                           seriesData.push({
                               name:data.data[0].areaVisuals[n].areaName,
                               type:'line',
-                              stack:'time',
+                             // stack:'time',
                               data:[]
                           });
 
@@ -164,7 +270,10 @@ $(function(){
                       ],
                       yAxis: [
                           {
-                              type: 'value'
+                              type: 'value',
+                              axisLabel:{
+                                  formatter:'{value} min'
+                              }
                           }
                       ],
                       series: seriesData
