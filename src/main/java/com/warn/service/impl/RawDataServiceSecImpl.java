@@ -45,10 +45,13 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                     break;
                 case "霍尔":
                     sensorCollection.setSensorID(5);
+                    break;
                 case "WIFI故障":
                     sensorCollection.setSensorID(252);
+                    break;
                 case "请求时间":
                     sensorCollection.setSensorID(254);
+                    break;
                 case "紧急报警":
                     sensorCollection.setSensorID(255);
             }

@@ -103,9 +103,10 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         }else{
             query=new Query(criteria);
         }
-
-        return getMongoTemplate().count(query,SensorCollection.class);
-    }
+        query.with(new Sort(Sort.Direction.DESC, "_id"));
+        List<SensorCollection> sensorCollections = getMongoTemplate().find(query.limit(1000), SensorCollection.class);
+        return (long)sensorCollections.size();
+}
 
     @Override
     public List<SensorCollection> datagridSensor(PageHelper page, SensorCollection sensorCollection, OldMan oldMan) {
@@ -134,8 +135,6 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
             }
             if(criteria==null){
                 criteria = Criteria.where("gatewayID").in(gateways);
-            }else{
-                criteria=criteria.and("gatewayID").in(gateways);
             }
         }
         if(sensorCollection.getSensorID()!=null){

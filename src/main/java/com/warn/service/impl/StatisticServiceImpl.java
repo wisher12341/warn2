@@ -61,12 +61,14 @@ public class StatisticServiceImpl implements StatisticService  {
         OldMan oldMan = dataDao.getOldManByGatewayID(gatewayId);
         List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
         Integer rSize = roomList.size();
-        try {
+       try {
            Random r = new Random();
-           TimeUnit.SECONDS.sleep(5+r.nextInt(20));
-        }catch(Exception e){
+           Random r1 = new Random();
+           Random r2 = new Random();
+           TimeUnit.SECONDS.sleep(r1.nextInt(5)+r.nextInt(10)+r2.nextInt(15));
+       }catch(Exception e){
            System.out.println("timeunit wrong");
-        }
+       }
         List<AreaStatistic> areaStatistics = statisticDao.getStatisticByDate(today,oldMan.getOid());
         Integer areas[][] = new Integer[11][11];
         String statisticInfo[] = new String[11];

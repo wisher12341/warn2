@@ -1,10 +1,13 @@
 package com.warn.controller;
 
+import com.warn.dao.SensorDataDao;
 import com.warn.dto.DataGrid;
 import com.warn.dto.Result;
 import com.warn.entity.OldMan;
 import com.warn.dto.PageHelper;
+import com.warn.entity.SensorData;
 import com.warn.service.DataService;
+import com.warn.util.DynamicDataSourceHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +29,9 @@ public class DataController {
     @Autowired
     DataService dataService;
 
+    @Autowired
+    SensorDataDao sensorDataDao;
+
     /**
      * 跳转至管理员列表页面
      * @return
@@ -42,6 +48,14 @@ public class DataController {
     @RequestMapping(value = "/user/list",method = RequestMethod.GET)
     public String list_user(){
         return "user/table_oldman";
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/testDao",method = RequestMethod.GET)
+    public Result testDao(){
+        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+        List<SensorData> sensorData = sensorDataDao.getSensorDatas();
+        return new Result(true,sensorData);
     }
 
 
