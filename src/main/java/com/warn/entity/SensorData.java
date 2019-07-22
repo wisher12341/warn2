@@ -1,12 +1,16 @@
 package com.warn.entity;
 
+import java.util.List;
+
 public class SensorData {
     private Integer id;
-    private Integer gatewayID;
+    private List<Integer> gatewayIDs;
     private Integer sensorPointID;
     private Integer sensorID;
     private Integer sensorData;
     private String timeString;
+    private String date;
+    private List<Integer> sensorPointIDs;
 
     public Integer getId() {
         return id;
@@ -16,12 +20,12 @@ public class SensorData {
         this.id = id;
     }
 
-    public Integer getGatewayID() {
-        return gatewayID;
+    public List<Integer> getGatewayIDs() {
+        return gatewayIDs;
     }
 
-    public void setGatewayID(Integer gatewayID) {
-        this.gatewayID = gatewayID;
+    public void setGatewayIDs(List<Integer> gatewayIDs) {
+        this.gatewayIDs = gatewayIDs;
     }
 
     public Integer getSensorPointID() {
@@ -54,5 +58,21 @@ public class SensorData {
 
     public void setTimeString(String timeString) {
         this.timeString = timeString;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public List<Integer> getSensorPointIDs() {
+        return sensorPointIDs;
+    }
+
+    public void setSensorPointIDs(List<Integer> sensorPointIDs) {
+        this.sensorPointIDs = sensorPointIDs;
     }
 }

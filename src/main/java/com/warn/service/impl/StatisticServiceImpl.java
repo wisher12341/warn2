@@ -14,7 +14,7 @@ import com.warn.entity.OldMan;
 import com.warn.entity.Room;
 import com.warn.entity.Threshold_statistic;
 import com.warn.mongodb.model.SensorCollection;
-import com.warn.mongodbSec.dao.SensorMogoSecDao;
+import com.warn.sensordata.dao.SensorMogoSecDao;
 import com.warn.service.StatisticService;
 import com.warn.service.WarnHistoryService;
 import com.warn.util.Tool.Tool;
@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.awt.geom.Area;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;

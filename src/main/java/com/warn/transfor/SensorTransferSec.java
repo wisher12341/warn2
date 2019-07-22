@@ -8,6 +8,8 @@ import com.warn.entity.Equipment;
 import com.warn.entity.OldMan;
 import com.warn.entity.Room;
 import com.warn.mongodb.model.SensorCollection;
+import com.warn.sensordata.model.SecSensorCollection;
+import com.warn.util.DynamicDataSourceHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -29,9 +31,10 @@ public class SensorTransferSec {
     @Autowired
     EquipDao equipDao;
 
-    public List<SenSorDto> sensorTransferSec(List<SensorCollection> sensorCollections){
+    public List<SenSorDto> sensorTransferSec(List<SecSensorCollection> sensorCollections){
+        DynamicDataSourceHolder.setDataSource("defaultDataSource");
         List<SenSorDto> senSorDtos=new ArrayList<>();
-        for(SensorCollection sensorCollection:sensorCollections){
+        for(SecSensorCollection sensorCollection:sensorCollections){
             SenSorDto senSorDto=new SenSorDto();
             senSorDto.setSensorId(sensorCollection.getSensorPointID());
             senSorDto.setSensorData(sensorCollection.getSensorData());

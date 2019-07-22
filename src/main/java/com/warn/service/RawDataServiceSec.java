@@ -2,8 +2,8 @@ package com.warn.service;
 
 import com.warn.dto.PageHelper;
 import com.warn.dto.SenSorDto;
-import com.warn.mongodbSec.model.SensorPointCollection;
-import com.warn.mongodbSec.model.UsersCollection;
+import com.warn.sensordata.model.SensorPointCollection;
+import com.warn.sensordata.model.UsersCollection;
 
 
 import java.util.List;

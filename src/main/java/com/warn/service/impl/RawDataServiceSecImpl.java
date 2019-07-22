@@ -1,18 +1,21 @@
 package com.warn.service.impl;
 
+import com.warn.dao.DataDao;
 import com.warn.dto.SenSorDto;
 import com.warn.entity.OldMan;
-import com.warn.mongodbSec.dao.RawDataSecDao;
+import com.warn.sensordata.dao.RawDataSecDao;
 import com.warn.dto.PageHelper;
 
 import com.warn.mongodb.model.SensorCollection;
-import com.warn.mongodbSec.model.SensorPointCollection;
-import com.warn.mongodbSec.model.UsersCollection;
+import com.warn.sensordata.model.SecSensorCollection;
+import com.warn.sensordata.model.SensorPointCollection;
+import com.warn.sensordata.model.UsersCollection;
 import com.warn.service.RawDataServiceSec;
 import com.warn.transfor.SensorTransferSec;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +28,8 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
     RawDataSecDao rawDataSecDao;
     @Autowired
     SensorTransferSec sensorTransfor;
+    @Autowired
+    DataDao dataDao;
 
     public Long getsensorDatagridTotal(SenSorDto senSorDto) {
         SensorCollection sensorCollection=new SensorCollection();
@@ -82,8 +87,13 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                 sensorCollection.setSensorPointID(senSorDto.getSensorId());
             }
         }
-
-        return rawDataSecDao.getsensorDatagridTotal(sensorCollection,oldMan);
+        OldMan oldManSearch = new OldMan();
+        List<OldMan> oldManSearchs = new ArrayList<>();
+        if(oldMan!=null&&oldMan.getOid()!=null)
+            oldManSearch=dataDao.getOldManByOid(oldMan.getOid());
+        if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals(""))
+            oldManSearchs =dataDao.getOldManBySegment(oldMan.getSegment());
+        return rawDataSecDao.getsensorDatagridTotal(sensorCollection,oldManSearch,oldManSearchs);
     }
 
 
@@ -155,8 +165,13 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                 sensorCollection.setSensorPointID(senSorDto.getSensorId());
             }
         }
-
-        List<SensorCollection> sensorCollections= rawDataSecDao.datagridSensor(page,sensorCollection,oldMan);
+        OldMan oldManSearch = new OldMan();
+        List<OldMan> oldManSearchs = new ArrayList<>();
+        if(oldMan!=null&&oldMan.getOid()!=null)
+            oldManSearch=dataDao.getOldManByOid(oldMan.getOid());
+        if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals(""))
+            oldManSearchs =dataDao.getOldManBySegment(oldMan.getSegment());
+        List<SecSensorCollection> sensorCollections= rawDataSecDao.datagridSensor(page,sensorCollection,oldManSearch,oldManSearchs);
         List<SenSorDto> sensors=sensorTransfor.sensorTransferSec(sensorCollections);
         return sensors;
     }

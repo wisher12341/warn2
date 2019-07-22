@@ -4,4 +4,55 @@
     <select id="getSensorDatas" resultType="com.warn.entity.SensorData">
         select * from sensorCollection where 1=1
     </select>
+
+    <select id="getsensorDatagridTotal" resultType="long">
+        select count(1) from sensorCollection where 1=1
+        <if test="sensor.gatewayIDs.size != 0">
+            and gatewayID in
+            <foreach collection="sensor.gatewayIDs" index="index" item="item" open="(" separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+        <if test="sensor.sensorPointID != null and sensor.sensorPointID != ''">
+            and sensorPointID = #{sensor.sensorPointID}
+        </if>
+        <if test="sensor.sensorID != null and sensor.sensorID != ''">
+            and sensorID = #{sensor.sensorID}
+        </if>
+        <if test="sensor.sensorData != null and sensor.sensorData != ''">
+            and sensorData = #{sensor.sensorData}
+        </if>
+        <if test="sensor.date != null and sensor.date != ''">
+            and date = #{sensor.date}
+        </if>
+    </select>
+
+    <select id="getSensorData" resultType="com.warn.sensordata.model.SecSensorCollection">
+        select * from sensorCollection  where 1=1
+        <if test="sensor.gatewayIDs.size != 0">
+            and gatewayID in
+            <foreach collection="sensor.gatewayIDs" index="index" item="item" open="(" separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+        <if test="sensor.sensorPointID != null and sensor.sensorPointID != ''">
+            and sensorPointID = #{sensor.sensorPointID}
+        </if>
+        <if test="sensor.sensorID != null and sensor.sensorID != ''">
+            and sensorID = #{sensor.sensorID}
+        </if>
+        <if test="sensor.sensorData != null and sensor.sensorData != ''">
+            and sensorData = #{sensor.sensorData}
+        </if>
+        <if test="sensor.date != null and sensor.date != ''">
+            and date = #{sensor.date}
+        </if>
+        <if test="page.sort != null and page.sort != ''">
+            order by #{page.sort} #{page.order}
+        </if>
+        <if test="page.page > 0">
+            limit #{page.start},#{page.rows}
+        </if>
+    </select>
+
 </mapper>

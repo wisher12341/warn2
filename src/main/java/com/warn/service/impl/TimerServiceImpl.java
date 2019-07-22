@@ -1,6 +1,5 @@
 package com.warn.service.impl;
 
-import com.warn.controller.SensorController;
 import com.warn.controller.SystemController;
 import com.warn.dao.DataDao;
 import com.warn.dao.EquipDao;
@@ -10,11 +9,10 @@ import com.warn.dwr.Remote;
 import com.warn.entity.*;
 import com.warn.exception.GetMDBException;
 import com.warn.exception.NullFromDBException;
-import com.warn.exception.WarnException;
 import com.warn.mongodb.dao.SensorMogoDao;
 import com.warn.mongodb.model.SensorCollection;
-import com.warn.mongodbSec.dao.SensorMogoSecDao;
-import com.warn.mongodbSec.model.SecSensorCollection;
+import com.warn.sensordata.dao.SensorMogoSecDao;
+import com.warn.sensordata.model.SecSensorCollection;
 import com.warn.service.DownHistoryService;
 import com.warn.service.SensorService;
 import com.warn.service.TimerService;
