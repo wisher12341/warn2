@@ -1,10 +1,13 @@
 package com.warn.sensordata.dao.impl;
 
 import com.warn.dao.SensorDataDao;
+import com.warn.entity.SensorData;
 import com.warn.exception.GetMDBException;
 import com.warn.exception.WarnException;
 import com.warn.sensordata.dao.SensorMogoSecDao;
 import com.warn.mongodb.model.SensorCollection;
+import com.warn.util.DynamicDataSource;
+import com.warn.util.DynamicDataSourceHolder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,7 +47,14 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
             for (Integer oid : closeWarns) {
                 gatewayIDs.add(oid);
             }
+            DynamicDataSourceHolder.setDataSource("sensorDataSource");
+            List<SensorCollection> sensorCollections1 = new ArrayList<>();
+            if(gatewayIDs.contains(43))
+               sensorCollections1 = sensorDataDao.findByTimeOld(43,startTime,endTime);
             List<SensorCollection> sensorCollections = sensorDataDao.findByTime(gatewayIDs,startTime, endTime);
+            if(sensorCollections1.size() != 0)
+                sensorCollections.addAll(sensorCollections1);
+            DynamicDataSourceHolder.setDataSource("defaultDataSource");
             if(sensorCollections.size() != 0)
                 Collections.reverse(sensorCollections);
             return sensorCollections;
@@ -68,14 +78,34 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
     }
 
     public List<SensorCollection> findToStatisticBeta(Integer gateWayId,List<Integer> sensorPointIds,String start,String end){
-        Query query;
-        Criteria c;
-        c = Criteria.where("gatewayID").is(gateWayId).and("sensorPointID").in(sensorPointIds).and("sensorID").in(1,5).and("timeString").gte(start).lte(end);
-        query = new Query(c);
-        if(query==null){
-            throw new GetMDBException("query为null");
+        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        SensorData sensorData = new SensorData();
+        sensorData.setGatewayID(gateWayId);
+        sensorData.setSensorPointIDs(sensorPointIds);
+        try{
+            Long startTime = date.parse(start).getTime();
+            Long endTime = date.parse(end).getTime();
+            List<SensorCollection> sensorCollections = new ArrayList<>();
+            if(sensorData.getGatewayID() != 43)
+                sensorCollections = sensorDataDao.findToStatisticBeta(sensorData,startTime,endTime);
+            else
+                sensorCollections = sensorDataDao.findToStatisticBetaFt(sensorData,startTime,endTime);
+            if(sensorCollections.size() != 0)
+                Collections.reverse(sensorCollections);
+            return sensorCollections;
+        }catch (Exception e){
+            throw new WarnException("mysql2 inner error"+e.getMessage());
         }
-        return getMongoTemplate().find(query, SensorCollection.class);
+//        Query query;
+//        Criteria c;
+//        c = Criteria.where("gatewayID").is(gateWayId).and("sensorPointID").in(sensorPointIds).and("sensorID").in(1,5).and("timeString").gte(start).lte(end);
+//        query = new Query(c);
+//        if(query==null){
+//            throw new GetMDBException("query为null");
+//        }
+//        return getMongoTemplate().find(query, SensorCollection.class);
     }
 
 }

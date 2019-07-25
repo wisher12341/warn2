@@ -27,6 +27,8 @@ public class SensorCollection implements Serializable {
     private String minute;
     private String second;
     private Integer gatewayID;//网关ID  也就是人员ID
+    private String date;
+    private Integer endId;
 
     private String timeString;//日期 年月日  数据库本身没有该字段 方便条件查询
 
@@ -133,6 +135,30 @@ public class SensorCollection implements Serializable {
 
     public void setTime(String time) {
         this.timeString = time;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public String getTimeString() {
+        return timeString;
+    }
+
+    public void setTimeString(String timeString) {
+        this.timeString = timeString;
+    }
+
+    public Integer getEndId() {
+        return endId;
+    }
+
+    public void setEndId(Integer endId) {
+        this.endId = endId;
     }
 
     @Override

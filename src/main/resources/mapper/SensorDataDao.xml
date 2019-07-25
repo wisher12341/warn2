@@ -25,6 +25,18 @@
         <if test="sensor.date != null and sensor.date != ''">
             and date = #{sensor.date}
         </if>
+        <if test="selectId == 3">
+            and id BETWEEN #{startId} and #{endId}
+        </if>
+        <if test="selectId == 2">
+            and id <![CDATA[ <= ]]> #{endId}
+        </if>
+        <if test="selectId == 1">
+            and id <![CDATA[ >= ]]> #{startId}
+        </if>
+        <if test="selectId == 0">
+            order by id DESC
+        </if>
     </select>
 
     <select id="getSensorData" resultType="com.warn.sensordata.model.SecSensorCollection">
@@ -47,25 +59,99 @@
         <if test="sensor.date != null and sensor.date != ''">
             and date = #{sensor.date}
         </if>
-        <if test="page.sort != null and page.sort != ''">
-            order by #{page.sort} #{page.order}
+        <if test="selectId == 3">
+            and id BETWEEN #{startId} and #{endId}
+            order by timeStamp DESC
+        </if>
+        <if test="selectId == 2">
+            and id <![CDATA[ <= ]]> #{endId}
+            order by timeStamp DESC
+        </if>
+        <if test="selectId == 1">
+            and id <![CDATA[ >= ]]> #{startId}
+            order by timeStamp DESC
+        </if>
+        <if test="selectId == 0">
+            order by id DESC
         </if>
         <if test="page.page > 0">
             limit #{page.start},#{page.rows}
         </if>
+
     </select>
 
     <select id="findByTime" resultType="com.warn.mongodb.model.SensorCollection">
-        select * from sensorCollection where timeStamp BETWEEN startTime and endTime
-        <if test="sensor.gatewayIDs.size != 0">
+        select * from sensorCollection where timeStamp BETWEEN #{startTime} and #{endTime}
+        <if test="gatewayIds.size != 0">
            and gatewayID in
-            <foreach collection="sensor.gatewayIDs" index="index" item="item" open="(" separator="," close=")">
+            <foreach collection="gatewayIds" index="index" item="item" open="(" separator="," close=")">
                 ${item}
             </foreach>
         </if>
         order by id DESC
     </select>
     
-    <select id=""
+    <select id="findToStatisticBeta" resultType="com.warn.mongodb.model.SensorCollection">
+        select * from sensorCollection where gatewayID = #{sensor.gatewayID} and timeStamp BETWEEN #{startTime} and #{endTime}
+        <if test="sensor.sensorPointIDs.size != 0">
+            and sensorPointID in
+            <foreach collection="sensor.sensorPointIDs" index="index" item="item" open="(" separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+        and sensorID =1 or sensorID = 5
+
+        order by id DESC
+    </select>
+
+    <select id="findToStatisticBetaFt" resultType="com.warn.mongodb.model.SensorCollection">
+        select * from sensor_collection_old where gatewayID = #{sensor.gatewayID} and timeStamp BETWEEN #{startTime} and #{endTime}
+        <if test="sensor.sensorPointIDs.size != 0">
+            and sensorPointID in
+            <foreach collection="sensor.sensorPointIDs" index="index" item="item" open="(" separator="," close=")">
+                ${item}
+            </foreach>
+        </if>
+        and sensorID =1 or sensorID = 5
+
+        order by id DESC
+    </select>
+
+
+    <select id="getDateEndRecord" resultType="com.warn.mongodb.model.SensorCollection">
+        select * from sensorCollection where date = #{date}
+        order by id DESC
+        limit 1
+    </select>
+
+    <insert id="addDateRecord" parameterType="com.warn.mongodb.model.SensorCollection">
+        INSERT INTO date_record(date,end_id) VALUES (#{date},#{id})
+    </insert>
+
+    <select id="getDateRecord" resultType="com.warn.mongodb.model.SensorCollection">
+        select * from date_record_old where date = #{date}
+    </select>
+
+    <select id="findByTimeOld" resultType="com.warn.mongodb.model.SensorCollection">--     //43网关用
+        select * from sensor_collection_old where timeStamp BETWEEN #{startTime} and #{endTime}
+        and gatewayID = #{gatewayId}
+        order by id DESC
+    </select>
+
+    <select id="getDateEndGateway" resultType="com.warn.mongodb.model.SensorCollection">
+        select DISTINCT gatewayID,date from sensorCollection where date = #{date}
+        order by id DESC
+    </select>
+
+    <select id="getDateGateway" resultType="com.warn.mongodb.model.SensorCollection">
+        select gatewayID,date,id from sensorCollection where date = #{date} and gatewayID = #{gatewayID}
+        order by id DESC
+        limit 1
+    </select>
+
+    <insert id="addDateGateway" parameterType="com.warn.mongodb.model.SensorCollection">
+        INSERT INTO gateway_record (date,gateway_id,end_id)VALUES (#{date},#{gatewayID},#{id})
+    </insert>
+
 
 </mapper>

@@ -12,6 +12,7 @@ import com.warn.sensordata.model.SensorPointCollection;
 import com.warn.sensordata.model.UsersCollection;
 import com.warn.service.RawDataServiceSec;
 import com.warn.transfor.SensorTransferSec;
+import com.warn.util.Tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -62,14 +63,18 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
             }
         }
         sensorCollection.setSensorData(senSorDto.getSensorData());
-        sensorCollection.setTime(senSorDto.getTime());
-
+        if( senSorDto.getTime() == null|| senSorDto.getTime().equals("") )
+            sensorCollection.setDate(Tool.getDate());
+        else
+            sensorCollection.setDate(senSorDto.getTime());
+        OldMan oldManSearch = new OldMan();
         if(oldMan!=null&&oldMan.getGatewayID()!=null&&!oldMan.getGatewayID().equals("")){
             //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
             if(oldMan.getGatewayID().length()>=4&&isBinary(oldMan.getGatewayID())){
                 //查询以二进制的方式
                 oldMan.setGatewayID(Integer.valueOf(oldMan.getGatewayID(),2).toString());
             }
+            oldManSearch.setGatewayID(oldMan.getGatewayID());
         }
         if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
             //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
@@ -87,7 +92,6 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                 sensorCollection.setSensorPointID(senSorDto.getSensorId());
             }
         }
-        OldMan oldManSearch = new OldMan();
         List<OldMan> oldManSearchs = new ArrayList<>();
         if(oldMan!=null&&oldMan.getOid()!=null)
             oldManSearch=dataDao.getOldManByOid(oldMan.getOid());
@@ -140,14 +144,19 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
             }
         }
         sensorCollection.setSensorData(senSorDto.getSensorData());
-        sensorCollection.setTime(senSorDto.getTime());
+        if( senSorDto.getTime() == null|| senSorDto.getTime().equals("") )
+            sensorCollection.setDate(Tool.getDate());
+        else
+            sensorCollection.setDate(senSorDto.getTime());
 
+        OldMan oldManSearch = new OldMan();
         if(oldMan!=null&&oldMan.getGatewayID()!=null&&!oldMan.getGatewayID().equals("")){
             //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
             if(oldMan.getGatewayID().length()>=4&&isBinary(oldMan.getGatewayID())){
                 //查询以二进制的方式
                 oldMan.setGatewayID(Integer.valueOf(oldMan.getGatewayID(),2).toString());
             }
+            oldManSearch.setGatewayID(oldMan.getGatewayID());
         }
         if(oldMan!=null&&oldMan.getSegment()!=null&&!oldMan.getSegment().equals("")){
             //简单判断 用户输入的是二进制还是十进制   十进制1-16  长度>=4且只有0和1 则判断为二进制
@@ -165,7 +174,7 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                 sensorCollection.setSensorPointID(senSorDto.getSensorId());
             }
         }
-        OldMan oldManSearch = new OldMan();
+
         List<OldMan> oldManSearchs = new ArrayList<>();
         if(oldMan!=null&&oldMan.getOid()!=null)
             oldManSearch=dataDao.getOldManByOid(oldMan.getOid());

@@ -17,6 +17,7 @@ import com.warn.mongodb.model.SensorCollection;
 import com.warn.sensordata.dao.SensorMogoSecDao;
 import com.warn.service.StatisticService;
 import com.warn.service.WarnHistoryService;
+import com.warn.util.DynamicDataSourceHolder;
 import com.warn.util.Tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,6 @@ public class StatisticServiceImpl implements StatisticService  {
    public static Boolean judge = false;
    public static Boolean key = true;
    @Override
-   @Transactional
     public void getStatisticData(Integer gatewayId){
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
@@ -60,15 +60,8 @@ public class StatisticServiceImpl implements StatisticService  {
         OldMan oldMan = dataDao.getOldManByGatewayID(gatewayId);
         List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
         Integer rSize = roomList.size();
-       try {
-           Random r = new Random();
-           Random r1 = new Random();
-           Random r2 = new Random();
-           TimeUnit.SECONDS.sleep(r1.nextInt(5)+r.nextInt(10)+r2.nextInt(15));
-       }catch(Exception e){
-           System.out.println("timeunit wrong");
-       }
         List<AreaStatistic> areaStatistics = statisticDao.getStatisticByDate(today,oldMan.getOid());
+        DynamicDataSourceHolder.setDataSource("sensorDataSource");
         Integer areas[][] = new Integer[11][11];
         String statisticInfo[] = new String[11];
         for(Room room:roomList) {//更新，先获取今天的数据，如果没有就从零开始
@@ -104,6 +97,7 @@ public class StatisticServiceImpl implements StatisticService  {
         //Integer limit = 3600 / 30 * roomList.size()+20;
         // List<SensorCollection> sensorCollections = sensorMogoSecDao.findToStatistic(gatewayId, sensorPointIds,limit);
         List<SensorCollection> sensorCollections = sensorMogoSecDao.findToStatisticBeta(gatewayId,sensorPointIds,start,end);
+        DynamicDataSourceHolder.setDataSource("defaultDataSource");
         Set<String> zero = new HashSet<>();
         // for(int i = limit - 1; i >=0 ; i--){
        Integer tempY = 10;
@@ -191,6 +185,7 @@ public class StatisticServiceImpl implements StatisticService  {
         }
     }
 
+    @Override
     public List<AreaVisual> getStatisticArea(Integer oid,Integer rid,String time){
         //OldMan oldMan = dataDao.getOldManByOid(oid);
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -209,6 +204,7 @@ public class StatisticServiceImpl implements StatisticService  {
 
     }
 
+    @Override
     public List<AreaVisualList> getStatisticAreaList(Integer oid,Integer rid) {
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat week = new SimpleDateFormat("EEEE");

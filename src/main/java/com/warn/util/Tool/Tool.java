@@ -3,7 +3,9 @@ package com.warn.util.Tool;
 import com.warn.entity.Room;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Tool {
 
@@ -43,6 +45,29 @@ public class Tool {
         return "无人";
 
 
+    }
+    public static String getDate(){//今天
+        Date date  = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        return sdf.format(date);
+    }
+    public static String getYesDate(){//昨天
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,-24);
+        return sdf.format(calendar.getTime());
+    }
+
+    public static String getYesYesDate(){//前天
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.HOUR_OF_DAY,-48);
+        return sdf.format(calendar.getTime());
     }
 
 }

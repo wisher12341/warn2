@@ -12,6 +12,7 @@ import com.warn.sensordata.model.SecSensorCollection;
 import com.warn.sensordata.model.SensorPointCollection;
 import com.warn.sensordata.model.UsersCollection;
 import com.warn.util.DynamicDataSourceHolder;
+import com.warn.util.Tool.Tool;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -71,8 +72,25 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
 //        List<SensorCollection> sensorCollections = getMongoTemplate().find(query.limit(2000), SensorCollection.class);
 //        return (long)sensorCollections.size();
         sensorData.setGatewayIDs(gateways);
+        Integer startId = 0;
+        Integer endId = 0;
+        Integer selectId = 0;
+        sensorData.setDate(sensorCollection.getDate());
         DynamicDataSourceHolder.setDataSource("sensorDataSource");
-        return sensorDataDao.getsensorDatagridTotal(sensorData);
+        if(!sensorCollection.getDate().equals(Tool.getDate())){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+        }
+        return sensorDataDao.getsensorDatagridTotal(sensorData,startId,endId,selectId);
 }
 
     @Override
@@ -114,10 +132,25 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
 //            }
         }
         sensorData.setGatewayIDs(gateways);
-        page.setSort("id");
-        page.setOrder("desc");
+        Integer startId = 0;
+        Integer endId = 0;
+        Integer selectId = 0;
+        sensorData.setDate(sensorCollection.getDate());
         DynamicDataSourceHolder.setDataSource("sensorDataSource");
-        return sensorDataDao.getSensorData(sensorData,page);
+        if(!sensorCollection.getDate().equals(Tool.getDate())){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+        }
+        return sensorDataDao.getSensorData(sensorData,page,startId,endId,selectId);
 //        query.with(new Sort(Sort.Direction.DESC, "_id"));
 //        return getMongoTemplate().find(query.skip(page.getStart()).limit(page.getRows()), SensorCollection.class);
     }

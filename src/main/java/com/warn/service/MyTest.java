@@ -1,49 +1,33 @@
-package com.warn.schedule;
+package com.warn.service;
 
 import com.warn.dao.SensorDataDao;
-import com.warn.entity.SensorData;
 import com.warn.mongodb.model.SensorCollection;
-import com.warn.service.StatisticService;
 import com.warn.util.DynamicDataSourceHolder;
 import com.warn.util.Tool.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.runner.RunWith;
+import org.junit.Test;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-@Component
-public class AreaDataFresher {
-    @Autowired
-    StatisticService statisticService;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:spring/spring-dao.xml"})
+public class MyTest {
+
     @Autowired
     SensorDataDao sensorDataDao;
 
-    @Scheduled(cron = "0 0 0-12 * * ?")
-    public void updateArea(){
-        statisticService.getStatisticData(48);
-        statisticService.getStatisticData(43);
-        statisticService.getStatisticData(42);
 
-    }
-
-    @Scheduled(cron = "0 0 12 * * ?")
-    public void check(){
-        statisticService.checkStatistic(48,155);
-    }
-
-    @Scheduled(cron = "0 1 0-12 * * ?")
-    public void updateArea2(){
-        statisticService.getStatisticData(48);
-        statisticService.getStatisticData(43);
-        statisticService.getStatisticData(42);
-    }
-
-    @Scheduled(cron = "0 1 16 * * *")
-    public void recordForSql(){
+    @Test
+    public void testDataBase(){
+        Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         Calendar calendar = Calendar.getInstance();
@@ -54,8 +38,8 @@ public class AreaDataFresher {
         sensorDataDao.addDateRecord(sensorCollection);
     }
 
-    @Scheduled(cron = "0 1 16 * * *")
-    public void recordGatewayForSql(){
+    @Test
+    public void testDataBaseTwo(){
         DynamicDataSourceHolder.setDataSource("sensorDataSource");
         List<SensorCollection> sensorCollections = sensorDataDao.getDateEndGateway(Tool.getYesDate());
         for(SensorCollection sensorCollection:sensorCollections){
@@ -63,6 +47,7 @@ public class AreaDataFresher {
             sensorDataDao.addDateGateway(sensorCollection1);
         }
     }
+
 
 
 }

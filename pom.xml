@@ -179,6 +179,11 @@
       <artifactId>fastjson</artifactId>
       <version>1.1.41</version>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>RELEASE</version>
+    </dependency>
 
   </dependencies>
   <build>

@@ -11,6 +11,7 @@ public class SensorData {
     private String timeString;
     private String date;
     private List<Integer> sensorPointIDs;
+    private Integer gatewayID;
 
     public Integer getId() {
         return id;
@@ -74,5 +75,13 @@ public class SensorData {
 
     public void setSensorPointIDs(List<Integer> sensorPointIDs) {
         this.sensorPointIDs = sensorPointIDs;
+    }
+
+    public Integer getGatewayID() {
+        return gatewayID;
+    }
+
+    public void setGatewayID(Integer gatewayID) {
+        this.gatewayID = gatewayID;
     }
 }
