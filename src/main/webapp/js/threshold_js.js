@@ -100,9 +100,15 @@ $(function(){
         onBeforeEdit:function(index,row){
             row.editing = true;
             updateActions_l(index);
+            alert("1");
         },
         onAfterEdit:function(index,row){
             //修改阈值信息
+            if(row.times == '')
+                alert("时间段不能为空");
+            else
+                alert("时间段不能为空");
+            alert("1");
             $.ajax({
                 type: "POST",
                 url: pathJs+"/threshold/updateThreshold_l",
@@ -115,6 +121,7 @@ $(function(){
                 },
                 success:function(data){
                     if(data.success){
+                        alert("");
                         mesTitle='修改成功';
                     }else{
                         mesTitle='修改失败';
@@ -295,6 +302,7 @@ function cancelrow_l(target){
 function formatAction_l(value,row,index){
     if (row.editing){
         var s = '<input type="button" class="saveButton easyui-linkbutton" value="保存" onclick="saverow_l(this)" /> ';
+        alert("1");
         var c = '<input type="button" class="cancelButton easyui-linkbutton" value="取消" onclick="cancelrow_l(this)" />';
         return s+c;
     } else {

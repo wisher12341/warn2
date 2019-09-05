@@ -99,7 +99,7 @@
                 ${item}
             </foreach>
         </if>
-        and sensorID =1 or sensorID = 5
+        and sensorID in (1,5)
 
         order by id DESC
     </select>
@@ -112,7 +112,7 @@
                 ${item}
             </foreach>
         </if>
-        and sensorID =1 or sensorID = 5
+        and sensorID in(1,5)
 
         order by id DESC
     </select>
@@ -124,12 +124,22 @@
         limit 1
     </select>
 
+    <insert id="migrateData" parameterType="java.util.List">
+        INSERT into sensor_collection(gatewayID,sensorPointID,sensorData,sensorID,timeString,date,timeStamp)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.gatewayID},#{item.sensorPointID},#{item.sensorData},#{item.sensorID},#{item.timeString},#{item.data},#{item.timeStamp}
+            )
+        </foreach>
+    </insert>
+
     <insert id="addDateRecord" parameterType="com.warn.mongodb.model.SensorCollection">
-        INSERT INTO date_record(date,end_id) VALUES (#{date},#{id})
+        INSERT INTO date_record(date,end_id,time_string) VALUES (#{date},#{id},#{timeString})
     </insert>
 
     <select id="getDateRecord" resultType="com.warn.mongodb.model.SensorCollection">
-        select * from date_record_old where date = #{date}
+        select * from date_record where date = #{date}
     </select>
 
     <select id="findByTimeOld" resultType="com.warn.mongodb.model.SensorCollection">--     //43网关用
@@ -150,7 +160,7 @@
     </select>
 
     <insert id="addDateGateway" parameterType="com.warn.mongodb.model.SensorCollection">
-        INSERT INTO gateway_record (date,gateway_id,end_id)VALUES (#{date},#{gatewayID},#{id})
+        INSERT INTO gateway_record (date,gateway_id,end_id,time_string)VALUES (#{date},#{gatewayID},#{id},#{timeString})
     </insert>
 
 

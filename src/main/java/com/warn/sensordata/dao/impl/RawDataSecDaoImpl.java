@@ -76,7 +76,7 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         Integer endId = 0;
         Integer selectId = 0;
         sensorData.setDate(sensorCollection.getDate());
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
         if(!sensorCollection.getDate().equals(Tool.getDate())){
             List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
             List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());
@@ -136,7 +136,7 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         Integer endId = 0;
         Integer selectId = 0;
         sensorData.setDate(sensorCollection.getDate());
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
         if(!sensorCollection.getDate().equals(Tool.getDate())){
             List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
             List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());

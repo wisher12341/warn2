@@ -47,14 +47,14 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
             for (Integer oid : closeWarns) {
                 gatewayIDs.add(oid);
             }
-            DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
             List<SensorCollection> sensorCollections1 = new ArrayList<>();
             if(gatewayIDs.contains(43))
                sensorCollections1 = sensorDataDao.findByTimeOld(43,startTime,endTime);
             List<SensorCollection> sensorCollections = sensorDataDao.findByTime(gatewayIDs,startTime, endTime);
             if(sensorCollections1.size() != 0)
                 sensorCollections.addAll(sensorCollections1);
-            DynamicDataSourceHolder.setDataSource("defaultDataSource");
+
             if(sensorCollections.size() != 0)
                 Collections.reverse(sensorCollections);
             return sensorCollections;
@@ -77,8 +77,16 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
         return getMongoTemplate().find(query.skip(0).limit(limit), SensorCollection.class);
     }
 
+    public List<SensorData> migrateData(int skip,int limit){
+        Query query = new Query();
+        Criteria criteria = new Criteria();
+        query.with(new Sort(Sort.Direction.DESC, "_id"));
+        List<SensorData>  sensorDatas = getMongoTemplate().find(query.skip(skip).limit(limit), SensorData.class);
+        return sensorDatas;
+    }
+
     public List<SensorCollection> findToStatisticBeta(Integer gateWayId,List<Integer> sensorPointIds,String start,String end){
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         SensorData sensorData = new SensorData();

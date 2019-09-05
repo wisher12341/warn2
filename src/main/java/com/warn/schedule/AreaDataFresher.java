@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -22,7 +23,7 @@ public class AreaDataFresher {
     @Autowired
     SensorDataDao sensorDataDao;
 
-    @Scheduled(cron = "0 0 0-12 * * ?")
+    //@Scheduled(cron = "0 2 0-12 * * ?")
     public void updateArea(){
         statisticService.getStatisticData(48);
         statisticService.getStatisticData(43);
@@ -30,38 +31,42 @@ public class AreaDataFresher {
 
     }
 
-    @Scheduled(cron = "0 0 12 * * ?")
+    //@Scheduled(cron = "0 0 12 * * ?")
     public void check(){
         statisticService.checkStatistic(48,155);
     }
 
-    @Scheduled(cron = "0 1 0-12 * * ?")
+  // @Scheduled(cron = "0 0 0-12 * * ?")
     public void updateArea2(){
         statisticService.getStatisticData(48);
         statisticService.getStatisticData(43);
         statisticService.getStatisticData(42);
     }
 
-    @Scheduled(cron = "0 1 16 * * *")
+   // @Scheduled(cron = "0 0 17 * * *")
     public void recordForSql(){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,-24);
-        String yesterday = sdf.format(calendar.getTime());
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
-        SensorCollection sensorCollection = sensorDataDao.getDateEndRecord(yesterday);
+        SensorCollection sensorCollection = sensorDataDao.getDateEndRecord(Tool.getYesDate());
+        sensorCollection.setTimeString(Tool.getYesDate());
         sensorDataDao.addDateRecord(sensorCollection);
+
     }
 
-    @Scheduled(cron = "0 1 16 * * *")
+  // @Scheduled(cron = "0 5 17 * * *")
     public void recordGatewayForSql(){
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+        Date date = new Date();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         List<SensorCollection> sensorCollections = sensorDataDao.getDateEndGateway(Tool.getYesDate());
         for(SensorCollection sensorCollection:sensorCollections){
             SensorCollection sensorCollection1 = sensorDataDao.getDateGateway(sensorCollection);
+            sensorCollection1.setTimeString(Tool.getYesDate());
             sensorDataDao.addDateGateway(sensorCollection1);
         }
+
     }
 
 

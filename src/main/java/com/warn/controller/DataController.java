@@ -53,7 +53,7 @@ public class DataController {
     @ResponseBody
     @RequestMapping(value = "/testDao",method = RequestMethod.GET)
     public Result testDao(){
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
         List<SensorData> sensorData = sensorDataDao.getSensorDatas();
         return new Result(true,sensorData);
     }

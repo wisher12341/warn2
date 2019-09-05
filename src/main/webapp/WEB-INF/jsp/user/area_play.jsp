@@ -29,7 +29,7 @@
                 <%--<th data-options="field:'oid',width:fixWidth(0.3),align:'center'" >ID</th>--%>
                 <th data-options="field:'oldName',width:fixWidth(0.08),align:'center'" >姓名</th>
                 <th data-options="field:'rid',width:fixWidth(0.08),align:'center',hidden:true">房间ID</th>
-                <th data-options="field:'roomName',width:fixWidth(0.08),align:'center'" >房间名</th>
+                <%--<th data-options="field:'roomName',width:fixWidth(0.08),align:'center'" >房间名</th>--%>
             </tr>
             </thead>
         </table>
@@ -42,36 +42,63 @@
                    plain="true" onclick="timeSearch()"><span>查询</span></a>
                 <%--<input class="easyui-searchbox" data-options="prompt:'姓名'" name="oldName" />--%>
             </form>
-            <%--<div id="buttonTool">--%>
+            <div id="buttonTool">
                 <%--<a href="javascript:void(0);" class="easyui-linkbutton fa fa-search toolB"--%>
                    <%--plain="true" onclick="formSearch()" id="searchA"><span>查询</span></a>--%>
                 <%--<a href="javascript:void(0);" class="easyui-linkbutton toolB fa fa-refresh"--%>
                    <%--plain="true" onclick="refresh();" id="refreshA"><span>刷新</span></a>--%>
-                <%--<a href="javascript:void(0);" class="easyui-linkbutton dayButton block disabled"--%>
-                   <%--plain="true" onclick="dayB()"><span>整体活动情况</span></a>--%>
-                <%--<a href="javascript:void(0);" class="easyui-linkbutton roomsButton block disabled"--%>
-                   <%--plain="true" onclick="roomsB()"><span>各个房间活动情况</span></a>--%>
-            <%--</div>--%>
+                <a href="javascript:void(0);" class="easyui-linkbutton dayButton block disabled"
+                   plain="true" onclick="dayB()"><span>整体活动情况</span></a>
+                <a href="javascript:void(0);" class="easyui-linkbutton roomsButton block disabled"
+                   plain="true" onclick="roomsB()"><span>各个房间活动情况</span></a>
+            </div>
         </div>
     </div>
 </div>
 
-<div region="center" border="true" singleSelect="true" style="overflow: hidden;" id="visual">
+<div region="center" border="true" singleSelect="true"  id="visual">
     <%--<div>--%>
     <%--<input type="button" value="全天活动情况" class="dayButton" disabled="true" onclick="dayB()">--%>
     <%--<input type="button" value="各个房间活动情况" class="roomsButton" onclick="roomsB()">--%>
     <%--</div>--%>
     <div id="mainDiv" style="width:1400px;" class="tuMain">
-        <%--<div class="title">生活规律环图</div>--%>
+        <div class="title"></div>
         <div id="main"  ></div>
     </div>
-    <div id="mainLineDiv" style="width:1400px;" class="tuMainLine">
-        <div id="mainLine"  style = "left:150px;"></div>
+    <div id="main1Div" style="width:1400px;" class="tuMain">
+        <div class="title"></div>
+        <div id="main1"  ></div>
     </div>
+    <div id="main2Div" style="width:1400px;" class="tuMain">
+         <div class="title"></div>
+         <div id="main2"  ></div>
+     </div>
+    <div id="mainLineDiv"  class="tu">
+        <div class="title"></div>
+        <div id="mainLine"  ></div>
+    </div>
+     <div id="mainLine1Div"  class="tu">
+         <div class="title"></div>
+        <div id="mainLine1" ></div>
+     </div>
+     <div id="mainLine2Div"  class="tu">
+         <div class="title"></div>
+        <div id="mainLine2"  ></div>
+     </div>
+
     <%--图形设置一定要放在后面  固定最多6个环图--%>
     <script type="text/javascript">
         var myChart = echarts.init(document.getElementById('main'));
+
+        var myChart1 = echarts.init(document.getElementById('main1'));
+
+        var myChart2= echarts.init(document.getElementById('main2'));
+
         var myChartLine = echarts.init(document.getElementById('mainLine'));
+
+        var myChartLine1 = echarts.init(document.getElementById('mainLine1'));
+
+        var myChartLine2 = echarts.init(document.getElementById('mainLine2'));
     </script>
 
 </div>

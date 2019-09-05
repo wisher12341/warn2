@@ -130,7 +130,7 @@
     </select>
     <select id="datagridStatistic" resultType="com.warn.entity.Room">
         select
-        DISTINCT rid,oldId,roomName
+        DISTINCT oldId
         FROM room r,oldman o,area_statistic s
         WHERE o.version = 2 and s.room_id = r.rid and r.oldId = o.oid
         <if test="room.rid != null and room.rid != ''">
@@ -191,7 +191,7 @@
     </update>
 
     <select id="getAllRoomByOldManId" resultType="com.warn.entity.Room">
-        SELECT rid,roomName,nerRoom,rRegtime,oldId,collectId FROM room WHERE oldId=#{id}
+        SELECT * FROM room WHERE oldId=#{id}
     </select>
 
     <select id="getRoomById" resultType="com.warn.entity.Room">

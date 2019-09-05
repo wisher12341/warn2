@@ -51,8 +51,9 @@ public class SensorServiceImpl implements SensorService{
 //    private static Map<OldMan,String> noMove=new HashMap<OldMan,String>();//存储老人不动的最初时间 时 分 秒;
     private static Map<OldMan,Integer> prePosition = new HashMap<>();//存放老人的上一个位置
     private static Map<Integer,Integer> roomPosition = new HashMap<>();//房间内的位置信息
+    private static Map<Integer,Map<Integer,Integer>> roomPs = new HashMap<>();
 //    private static Map<OldMan,Room> noMovaRoom=new HashMap<OldMan, Room>();//存储老人不动之前所在的房间
-public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储是否对该老人已经进行一级报警 如果已经报过警，则不重复一级报警
+    public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储是否对该老人已经进行一级报警 如果已经报过警，则不重复一级报警
     public static Map<OldMan,Boolean> warn2=new HashMap<OldMan,Boolean>();//存储是否对该老人已经进行二级报警 如果已经报过警，则不重复二级报警
     //温度
     public static Map<Room,Boolean> wendu=new HashMap<Room,Boolean>();//存储是否对该老人已经进行温度报警 如果已经报过警，则不重复报警
@@ -1688,7 +1689,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                     sendAlarm.setTime(sensorCollection.getTime());
                                     sendAlarm.setLevel(warn_wendu.getThreshold_wendu().toString());
                                     sendAlarm.setType("wendu");
-                                    sendPost(sendAlarm);
+                                    sendPost(sendAlarm,StaticVal.url);
                                 }else{
                                     DwrData dwrData = new DwrData();
                                     dwrData.setType("warn_wendu");
@@ -1780,7 +1781,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 
     public void checkPositionData(List<SensorCollection> sensorCollections) throws NullFromDBException, WarnException{
         SystemController.logger.info("======================================行为预警2.0=========================================================");
-        try {
+//        try {
             final SensorDataDeal sensorDataDeal = new SensorDataDeal();
             SensorCollection sensorCollection = null;
             OldMan oldMan=dataDao.getOldManByGatewayID(sensorCollections.get(0).getGatewayID());
@@ -1788,6 +1789,9 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 throw new NullFromDBException("行为预警：找不到老人");
             }
             List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
+            Map<Integer,Integer> roomPosition = new HashMap<>();
+            if(roomPs.get(oldMan.getOid()) != null)
+                roomPosition = roomPs.get(oldMan.getOid());
             if(roomPosition.size() == 0)
             for(Room room:roomList){
                 roomPosition.put(room.getRid(),11);//赋予初始值，没有位置的值为11
@@ -1849,7 +1853,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                 }
 //                sensorCollection = sensorCollections.get(sensorCollections.size() - 1);
             }
-
+            roomPs.put(oldMan.getOid(),roomPosition);
             Room room=roomDao.getRoomByGateWayId_SensorId(sensorCollection.getGatewayID(),sensorCollection.getSensorPointID());
 
             if(room==null){
@@ -2073,7 +2077,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                     sendAlarm.setTime(warn.getTime());
                                     sendAlarm.setLevel(warn.getWarnLevel().toString());
                                     sendAlarm.setType("position");
-                                    sendPost(sendAlarm);
+                                    sendPost(sendAlarm,StaticVal.url);
                                 }
                                 else{
                                     DwrData dwrData = new DwrData();
@@ -2118,7 +2122,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
                                     sendAlarm.setTime(warn.getTime());
                                     sendAlarm.setLevel(warn.getWarnLevel().toString());
                                     sendAlarm.setType("position");
-                                    sendPost(sendAlarm);
+                                    sendPost(sendAlarm,StaticVal.url);
                                 }
                                 else{
                                     DwrData dwrData = new DwrData();
@@ -2158,13 +2162,13 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
 
             timer.put(sensorDataDeal.getOldMan(), service);
 //具体过程为如果在最后一个动的时间之后，老人一直不动话，此线程不会被停止，所以会继续计时知道超出阈值。如果老人再次有动作后，删除之前的线程，重新开始计时线程，转353.
-        }catch (NullFromDBException e1){
-            throw e1;
-        }catch (Exception e){
-            throw new WarnException("move inner error:"+e.getLocalizedMessage());
-        }
+//        }catch (NullFromDBException e1){
+//            throw e1;
+//        }catch (Exception e){
+//            throw new WarnException("move inner error:"+e.getMessage());
+//        }
     }
-    private void  sendPost(SendAlarm sendAlarm){
+    private void  sendPost(SendAlarm sendAlarm,String urlS){
         JSONObject json = new JSONObject();
         json.put("time",sendAlarm.getTime());
         json.put("info",sendAlarm.getInfo());
@@ -2176,7 +2180,7 @@ public static Map<OldMan,Boolean> warn1=new HashMap<OldMan,Boolean>();//存储�
         String content = json.toString();
         DataOutputStream out = null;
         try {
-            URL url = new URL("http://106.15.201.132:81/alarm/Forbidden");
+            URL url = new URL(urlS);
             // 打开和URL之间的连接
             URLConnection conn = url.openConnection();
             HttpURLConnection httpUrlConnection = (HttpURLConnection) conn;

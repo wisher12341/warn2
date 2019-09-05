@@ -6,7 +6,15 @@
     </select>
 
     <select id="getStatisticInfo" resultType="com.warn.entity.AreaStatistic">
-        select * from area_statistic where oid = #{oid} and date = #{date} and room_id = #{roomId};
+        select * from area_statistic where oid = #{oid} and date = #{date};
+    </select>
+
+    <select id="getStatisitcInfos" resultType="com.warn.entity.AreaStatistic">
+        select * from area_statistic where oid = #{oid} and room_id = #{rid}
+        and date in
+        <foreach collection="dates" index="index" item="item" open="(" separator="," close=")">
+            #{item}
+        </foreach>
     </select>
 
     <insert id="addAreaStatistic" parameterType="com.warn.entity.AreaStatistic">

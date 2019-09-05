@@ -56,18 +56,16 @@ public class Tool {
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,-24);
-        return sdf.format(calendar.getTime());
+        date = new Date(date.getTime() - 86400000);
+        return sdf.format(date.getTime());
     }
 
     public static String getYesYesDate(){//前天
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,-48);
-        return sdf.format(calendar.getTime());
+        date = new Date(date.getTime() - 86400000 * 2);
+        return sdf.format(date.getTime());
     }
 
 }

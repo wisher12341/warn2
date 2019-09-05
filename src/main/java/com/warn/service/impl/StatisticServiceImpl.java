@@ -8,13 +8,12 @@ import com.warn.dto.DwrData;
 import com.warn.dto.Warn_statistic;
 import com.warn.dto.visual.AreaVisual;
 import com.warn.dto.visual.AreaVisualList;
+import com.warn.dto.visual.AreaVisualLists;
 import com.warn.dwr.Remote;
-import com.warn.entity.AreaStatistic;
-import com.warn.entity.OldMan;
-import com.warn.entity.Room;
-import com.warn.entity.Threshold_statistic;
+import com.warn.entity.*;
 import com.warn.mongodb.model.SensorCollection;
 import com.warn.sensordata.dao.SensorMogoSecDao;
+import com.warn.service.SensorService;
 import com.warn.service.StatisticService;
 import com.warn.service.WarnHistoryService;
 import com.warn.util.DynamicDataSourceHolder;
@@ -50,6 +49,7 @@ public class StatisticServiceImpl implements StatisticService  {
    public static Boolean key = true;
    @Override
     public void getStatisticData(Integer gatewayId){
+
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         String current =  date.format(new Date());//现在的时间
@@ -61,7 +61,7 @@ public class StatisticServiceImpl implements StatisticService  {
         List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
         Integer rSize = roomList.size();
         List<AreaStatistic> areaStatistics = statisticDao.getStatisticByDate(today,oldMan.getOid());
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
+
         Integer areas[][] = new Integer[11][11];
         String statisticInfo[] = new String[11];
         for(Room room:roomList) {//更新，先获取今天的数据，如果没有就从零开始
@@ -97,7 +97,7 @@ public class StatisticServiceImpl implements StatisticService  {
         //Integer limit = 3600 / 30 * roomList.size()+20;
         // List<SensorCollection> sensorCollections = sensorMogoSecDao.findToStatistic(gatewayId, sensorPointIds,limit);
         List<SensorCollection> sensorCollections = sensorMogoSecDao.findToStatisticBeta(gatewayId,sensorPointIds,start,end);
-        DynamicDataSourceHolder.setDataSource("defaultDataSource");
+
         Set<String> zero = new HashSet<>();
         // for(int i = limit - 1; i >=0 ; i--){
        Integer tempY = 10;
@@ -137,7 +137,7 @@ public class StatisticServiceImpl implements StatisticService  {
                 if(sensorCollections.size() - i < rSize * 2 * 4)
                     judge = true;
                 else
-                    for(int j = rSize * 2 * 2; j <= rSize * 8 ; j++){ //出门判断(有门的霍尔数据的2-4分钟内，房间内 没有人的数据 的话，判断为出门)
+                    for(int j = rSize * 2 * 2; j < rSize * 8 ; j++){ //出门判断(有门的霍尔数据的2-4分钟内，房间内 没有人的数据 的话，判断为出门)
                         SensorCollection sensorCollection1 = sensorCollections.get(i+j);
                         if(sensorCollection1.getSensorID() == 1)
                             if(sensorCollection1.getSensorData() != 0){
@@ -186,45 +186,80 @@ public class StatisticServiceImpl implements StatisticService  {
     }
 
     @Override
-    public List<AreaVisual> getStatisticArea(Integer oid,Integer rid,String time){
+    public List<AreaVisualList> getStatisticArea(Integer oid,Integer rid,String time){
         //OldMan oldMan = dataDao.getOldManByOid(oid);
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         String current =  date.format(new Date());//现在的时间
         String today = current.split(" ")[0];
-        List<AreaStatistic> areaStatistic = new ArrayList<>();
+        List<AreaVisualList> areaVisualLists = new ArrayList<>();
+        List<AreaStatistic> areaStatistics = new ArrayList<>();
+        Room room1 = new Room();
         if(time == null)
-        areaStatistic = statisticDao.getStatisticInfo(today,oid,rid);//就算取不到也不会报Null 的异常
+            areaStatistics = statisticDao.getStatisticInfo(today,oid);//就算取不到也不会报Null 的异常
         else
-            areaStatistic = statisticDao.getStatisticInfo(time,oid,rid);
-         Room room = roomDao.getRoomById(rid);
-        List<AreaVisual> areaVisuals = setVisuals(areaStatistic,room);
-        return areaVisuals;
-
-
+            areaStatistics = statisticDao.getStatisticInfo(time,oid);
+         if(areaStatistics.size() != 0)
+             for(AreaStatistic areaStatistic:areaStatistics){
+                 Room room = roomDao.getRoomById(areaStatistic.getRoomId());
+                 AreaVisualList areaVisualList = new AreaVisualList();
+                 List<AreaStatistic> areaStatistics1 = new ArrayList<>();
+                 areaStatistics1.clear();
+                 areaStatistics1.add(areaStatistic);
+                 List<AreaVisual> areaVisuals = setVisuals(areaStatistics1,room);
+                 areaVisualList.setAreaVisuals(areaVisuals);
+                 areaVisualList.setRoomName(room.getRoomName());
+                 areaVisualLists.add(areaVisualList);
+              }
+          else
+         {
+             AreaVisualList areaVisualList = new AreaVisualList();
+             List<AreaVisual> areaVisuals = setVisuals(areaStatistics,room1);
+             areaVisualList.setAreaVisuals(areaVisuals);
+             areaVisualLists.add(areaVisualList);
+         }
+        return areaVisualLists;
     }
 
     @Override
-    public List<AreaVisualList> getStatisticAreaList(Integer oid,Integer rid) {
+    public List<AreaVisualLists> getStatisticAreaList(Integer oid,Integer rid) {
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         SimpleDateFormat week = new SimpleDateFormat("EEEE");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         week.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         Date current = new Date();//现在的时间
-
-        List<AreaVisualList> areaVisualLists = new ArrayList<>();
-        for (int j = 0; j < 7; j++) {
-            AreaVisualList areaVisualList = new AreaVisualList();
-            String time = date.format(current).split(" ")[0];
-            areaVisualList.setDate(time+"("+week.format(current)+")");
-            Room room = roomDao.getRoomById(rid);
-            List<AreaStatistic> areaStatistic = statisticDao.getStatisticInfo(time, oid, rid);//就算取不到也不会报Null 的异常
-            List<AreaVisual> areaVisuals = setVisuals(areaStatistic,room);
-            areaVisualList.setAreaVisuals(areaVisuals);
-            areaVisualLists.add(areaVisualList);
+        List<String> dates = new ArrayList<>();
+        List<Room> roomList = roomDao.getAllRoomByOldManId(oid);
+        List<AreaVisualLists> visualLists = new ArrayList<>();
+        for(int j = 0; j < 7; j++){
+            dates.add(date.format(current).split(" ")[0]);
             current = new Date(current.getTime() - 86400000);
         }
-        return areaVisualLists;
+        for(Room room:roomList){
+            AreaVisualLists visualList = new AreaVisualLists();
+            List<AreaStatistic> areaStatistics = statisticDao.getStatisitcInfos(dates,oid,room.getRid());//就算取不到也不会报Null 的异常
+            List<AreaVisualList> areaVisualLists = new ArrayList<>();
+            for(AreaStatistic areaStatistic:areaStatistics){
+                AreaVisualList areaVisualList = new AreaVisualList();
+                areaVisualList.setDate(areaStatistic.getDate()+"("+week.format(current)+")");
+                List<AreaStatistic> areaStatistics1 = new ArrayList<>();
+                areaStatistics1.clear();
+                areaStatistics1.add(areaStatistic);
+                List<AreaVisual> areaVisuals = setVisuals(areaStatistics1,room);
+                areaVisualList.setAreaVisuals(areaVisuals);
+                areaVisualLists.add(areaVisualList);
+                current = new Date(current.getTime() - 86400000);
+            }
+            Collections.reverse(areaVisualLists);
+            visualList.setAreaVisual(areaVisualLists);
+            visualList.setRoomName(room.getRoomName());
+            visualLists.add(visualList);
+        }
+        return visualLists;
+
+    }
+    @Override
+    public void transferData(List<SensorData> sensorDatas){
 
     }
 
@@ -247,14 +282,14 @@ public class StatisticServiceImpl implements StatisticService  {
         List<AreaVisual> areaVisuals = new ArrayList<>();
         current = new Date(current.getTime() - 86400000);
         String today =  date.format(new Date()).split(" ")[0];
-        List<AreaStatistic> areaStatistic1 =  statisticDao.getStatisticInfo(today,oid,rid);//就算取不到也不会报Null 的异常
+        List<AreaStatistic> areaStatistic1 =  statisticDao.getStatisticInfo(today,oid);//就算取不到也不会报Null 的异常
         Room room = roomDao.getRoomById(rid);
         List<AreaVisual> areaVisuals1 = setVisuals(areaStatistic1,room);
         for (int j = 0; j < 7; j++) {
             AreaVisualList areaVisualList = new AreaVisualList();
             String time = date.format(current).split(" ")[0];
             areaVisualList.setDate(time);
-            List<AreaStatistic> areaStatistic = statisticDao.getStatisticInfo(time, oid, rid);//就算取不到也不会报Null 的异常
+            List<AreaStatistic> areaStatistic = statisticDao.getStatisticInfo(time, oid);//就算取不到也不会报Null 的异常
             if(areaStatistic.get(0).getNormal() == 0){
                 areaVisuals = setVisuals(areaStatistic,room);
                 areaVisualList.setAreaVisuals(areaVisuals);

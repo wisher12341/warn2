@@ -26,6 +26,8 @@ public interface SensorDataDao {
 
     void addDateRecord(SensorCollection sensorCollection);
 
+    void migrateDate(List<SensorData> sensorDatas);
+
     List<SensorCollection> findByTimeOld(@Param("gatewayId") Integer gatewayId,@Param("startTime") Long startTime,@Param("endTime") Long endTime);
 
     SensorCollection getDateGateway(SensorCollection sensorCollection);

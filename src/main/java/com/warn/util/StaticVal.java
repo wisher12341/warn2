@@ -22,4 +22,9 @@ public class StaticVal {
 
     public static Integer gatewayDown=5; //网关故障的阈值   单位：分钟
     public static Integer equipDown=5; //设备故障的阈值   单位：分钟
+
+    public static String url ="http://47.103.137.244:81/alarm/Forbidden";
+
+//    public static String url_1 =
+
 }

@@ -107,6 +107,9 @@ $(function(){
         },
         onAfterEdit:function(index,row){
             //修改阈值信息
+            if(row.times == '')
+                alert("时间段不能为空");
+            else
             $.ajax({
                 type: "POST",
                 url: pathJs+"/threshold/updateThreshold_l",

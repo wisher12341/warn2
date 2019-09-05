@@ -32,7 +32,7 @@ public class SensorTransferSec {
     EquipDao equipDao;
 
     public List<SenSorDto> sensorTransferSec(List<SecSensorCollection> sensorCollections){
-        DynamicDataSourceHolder.setDataSource("defaultDataSource");
+
         List<SenSorDto> senSorDtos=new ArrayList<>();
         for(SecSensorCollection sensorCollection:sensorCollections){
             SenSorDto senSorDto=new SenSorDto();

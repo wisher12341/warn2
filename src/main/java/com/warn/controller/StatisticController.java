@@ -8,6 +8,7 @@ import com.warn.dto.PageHelper;
 import com.warn.dto.Result;
 import com.warn.dto.visual.AreaVisual;
 import com.warn.dto.visual.AreaVisualList;
+import com.warn.dto.visual.AreaVisualLists;
 import com.warn.entity.AreaStatistic;
 import com.warn.entity.OldMan;
 import com.warn.entity.OldRoom;
@@ -58,7 +59,7 @@ public class StatisticController {
             oldRoom.setOldName(oldMan.getOldName());
             oldRooms.add(oldRoom);
         }
-        dg.setTotal(roomDao.getDatagridTotal2(room));
+        dg.setTotal((long)oldRooms.size());
         dg.setRows(oldRooms);
         return dg;
     }
@@ -66,14 +67,14 @@ public class StatisticController {
     @RequestMapping(value = "/areaVisual",method = RequestMethod.POST)
     @ResponseBody
     public Result getAreaVisual(Integer oid,Integer rid,String time){
-        List<AreaVisual> areaVisuals = statisticService.getStatisticArea(oid,rid,time);
+        List<AreaVisualList> areaVisuals = statisticService.getStatisticArea(oid,rid,time);
         return new Result(true,areaVisuals);
     }
 
     @RequestMapping(value = "/areaLine",method = RequestMethod.POST)
     @ResponseBody
     public Result getAreaLine(Integer oid, Integer rid){
-        List<AreaVisualList> areaVisualLists = statisticService.getStatisticAreaList(oid,rid);
+        List<AreaVisualLists> areaVisualLists = statisticService.getStatisticAreaList(oid,rid);
         return new Result(true,areaVisualLists);
     }
 
