@@ -17,10 +17,7 @@ import org.junit.Test;
 
 import javax.annotation.Resource;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.TimeZone;
+import java.util.*;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -49,7 +46,6 @@ public class MyTest {
     @Test
     public void testDataBaseTwo(){
         Date date = new Date();
-        DynamicDataSourceHolder.setDataSource("sensorDataSource");
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         List<SensorCollection> sensorCollections = sensorDataDao.getDateEndGateway(Tool.getYesDate());
@@ -75,6 +71,22 @@ public class MyTest {
     public MongoTemplate getMongoTemplate() {
         return mongoTemplate;
     }
+
+//    @Test
+//    public void cleanData(){
+//        List<SensorCollection> sensorCollections = sensorDataDao.getDateRecordOA();
+//        List<String> dates = new ArrayList<String>();
+//        List<SensorCollection>  sensorCollections1 = new ArrayList<>();
+//        for(SensorCollection sensorCollection:sensorCollections){
+//            if(!dates.contains(sensorCollection.getDate())) {
+//                dates.add(sensorCollection.getDate());
+//                sensorCollections1.add(sensorCollection);
+//            }
+//        }
+//        Collections.reverse(sensorCollections1);
+//        sensorDataDao.addDateRecordOA(sensorCollections1);
+//        sensorCollections.clear();
+//    }
 
 
 

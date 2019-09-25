@@ -13,6 +13,7 @@ import com.warn.sensordata.model.SensorPointCollection;
 import com.warn.sensordata.model.UsersCollection;
 import com.warn.util.DynamicDataSourceHolder;
 import com.warn.util.Tool.Tool;
+import com.warn.util.common.Const;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,8 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
     DataDao dataDao;
     @Autowired
     SensorDataDao sensorDataDao;
+
+
 
     @Override
     public Long getsensorDatagridTotal(SensorCollection sensorCollection, OldMan oldMan,List<OldMan> oldMen) {
@@ -76,10 +79,39 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         Integer endId = 0;
         Integer selectId = 0;
         sensorData.setDate(sensorCollection.getDate());
-
-        if(!sensorCollection.getDate().equals(Tool.getDate())){
-            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
-            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());
+        String tempDate = sensorCollection.getDate() + " " + "13:48:21";
+        Long tempLong = Tool.StringToLong(tempDate);
+        if(sensorCollection.getGeneration().equals(1)){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord_fg(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord_fg(Tool.getYesOfDate(sensorCollection.getDate()));
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+            return sensorDataDao.getsensorDatagridTotal_fg(sensorData,startId,endId,selectId);
+        }
+        else if(tempLong < Const.date_old){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord_old(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord_old(Tool.getYesOfDate(sensorCollection.getDate()));
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+            return sensorDataDao.getsensorDatagridTotal_old(sensorData,startId,endId,selectId);
+        }
+        else if(!sensorCollection.getDate().equals(Tool.getDate())){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesOfDate(sensorCollection.getDate()));
             if(sensorCollections.size() != 0){
                 endId = sensorCollections.get(0).getEndId();
                 ++selectId;
@@ -136,10 +168,39 @@ public class RawDataSecDaoImpl implements RawDataSecDao {
         Integer endId = 0;
         Integer selectId = 0;
         sensorData.setDate(sensorCollection.getDate());
-
-        if(!sensorCollection.getDate().equals(Tool.getDate())){
-            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(Tool.getYesDate());
-            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesYesDate());
+        String tempDate = sensorCollection.getDate() + " " + "13:48:21";
+        Long tempLong = Tool.StringToLong(tempDate);
+        if(sensorCollection.getGeneration().equals(1)){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord_fg(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord_fg(Tool.getYesOfDate(sensorCollection.getDate()));
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+            return sensorDataDao.getSensorData_fg(sensorData,page,startId,endId,selectId);
+        }
+        else if(tempLong < Const.date_old){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord_old(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord_old(Tool.getYesOfDate(sensorCollection.getDate()));
+            if(sensorCollections.size() != 0){
+                endId = sensorCollections.get(0).getEndId();
+                ++selectId;
+                ++selectId;
+            }
+            if(sensorCollections1.size() !=0){
+                startId = sensorCollections1.get(0).getEndId();
+                ++selectId;
+            }
+            return sensorDataDao.getSensorData_old(sensorData,page,startId,endId,selectId);
+        }
+        else if(!sensorCollection.getDate().equals(Tool.getDate())){
+            List<SensorCollection> sensorCollections = sensorDataDao.getDateRecord(sensorCollection.getDate());
+            List<SensorCollection> sensorCollections1 = sensorDataDao.getDateRecord(Tool.getYesOfDate(sensorCollection.getDate()));
             if(sensorCollections.size() != 0){
                 endId = sensorCollections.get(0).getEndId();
                 ++selectId;

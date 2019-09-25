@@ -184,6 +184,7 @@ public class SensorServiceImpl implements SensorService{
                                         SystemController.logger.info("已存入历史消息");
                                         //推送
                                         Remote.noticeNewOrder(dwrData);
+                                        sendPost2(dwrData,StaticVal.url2);
 
                                         //地图更新
 //                                        HouseMarker houseMarker=new HouseMarker();
@@ -568,7 +569,7 @@ public class SensorServiceImpl implements SensorService{
                                 SystemController.logger.info("已存入历史消息");
                                 //推送
                                 Remote.noticeNewOrder(dwrData);
-
+                                sendPost2(dwrData,StaticVal.url2);
                                 //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
@@ -600,7 +601,7 @@ public class SensorServiceImpl implements SensorService{
                                 warnHistoryService.addWarnHistory(dwrData);
                                 //推送
                                 Remote.noticeNewOrder(dwrData);
-
+                                sendPost2(dwrData,StaticVal.url2);
                                 //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
@@ -860,7 +861,7 @@ public class SensorServiceImpl implements SensorService{
                                 SystemController.logger.info("已存入历史消息");
                                 //推送
                                 Remote.noticeNewOrder(dwrData);
-
+                                sendPost2(dwrData,StaticVal.url2);
                                 //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
@@ -892,7 +893,7 @@ public class SensorServiceImpl implements SensorService{
                                 warnHistoryService.addWarnHistory(dwrData);
                                 //推送
                                 Remote.noticeNewOrder(dwrData);
-
+                                sendPost2(dwrData,StaticVal.url2);
                                 //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
@@ -1523,7 +1524,7 @@ public class SensorServiceImpl implements SensorService{
                                                 dwrData.setWarn_light(warn_light);
                                                 warnHistoryService.addWarnHistory(dwrData);
                                                 Remote.noticeNewOrder(dwrData);
-
+                                                sendPost2(dwrData,StaticVal.url2);
                                                 //地图更新
 //                                                HouseMarker houseMarker=new HouseMarker();
 //                                                houseMarker.setOid(oldMan.getOid());
@@ -1701,6 +1702,7 @@ public class SensorServiceImpl implements SensorService{
                                     mapUpdate(oldMan);
                                     //启动短信定时任务
                                     smsService.smsSwitch();
+                                    sendPost2(dwrData,StaticVal.url2);
                                 }
 
                                 //地图更新
@@ -2132,7 +2134,7 @@ public class SensorServiceImpl implements SensorService{
                                     warnHistoryService.addWarnHistory(dwrData);
                                     //推送
                                     Remote.noticeNewOrder(dwrData);
-
+                                    sendPost2(dwrData,StaticVal.url2);
                                     //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
@@ -2168,6 +2170,65 @@ public class SensorServiceImpl implements SensorService{
 //            throw new WarnException("move inner error:"+e.getMessage());
 //        }
     }
+    private void  sendPost2(DwrData sendAlarm,String urlS){
+        //JSONObject json = new JSONObject();
+        //
+        JSONObject json = JSONObject.fromObject(sendAlarm);
+        //
+//        json.put("time",sendAlarm.getTime());
+//        json.put("info",sendAlarm.getInfo());
+//        json.put("type",sendAlarm.getType());
+//        json.put("level",sendAlarm.getLevel());
+
+
+
+        BufferedReader in = null;
+        String status = "";
+        String response = "";
+        String content = json.toString();
+        DataOutputStream out = null;
+        try {
+            URL url = new URL(urlS);
+            // 打开和URL之间的连接
+            URLConnection conn = url.openConnection();
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) conn;
+            // 设置请求属性
+            httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+            // 发送POST请求必须设置如下两行
+            httpUrlConnection.setDoOutput(true);
+            httpUrlConnection.setDoInput(true);
+            httpUrlConnection.setRequestMethod("POST");
+            httpUrlConnection.setUseCaches(false);
+            httpUrlConnection.connect();
+            out = new DataOutputStream(httpUrlConnection.getOutputStream());
+            // 获取URLConnection对象对应的输出流
+
+            out.writeBytes(content);
+            // 发送请求参数
+            // flush输出流的缓冲
+            out.flush();
+
+            // 定义BufferedReader输入流来读取URL的响应
+            in = new BufferedReader(new InputStreamReader(httpUrlConnection.getInputStream()));
+            String line;
+            while ((line = in.readLine()) != null) {
+                response += line;
+            }
+            status = new Integer(httpUrlConnection.getResponseCode()).toString();
+        } catch (Exception e) {
+            System.out.println("发送 POST 请求出现异常！" + e);
+        }
+        // 使用finally块来关闭输出流、输入流
+        finally {
+            try {
+                if (out != null) { out.close();}
+                if (in != null) {in.close();}
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
     private void  sendPost(SendAlarm sendAlarm,String urlS){
         JSONObject json = new JSONObject();
         json.put("time",sendAlarm.getTime());

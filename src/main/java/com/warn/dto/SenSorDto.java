@@ -17,6 +17,7 @@ public class SenSorDto {
     private OldMan oldMan;
     private Room room;
     private Equipment equipment;
+    private Integer generation;//1代还是二代
 
     public Integer getGatewayID() {
         return gatewayID;
@@ -81,5 +82,13 @@ public class SenSorDto {
 
     public void setEquipment(Equipment equipment) {
         this.equipment = equipment;
+    }
+
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
     }
 }

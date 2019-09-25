@@ -60,6 +60,33 @@ public class Tool {
         return sdf.format(date.getTime());
     }
 
+    public static String getYesOfDate(String date){
+        date = date + " " + "12:00:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        try{
+            Date formatDate = sdf.parse(date);
+            formatDate = new Date(formatDate.getTime() -  864000000);
+            date = sdf.format(formatDate);
+            return date.split(" ")[0];
+        }catch (Exception e){
+            e.getMessage();
+            return date;
+        }
+    }
+
+    public static Long StringToLong(String date) {
+      try{
+          SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+          sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+          Long ptime  = sdf.parse(date).getTime();
+          return ptime;
+          }catch (Exception e){
+          e.printStackTrace();
+      }
+        return new Long(0);
+    }
+
     public static String getYesYesDate(){//前天
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

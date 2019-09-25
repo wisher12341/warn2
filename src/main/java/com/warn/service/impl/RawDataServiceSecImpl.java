@@ -62,6 +62,7 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                     sensorCollection.setSensorID(255);
             }
         }
+        sensorCollection.setGeneration(senSorDto.getGeneration());
         sensorCollection.setSensorData(senSorDto.getSensorData());
         if( senSorDto.getTime() == null|| senSorDto.getTime().equals("") )
             sensorCollection.setDate(Tool.getDate());
@@ -143,6 +144,7 @@ public class RawDataServiceSecImpl implements RawDataServiceSec {
                     sensorCollection.setSensorID(255);
             }
         }
+        sensorCollection.setGeneration(senSorDto.getGeneration());
         sensorCollection.setSensorData(senSorDto.getSensorData());
         if( senSorDto.getTime() == null|| senSorDto.getTime().equals("") )
             sensorCollection.setDate(Tool.getDate());

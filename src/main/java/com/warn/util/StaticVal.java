@@ -25,6 +25,9 @@ public class StaticVal {
 
     public static String url ="http://47.103.137.244:81/alarm/Forbidden";
 
+    public static String url2 ="http://47.103.137.244:83/alarm/Forbidden";
+
+
 //    public static String url_1 =
 
 }

@@ -9,4 +9,6 @@ public class Const {
 	public static final String COOKIEDOMAINNAME = "2015_V_5_SSM";   //自己随便定义
 	// 加密cookie时的网站自定码
 	public static final String WEBKEY = "2015_V_5_SSM";  	 	//自己随便定义
+
+	public static long date_old = new Long("1565156901000");
 }

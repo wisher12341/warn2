@@ -89,14 +89,14 @@ public class SensorTransferSec {
         return senSorDtos;
     }
 
-    public String timeDel(SensorCollection sensorCollection){
-        String time="";
-        time+=sensorCollection.getYear()+"-";
-        time+=((sensorCollection.getMonth().length() == 1) ? "0" + sensorCollection.getMonth() : sensorCollection.getMonth())+"-";
-        time+=((sensorCollection.getDay().length() == 1) ? "0" + sensorCollection.getDay() : sensorCollection.getDay())+"  ";
-        time+=((sensorCollection.getHour().length() == 1) ? "0" + sensorCollection.getHour() : sensorCollection.getHour())+":";
-        time+=((sensorCollection.getMinute().length() == 1) ? "0" + sensorCollection.getMinute() : sensorCollection.getMinute())+":";
-        time+=((sensorCollection.getSecond().length() == 1) ? "0" + sensorCollection.getSecond() : sensorCollection.getSecond());
-        return time;
-    }
+//    public String timeDel(SensorCollection sensorCollection){
+//        String time="";
+//        time+=sensorCollection.getYear()+"-";
+//        time+=((sensorCollection.getMonth().length() == 1) ? "0" + sensorCollection.getMonth() : sensorCollection.getMonth())+"-";
+//        time+=((sensorCollection.getDay().length() == 1) ? "0" + sensorCollection.getDay() : sensorCollection.getDay())+"  ";
+//        time+=((sensorCollection.getHour().length() == 1) ? "0" + sensorCollection.getHour() : sensorCollection.getHour())+":";
+//        time+=((sensorCollection.getMinute().length() == 1) ? "0" + sensorCollection.getMinute() : sensorCollection.getMinute())+":";
+//        time+=((sensorCollection.getSecond().length() == 1) ? "0" + sensorCollection.getSecond() : sensorCollection.getSecond());
+//        return time;
+//    }
 }

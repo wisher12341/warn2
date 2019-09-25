@@ -29,7 +29,7 @@ public class SensorCollection implements Serializable {
     private Integer gatewayID;//网关ID  也就是人员ID
     private String date;
     private Integer endId;
-
+    private Integer generation;
     private String timeString;//日期 年月日  数据库本身没有该字段 方便条件查询
 
     public SensorCollection() {
@@ -159,6 +159,15 @@ public class SensorCollection implements Serializable {
 
     public void setEndId(Integer endId) {
         this.endId = endId;
+    }
+
+
+    public Integer getGeneration() {
+        return generation;
+    }
+
+    public void setGeneration(Integer generation) {
+        this.generation = generation;
     }
 
     @Override
