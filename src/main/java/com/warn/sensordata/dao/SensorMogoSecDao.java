@@ -15,7 +15,7 @@ public interface SensorMogoSecDao {
 
     MongoTemplate getMongoTemplate();
 
-    List<SensorCollection> findByTime(String start, String end, Integer gatewayID, List<Integer> closeWarns);
+    List<SensorCollection> findByTime(String start, String end, Integer gatewayID, List<Integer> closeWarns,Integer type);
 
     List<SensorCollection> findToStatistic(Integer gateWayId,List<Integer> sensorPointIds,Integer limit);
 

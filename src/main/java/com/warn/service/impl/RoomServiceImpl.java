@@ -128,7 +128,6 @@ public class RoomServiceImpl implements RoomService{
     }
 
     @Transactional
-    //因为之前浏览器缓存的原因 导致 删除时  传递的信息 错误  不得不这样处理  以后再改
     public void deleteRoomById(Room room) {
         //停止房间光强的定时器
         if(SensorServiceImpl.lightTimer.get(room)!=null){
@@ -178,7 +177,6 @@ public class RoomServiceImpl implements RoomService{
     public List<Room> getAllRoomByOldManId(Integer oldId) {
         return roomDao.getAllRoomByOldManId(oldId);
     }
-//不得不承认，年轻犯下的错
     public List<AutoValue> getAreasByRoomId(Integer rid){
         Room room = roomDao.getRoomById(rid);
         List<AutoValue> autoValues = new ArrayList<>();

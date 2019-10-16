@@ -32,11 +32,9 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
     @Autowired
     SensorDataDao sensorDataDao;
 
-    public List<SensorCollection> findByTime(String start, String end, Integer gatewayID, List<Integer> closeWarns) throws GetMDBException,WarnException {
+    public List<SensorCollection> findByTime(String start, String end, Integer gatewayID, List<Integer> closeWarns,Integer type) throws GetMDBException,WarnException {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-
-
         try {
             Long startTime = sdf.parse(start).getTime();
             Long endTime = sdf.parse(end).getTime();
@@ -47,14 +45,11 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
             for (Integer oid : closeWarns) {
                 gatewayIDs.add(oid);
             }
-
-            List<SensorCollection> sensorCollections1 = new ArrayList<>();
-            if(gatewayIDs.contains(43))
-               sensorCollections1 = sensorDataDao.findByTimeOld(43,startTime,endTime);
-            List<SensorCollection> sensorCollections = sensorDataDao.findByTime(gatewayIDs,startTime, endTime);
-            if(sensorCollections1.size() != 0)
-                sensorCollections.addAll(sensorCollections1);
-
+            List<SensorCollection> sensorCollections = new ArrayList<>();
+            if(type == 1){
+                sensorCollections = sensorDataDao.findByTime_fg(gatewayIDs,startTime,endTime);
+            }else
+                sensorCollections = sensorDataDao.findByTime(gatewayIDs,startTime,endTime);
             if(sensorCollections.size() != 0)
                 Collections.reverse(sensorCollections);
             return sensorCollections;

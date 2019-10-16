@@ -2081,7 +2081,7 @@ public class SensorServiceImpl implements SensorService{
                                     sendAlarm.setType("position");
                                     sendPost(sendAlarm,StaticVal.url);
                                 }
-                                else{
+
                                     DwrData dwrData = new DwrData();
                                     dwrData.setType("warn_position");
                                     dwrData.setWarn(warn);
@@ -2105,7 +2105,7 @@ public class SensorServiceImpl implements SensorService{
                                     //启动短信定时任务
                                     smsService.smsSwitch();
                                     SystemController.logger.info("已进行报警");
-                                }
+                                    sendPost2(dwrData,StaticVal.url2);
 
                                 //设置已经进行了一级报警
                                 warn1.put(sensorDataDeal.getOldMan(), true);
@@ -2126,7 +2126,7 @@ public class SensorServiceImpl implements SensorService{
                                     sendAlarm.setType("position");
                                     sendPost(sendAlarm,StaticVal.url);
                                 }
-                                else{
+
                                     DwrData dwrData = new DwrData();
                                     dwrData.setType("warn_position");
                                     dwrData.setWarn(warn);
@@ -2144,7 +2144,7 @@ public class SensorServiceImpl implements SensorService{
                                     sensorDataDeal.getOldMan().setStatus(2);
                                     mapUpdate(sensorDataDeal.getOldMan());
                                     smsService.smsSwitch();
-                                }
+
 
 
                                 //启动短信定时任务

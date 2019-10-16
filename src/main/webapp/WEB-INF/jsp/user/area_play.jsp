@@ -73,15 +73,15 @@
          <div class="title"></div>
          <div id="main2"  ></div>
      </div>
-    <div id="mainLineDiv"  class="tu">
+    <div id="mainLineDiv" style="width:1400px;" class="tu">
         <div class="title"></div>
         <div id="mainLine"  ></div>
     </div>
-     <div id="mainLine1Div"  class="tu">
+     <div id="mainLine1Div" style="width:1400px;" class="tu">
          <div class="title"></div>
         <div id="mainLine1" ></div>
      </div>
-     <div id="mainLine2Div"  class="tu">
+     <div id="mainLine2Div" style="width:1400px;" class="tu">
          <div class="title"></div>
         <div id="mainLine2"  ></div>
      </div>

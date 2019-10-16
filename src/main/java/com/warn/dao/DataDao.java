@@ -15,6 +15,8 @@ public interface DataDao {
 
     Long getDatagridTotalNG(@Param("oldMan")OldMan oldMan);
 
+    Integer IsGatewayExist(Integer gatewayId);
+
     List<OldMan> datagridUser(@Param("page")PageHelper page,@Param("oldMan")OldMan oldMan);//两个参数的话 要加Param
 
     List<OldMan> datagridNGUser(@Param("page")PageHelper page,@Param("oldMan")OldMan oldMan);

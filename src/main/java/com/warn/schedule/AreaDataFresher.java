@@ -23,7 +23,7 @@ public class AreaDataFresher {
     @Autowired
     SensorDataDao sensorDataDao;
 
-    @Scheduled(cron = "0 2 0-12 * * ?")
+//    @Scheduled(cron = "0 2 0-12 * * ?")
     public void updateArea(){
         statisticService.getStatisticData(48);
         statisticService.getStatisticData(43);
@@ -32,9 +32,9 @@ public class AreaDataFresher {
     }
 
     //@Scheduled(cron = "0 0 12 * * ?")
-    public void check(){
-        statisticService.checkStatistic(48,155);
-    }
+//    public void check(){
+//        statisticService.checkStatistic(48,155);
+//    }
 
   // @Scheduled(cron = "0 0 0-12 * * ?")
     public void updateArea2(){
@@ -43,7 +43,7 @@ public class AreaDataFresher {
         statisticService.getStatisticData(42);
     }
 
-    @Scheduled(cron = "0 0 17 * * *")
+//   @Scheduled(cron = "0 0 17 * * *")
     public void recordForSql(){
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -51,10 +51,18 @@ public class AreaDataFresher {
         SensorCollection sensorCollection = sensorDataDao.getDateEndRecord(Tool.getYesDate());
         sensorCollection.setTimeString(Tool.getYesDate());
         sensorDataDao.addDateRecord(sensorCollection);
-
+    }
+//    @Scheduled(cron = "0 2 17 * * *")
+    public void recordForSql_fg(){
+        Date date = new Date();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        SensorCollection sensorCollection = sensorDataDao.getDateEndRecord_fg(Tool.getYesDate());
+        sensorCollection.setTimeString(Tool.getYesDate());
+        sensorDataDao.addDateRecord_fg(sensorCollection);
     }
 
-   @Scheduled(cron = "0 5 17 * * *")
+//   @Scheduled(cron = "0 5 17 * * *")
     public void recordGatewayForSql(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));

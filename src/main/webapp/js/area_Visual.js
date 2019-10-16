@@ -98,6 +98,11 @@ function timeSearch() {
                             ]
 
                         };
+                        if(i == 0){
+                            $("#mainLineDiv").hide();
+                            $("#mainLine1Div").hide();
+                            $("#mainLine2Div").hide();
+                        }
                         switch(i) {
                             case 0:
                                 $("#mainLineDiv .title").html(data.data[0].roomName);
@@ -184,7 +189,6 @@ function roomsB(){
         async:false,
         success:function(data) {
             if (data.success) {
-
                 //柱状图
                 for(var i = 0;i<data.data.length;i++){
                     var xAxisData = [];
@@ -268,6 +272,11 @@ function roomsB(){
                         ]
 
                     };
+                    if(i == 0){
+                        $("#mainLineDiv .title").html(null);
+                        $("#mainLine1Div .title").html(null);
+                        $("#mainLine2Div .title").html(null);
+                    }
                     switch(i) {
                         case 0:
                             $("#mainLineDiv .title").html(data.data[0].roomName);
@@ -396,6 +405,12 @@ $(function(){
                             ],
                             series: seriesData
                         };
+                        if(i == 0){
+                            $("#mainDiv .title").html(null);
+                            $("#main1Div .title").html(null);
+                            $("#main2Div .title").html(null);
+                        }
+
                         switch(i) {
                             case 0:
                                 $("#mainDiv .title").html(data.data[0].roomName);

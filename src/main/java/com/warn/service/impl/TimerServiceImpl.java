@@ -169,9 +169,9 @@ public class TimerServiceImpl implements TimerService {
                             //从mongodb数据库获得该时间段 该老人的数据
 //                            OldMan oldMan=dataDao.getOldManByOid(timeDto.getOldMan().getOid());
                             if(oldMan.getVersion() == 2)
-                            sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns);
+                            sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns,2);
                             else {
-                                sensorCollectionListAll = sensorMogoDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns);
+                                sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns,1);
                                 Collections.sort(sensorCollectionListAll, new Comparator<SensorCollection>() {
                                     @Override
                                     public int compare(SensorCollection o1, SensorCollection o2) {

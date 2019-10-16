@@ -41,7 +41,7 @@ function saveOldMan(){
                 $('#dlg_addOldMan').dialog('close');
                 $('#datagrid').datagrid('reload');
             } else {
-                mesTitle = '新增失败';
+                mesTitle = '新增失败,检查网关是否重复';
             }
             $.messager.show({
                 title: mesTitle,

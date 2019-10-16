@@ -1,5 +1,6 @@
 package com.warn.service;
 
+import com.warn.dto.Result;
 import com.warn.entity.OldMan;
 import com.warn.dto.PageHelper;
 
@@ -18,7 +19,7 @@ public interface DataService {
 
     List<OldMan> datagridNGUser(PageHelper page,OldMan oldman);
     //添加老人
-    void addOldman(OldMan oldMan, Integer segmentTwo_Ten);
+    Result addOldman(OldMan oldMan, Integer segmentTwo_Ten);
     //修改老人
     void editOldman(OldMan oldMan,Integer segmentTwo_Ten);
     //删除老人

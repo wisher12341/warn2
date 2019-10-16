@@ -18,6 +18,7 @@ import com.warn.service.StatisticService;
 import com.warn.service.WarnHistoryService;
 import com.warn.util.DynamicDataSourceHolder;
 import com.warn.util.Tool.Tool;
+import org.omg.CORBA.MARSHAL;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,9 +45,11 @@ public class StatisticServiceImpl implements StatisticService  {
 
 
    // public static Map<OldMan,Boolean> doorS=new HashMap<OldMan,Boolean>();//存储老人是否出门了（门动的时间）  出门了就不在计数;
-   public static Boolean out = false;
-   public static Boolean judge = false;
-   public static Boolean key = true;
+   public static Map<Integer,Boolean> out = new HashMap<>();//initial false
+   public static Map<Integer,Boolean> judge = new HashMap<>();//initial false
+   public static Map<Integer,Boolean> key = new HashMap<>();//initial true
+
+   //public static Map<String,Integer> AreaNum = new HashMap<>();
    @Override
     public void getStatisticData(Integer gatewayId){
 
@@ -65,17 +68,21 @@ public class StatisticServiceImpl implements StatisticService  {
         Integer areas[][] = new Integer[11][11];
         String statisticInfo[] = new String[11];
         for(Room room:roomList) {//更新，先获取今天的数据，如果没有就从零开始
-            if (areaStatistics.size() == 0)
+            if (areaStatistics.size() == 0){
                 for (int j = 0; j <= 10; j++) {
-                    areas[Integer.parseInt(room.getCollectId())][j] = 0;
+                    areas[Integer.parseInt(room.getCollectId())][j] = 0;//collectId即每个采集点、就是房间
                     areas[0][10] = 0;
                     areas[0][0] = 0;
                 }
+                out.put(gatewayId,false);
+                judge.put(gatewayId,false);
+                key.put(gatewayId,true);
+            }
             else{
                 for (AreaStatistic areaStatistic : areaStatistics) {
                     if(areaStatistic.getRoomId() == room.getRid()){
                         String tempArea[] = areaStatistic.getStatisticInfo().split("#");
-                        areas[Integer.parseInt(room.getCollectId())][0] = 0;
+                        areas[Integer.parseInt(room.getCollectId())][0] = 0;//把户外设为0？
                         for(int j = 0; j <= 10 ; j++)
                             areas[Integer.parseInt(room.getCollectId())][j] = Integer.parseInt(tempArea[j]);
                     }
@@ -100,26 +107,26 @@ public class StatisticServiceImpl implements StatisticService  {
 
         Set<String> zero = new HashSet<>();
         // for(int i = limit - 1; i >=0 ; i--){
-       Integer tempY = 10;
-       Integer tempX = 0;
+       Integer tempY = 10;//用来标其他区域
+       Integer tempX = 0;//同上
         for(int i=0;i<sensorCollections.size();i++){
             SensorCollection sensorCollection = sensorCollections.get(i);
-            if(judge)//衔接上一个时间段的出门的判断
+            if(judge.get(gatewayId))//衔接上一个时间段的出门的判断
                 for(int j = i;j <= rSize * 2 * 2;j ++){
                     SensorCollection sensorCollection1 = sensorCollections.get(i+j);
                     if(sensorCollection1.getSensorID() == 1)
                         if(sensorCollection1.getSensorData() != 0){
-                            out = false;//没出门
+                            out.put(gatewayId,false);//没出门
                             break;
                         }
                     if(j == rSize * 4)
-                        out = true;//出门了
+                        out.put(gatewayId,true);//出门了
                 }
-            if(sensorCollection.getSensorID() == 1){
+            if(sensorCollection.getSensorID() == 1){//如果是行为数据
                 if(sensorCollection.getSensorData() == 0){
                     zero.add(sensorCollection.getSensorPointID());
                     if(zero.size() == rSize ){//出门了就户外，没出门就算其他区域
-                        if(!out)
+                        if(!out.get(gatewayId))
                             areas[tempX][tempY]++;
                         else
                             areas[0][0]++;
@@ -131,21 +138,21 @@ public class StatisticServiceImpl implements StatisticService  {
                     tempX = Integer.parseInt(sensorCollection.getSensorPointID());
                     tempY = sensorCollection.getSensorData();
                     zero.clear();
-                    out = false;
+                    out.put(gatewayId,false);
                 }
             }else{
                 if(sensorCollections.size() - i < rSize * 2 * 4)
-                    judge = true;
+                    judge.put(gatewayId,true);
                 else
                     for(int j = rSize * 2 * 2; j < rSize * 8 ; j++){ //出门判断(有门的霍尔数据的2-4分钟内，房间内 没有人的数据 的话，判断为出门)
                         SensorCollection sensorCollection1 = sensorCollections.get(i+j);
                         if(sensorCollection1.getSensorID() == 1)
                             if(sensorCollection1.getSensorData() != 0){
-                                out = false;//没出门
+                                out.put(gatewayId,false);//没出门
                                 break;
                             }
                         if(j == rSize * 8)
-                            out = true;//出门了
+                            out.put(gatewayId,true);//出门了
                     }
 
             }
@@ -188,12 +195,14 @@ public class StatisticServiceImpl implements StatisticService  {
     @Override
     public List<AreaVisualList> getStatisticArea(Integer oid,Integer rid,String time){
         //OldMan oldMan = dataDao.getOldManByOid(oid);
+        Map<String,Integer> areaNum = new HashMap<>();
         SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        String current =  date.format(new Date());//现在的时间
+        String current = date.format(new Date());//现在的时间
         String today = current.split(" ")[0];
         List<AreaVisualList> areaVisualLists = new ArrayList<>();
         List<AreaStatistic> areaStatistics = new ArrayList<>();
+        List<AreaVisual> areaVisuals = new ArrayList<>();
         Room room1 = new Room();
         if(time == null)
             areaStatistics = statisticDao.getStatisticInfo(today,oid);//就算取不到也不会报Null 的异常
@@ -201,24 +210,67 @@ public class StatisticServiceImpl implements StatisticService  {
             areaStatistics = statisticDao.getStatisticInfo(time,oid);
          if(areaStatistics.size() != 0)
              for(AreaStatistic areaStatistic:areaStatistics){
-                 Room room = roomDao.getRoomById(areaStatistic.getRoomId());
-                 AreaVisualList areaVisualList = new AreaVisualList();
+                 room1 = roomDao.getRoomById(areaStatistic.getRoomId());
                  List<AreaStatistic> areaStatistics1 = new ArrayList<>();
                  areaStatistics1.clear();
                  areaStatistics1.add(areaStatistic);
-                 List<AreaVisual> areaVisuals = setVisuals(areaStatistics1,room);
-                 areaVisualList.setAreaVisuals(areaVisuals);
-                 areaVisualList.setRoomName(room.getRoomName());
-                 areaVisualLists.add(areaVisualList);
+                 mergeVsiuals(areaStatistics1,room1,areaNum);
               }
-          else
-         {
-             AreaVisualList areaVisualList = new AreaVisualList();
-             List<AreaVisual> areaVisuals = setVisuals(areaStatistics,room1);
-             areaVisualList.setAreaVisuals(areaVisuals);
-             areaVisualLists.add(areaVisualList);
+         for(Map.Entry<String,Integer> entry:areaNum.entrySet()){
+             AreaVisual areaVisual = new AreaVisual();
+             areaVisual.setAreaName(entry.getKey());
+             if(entry.getKey().equals("户外"))
+                 areaVisual.setSumTime(entry.getValue() / areaStatistics.size());
+             else
+                 areaVisual.setSumTime(entry.getValue());
+             areaVisuals.add(areaVisual);
          }
+        AreaVisualList areaVisualList = new AreaVisualList();
+         areaVisualList.setAreaVisuals(areaVisuals);
+         areaVisualList.setRoomName("区域时间统计");
+         areaVisualLists.add(areaVisualList);
+         areaVisualLists.add(getAreaAverage(oid));
         return areaVisualLists;
+    }
+
+    private AreaVisualList getAreaAverage(Integer oid){
+        Map<String,Integer> areaNum = new HashMap<>();
+        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat week = new SimpleDateFormat("EEEE");
+        date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        week.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+        Date current = new Date();//现在的时间
+        List<String> dates = new ArrayList<>();
+        List<Room> roomList = roomDao.getAllRoomByOldManId(oid);
+        List<AreaVisualLists> visualLists = new ArrayList<>();
+        List<AreaVisual> areaVisuals = new ArrayList<>();
+        for(int j = 0; j < 7; j++){
+            dates.add(date.format(current).split(" ")[0]);
+            current = new Date(current.getTime() - 86400000);
+        }
+        for(Room room:roomList){
+            List<AreaStatistic> areaStatistics = statisticDao.getStatisitcInfos(dates,oid,room.getRid());//就算取不到也不会报Null 的异常
+            for(AreaStatistic areaStatistic:areaStatistics){
+                List<AreaStatistic> areaStatistics1 = new ArrayList<>();
+                areaStatistics1.clear();
+                areaStatistics1.add(areaStatistic);
+                mergeVsiuals(areaStatistics1,room,areaNum);
+            }
+        }
+        for(Map.Entry<String,Integer> entry:areaNum.entrySet()){
+            AreaVisual areaVisual = new AreaVisual();
+            areaVisual.setAreaName(entry.getKey());
+            if(entry.getKey().equals("户外"))
+                areaVisual.setSumTime(entry.getValue()/(7 * roomList.size()));
+            else
+                areaVisual.setSumTime(entry.getValue()/7);
+            areaVisuals.add(areaVisual);
+        }
+        AreaVisualList areaVisualList = new AreaVisualList();
+        areaVisualList.setAreaVisuals(areaVisuals);
+        areaVisualList.setRoomName("周平均值");
+        return areaVisualList;
+
     }
 
     @Override
@@ -263,81 +315,81 @@ public class StatisticServiceImpl implements StatisticService  {
 
     }
 
-    @Override
-    public void checkStatistic(Integer oid,Integer rid){
-        try {
-            Random r = new Random();
-            TimeUnit.SECONDS.sleep(r.nextInt(20));
-        }catch(Exception e){
-            System.out.println("timeunit wrong");
-        }
-        if(key){
-            key  = false;
-        }else
-            return;
-        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-        Date current = new Date();//现在的时间
-        List<AreaVisualList> areaVisualLists = new ArrayList<>();
-        List<AreaVisual> areaVisuals = new ArrayList<>();
-        current = new Date(current.getTime() - 86400000);
-        String today =  date.format(new Date()).split(" ")[0];
-        List<AreaStatistic> areaStatistic1 =  statisticDao.getStatisticInfo(today,oid);//就算取不到也不会报Null 的异常
-        Room room = roomDao.getRoomById(rid);
-        List<AreaVisual> areaVisuals1 = setVisuals(areaStatistic1,room);
-        for (int j = 0; j < 7; j++) {
-            AreaVisualList areaVisualList = new AreaVisualList();
-            String time = date.format(current).split(" ")[0];
-            areaVisualList.setDate(time);
-            List<AreaStatistic> areaStatistic = statisticDao.getStatisticInfo(time, oid);//就算取不到也不会报Null 的异常
-            if(areaStatistic.get(0).getNormal() == 0){
-                areaVisuals = setVisuals(areaStatistic,room);
-                areaVisualList.setAreaVisuals(areaVisuals);
-                areaVisualLists.add(areaVisualList);
-                current = new Date(current.getTime() - 86400000);
-            }else{
-                j--;
-            }
-        }
-        List<Threshold_statistic> threshold_statistics = thresholdDao.getThresholdSByRid(rid);
-        Integer[] average = {0,0,0,0,0,0,0,0,0,0,0};
-        Integer[] standard = {0,0,0,0,0,0,0,0,0,0,0};
-        for(int i = 0;i <= 10;i++){
-            Integer sum = 0;
-            for(int j = 0;j < 7;j++){
-                sum = sum + areaVisualLists.get(j).getAreaVisuals().get(i).getSumTime();
-            }
-            average[i] = sum / 7;
-            double sumd = 0;
-            double two = 2;
-            for(int j = 0;j < 7;j++){
-                sumd = sumd + Math.pow(areaVisualLists.get(j).getAreaVisuals().get(i).getSumTime().doubleValue()-average[i].doubleValue(),two);
-            }
-            standard[i] = (int)Math.sqrt(sumd/7);
-            AreaVisual areaVisual = areaVisuals1.get(i);
-            Integer deviation = Math.abs(areaVisual.getSumTime() - average[i]);
-            Integer threshold = getThreshold(threshold_statistics,areaVisual.getAreaNumber());
-            if(threshold != null)
-                if((threshold == 404 && deviation > standard[i]) || (threshold!=404 && deviation > threshold)){  //报警
-                    Warn_statistic warn_statistic = new Warn_statistic();
-                    OldMan oldMan = dataDao.getOldManByOid(oid);
-                    warn_statistic.setOldMan(oldMan);
-                    warn_statistic.setRoom(room.getRoomName());
-                    warn_statistic.setAreaInfo(areaVisual.getAreaName());
-                    warn_statistic.setDate(today);
-                    warn_statistic.setDeviation(deviation);
-                    DwrData dwrData = new DwrData();
-                    dwrData.setType("warn_statistic");
-                    AreaStatistic areaStatistic = areaStatistic1.get(0);
-                    areaStatistic.setNormal(1);
-                    statisticDao.updateNormal(areaStatistic);
-                    dwrData.setWarn_statistic(warn_statistic);
-                    warnHistoryService.addWarnHistory(dwrData);
-                    Remote.noticeNewOrder(dwrData);
-                }
-        }
-        key = true;
-    }
+//    @Override
+//    public void checkStatistic(Integer oid,Integer rid){
+//        try {
+//            Random r = new Random();
+//            TimeUnit.SECONDS.sleep(r.nextInt(20));
+//        }catch(Exception e){
+//            System.out.println("timeunit wrong");
+//        }
+//        if(key){
+//            key  = false;
+//        }else
+//            return;
+//        SimpleDateFormat date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+//        date.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+//        Date current = new Date();//现在的时间
+//        List<AreaVisualList> areaVisualLists = new ArrayList<>();
+//        List<AreaVisual> areaVisuals = new ArrayList<>();
+//        current = new Date(current.getTime() - 86400000);
+//        String today =  date.format(new Date()).split(" ")[0];
+//        List<AreaStatistic> areaStatistic1 =  statisticDao.getStatisticInfo(today,oid);//就算取不到也不会报Null 的异常
+//        Room room = roomDao.getRoomById(rid);
+//        List<AreaVisual> areaVisuals1 = setVisuals(areaStatistic1,room);
+//        for (int j = 0; j < 7; j++) {
+//            AreaVisualList areaVisualList = new AreaVisualList();
+//            String time = date.format(current).split(" ")[0];
+//            areaVisualList.setDate(time);
+//            List<AreaStatistic> areaStatistic = statisticDao.getStatisticInfo(time, oid);//就算取不到也不会报Null 的异常
+//            if(areaStatistic.get(0).getNormal() == 0){
+//                areaVisuals = setVisuals(areaStatistic,room);
+//                areaVisualList.setAreaVisuals(areaVisuals);
+//                areaVisualLists.add(areaVisualList);
+//                current = new Date(current.getTime() - 86400000);
+//            }else{
+//                j--;
+//            }
+//        }
+//        List<Threshold_statistic> threshold_statistics = thresholdDao.getThresholdSByRid(rid);
+//        Integer[] average = {0,0,0,0,0,0,0,0,0,0,0};
+//        Integer[] standard = {0,0,0,0,0,0,0,0,0,0,0};
+//        for(int i = 0;i <= 10;i++){
+//            Integer sum = 0;
+//            for(int j = 0;j < 7;j++){
+//                sum = sum + areaVisualLists.get(j).getAreaVisuals().get(i).getSumTime();
+//            }
+//            average[i] = sum / 7;
+//            double sumd = 0;
+//            double two = 2;
+//            for(int j = 0;j < 7;j++){
+//                sumd = sumd + Math.pow(areaVisualLists.get(j).getAreaVisuals().get(i).getSumTime().doubleValue()-average[i].doubleValue(),two);
+//            }
+//            standard[i] = (int)Math.sqrt(sumd/7);
+//            AreaVisual areaVisual = areaVisuals1.get(i);
+//            Integer deviation = Math.abs(areaVisual.getSumTime() - average[i]);
+//            Integer threshold = getThreshold(threshold_statistics,areaVisual.getAreaNumber());
+//            if(threshold != null)
+//                if((threshold == 404 && deviation > standard[i]) || (threshold!=404 && deviation > threshold)){  //报警
+//                    Warn_statistic warn_statistic = new Warn_statistic();
+//                    OldMan oldMan = dataDao.getOldManByOid(oid);
+//                    warn_statistic.setOldMan(oldMan);
+//                    warn_statistic.setRoom(room.getRoomName());
+//                    warn_statistic.setAreaInfo(areaVisual.getAreaName());
+//                    warn_statistic.setDate(today);
+//                    warn_statistic.setDeviation(deviation);
+//                    DwrData dwrData = new DwrData();
+//                    dwrData.setType("warn_statistic");
+//                    AreaStatistic areaStatistic = areaStatistic1.get(0);
+//                    areaStatistic.setNormal(1);
+//                    statisticDao.updateNormal(areaStatistic);
+//                    dwrData.setWarn_statistic(warn_statistic);
+//                    warnHistoryService.addWarnHistory(dwrData);
+//                    Remote.noticeNewOrder(dwrData);
+//                }
+//        }
+//        key = true;
+//    }
 
     private Integer getThreshold(List<Threshold_statistic> threshold_statistics,Integer num){
        for(Threshold_statistic threshold_statistic:threshold_statistics){
@@ -345,6 +397,51 @@ public class StatisticServiceImpl implements StatisticService  {
                return num;
        }
        return null;
+    }
+//    private void mergeVisualsD(List<AreaStatistic> areaStatistics, Room room, Map<String,Integer> areaNum,String date){
+//        String areaTime[] = areaStatistics.get(0).getStatisticInfo().split("#");
+//        for (int i = 0; i < areaTime.length; i++) {
+//            AreaVisual areaVisual = new AreaVisual();
+//            if(Tool.getPositionInfo(i,room).equals("户外"))
+//                areaVisual.setAreaName("户外"+"-"+date);
+//            else
+//                areaVisual.setAreaName(room.getRoomName() + ":" + Tool.getPositionInfo(i, room) + "-" + date);
+//            areaVisual.setAreaNumber(i);
+//            areaVisual.setSumTime(Integer.parseInt(areaTime[i]) / 2);//转化成分钟
+//            if(areaNum.containsKey(areaVisual.getAreaName())) {
+//                Integer sum = areaVisual.getSumTime() + areaNum.get(areaVisual.getAreaName());
+//                areaNum.put(areaVisual.getAreaName(),sum);
+//            }else
+//                areaNum.put(areaVisual.getAreaName(),areaVisual.getSumTime());
+//        }
+//    }
+    private void mergeVsiuals(List<AreaStatistic> areaStatistics,Room room,Map<String,Integer> areaNum){
+        if (areaStatistics.size() != 0) {
+            //List<Room> roomList = roomDao.getAllRoomByOldManId(oldMan.getOid());
+            String areaTime[] = areaStatistics.get(0).getStatisticInfo().split("#");
+            for (int i = 0; i < areaTime.length; i++) {
+                AreaVisual areaVisual = new AreaVisual();
+                if(Tool.getPositionInfo(i,room).equals("户外"))
+                    areaVisual.setAreaName("户外");
+                else
+                    areaVisual.setAreaName(room.getRoomName() + ":" + Tool.getPositionInfo(i, room));
+                areaVisual.setAreaNumber(i);
+                areaVisual.setSumTime(Integer.parseInt(areaTime[i]) / 2);//转化成分钟
+                if(areaNum.containsKey(areaVisual.getAreaName())){
+                    Integer sum = areaVisual.getSumTime() + areaNum.get(areaVisual.getAreaName());
+                    areaNum.put(areaVisual.getAreaName(),sum);
+                }else
+                    areaNum.put(areaVisual.getAreaName(),areaVisual.getSumTime());
+            }
+        } else {
+            for (int i = 0; i <= 10; i++) {
+                AreaVisual areaVisual = new AreaVisual();
+                areaVisual.setAreaName(room.getRoomName() + ":" + Tool.getPositionInfo(i, room));
+                areaVisual.setAreaNumber(i);
+                areaVisual.setSumTime(0);
+                areaNum.put(areaVisual.getAreaName(),areaVisual.getSumTime());
+            }
+        }
     }
 
     private List<AreaVisual> setVisuals(List<AreaStatistic> areaStatistic,Room room){
@@ -370,5 +467,7 @@ public class StatisticServiceImpl implements StatisticService  {
         }
         return areaVisuals;
     }
+
+
 
 }

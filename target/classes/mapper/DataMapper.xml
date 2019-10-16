@@ -90,6 +90,10 @@
         </if>
     </select>
 
+    <select id="IsGatewayExist" resultType="Integer">
+        select count(1) from oldman where gatewayID = #{gatewayId}
+    </select>
+
 
     <!--参数只有一个的话 可以直接用对象的属性值，但是有两个以上的话 就要 对象名.属性名-->
     <select id="datagridUser" resultMap="resultOldMan">

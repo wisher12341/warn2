@@ -189,7 +189,7 @@
 
     </select>
 
-    <select id="getSensorData_fg" resultType="com.warn.mongodb.model.SensorCollection">
+    <select id="getSensorData_fg" resultType="com.warn.sensordata.model.SecSensorCollection">
         select * from sensor_collection_primary  where 1=1
         <if test="sensor.gatewayIDs.size != 0">
             and gatewayID in
@@ -263,7 +263,6 @@
             </foreach>
         </if>
         and sensorID in (1,5)
-
         order by id DESC
     </select>
 
@@ -322,6 +321,10 @@
 
     <select id="getDateRecord" resultType="com.warn.mongodb.model.SensorCollection">
         select * from date_record where date = #{date}
+    </select>
+
+    <select id="getDateRecord_fg" resultType="com.warn.mongodb.model.SensorCollection">
+        select * from date_record_primary where date=#{date}
     </select>
 
     <select id="getDateRecord_old" resultType="com.warn.mongodb.model.SensorCollection">

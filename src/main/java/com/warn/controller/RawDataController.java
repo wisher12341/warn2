@@ -47,9 +47,10 @@ public class RawDataController {
     @ResponseBody
     @RequestMapping(value="/sensor/datagrid", method = RequestMethod.POST)
     public DataGrid sensordatagrid(PageHelper page, SenSorDto senSorDto) {
+        senSorDto.setGeneration(1);
         DataGrid dg = new DataGrid();
-        dg.setTotal(rawDataService.getsensorDatagridTotal(senSorDto));
-        List<SenSorDto> sensorCollections = rawDataService.datagridSensor(page,senSorDto);
+        dg.setTotal(rawDataServiceSec.getsensorDatagridTotal(senSorDto));
+        List<SenSorDto> sensorCollections = rawDataServiceSec.datagridSensor(page,senSorDto);
         dg.setRows(sensorCollections);
         return dg;
     }
@@ -66,6 +67,7 @@ public class RawDataController {
     @ResponseBody
     @RequestMapping(value="/sensorSec/datagrid", method = RequestMethod.POST)
     public DataGrid sensorSecdatagrid(PageHelper page, SenSorDto senSorDto) {
+        senSorDto.setGeneration(2);
         DataGrid dg = new DataGrid();
         dg.setTotal(rawDataServiceSec.getsensorDatagridTotal(senSorDto));
         List<SenSorDto> sensorCollections = rawDataServiceSec.datagridSensor(page,senSorDto);

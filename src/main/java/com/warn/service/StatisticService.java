@@ -15,7 +15,7 @@ public interface StatisticService {
 
     List<AreaVisualLists> getStatisticAreaList(Integer oid, Integer rid);
 
-    void checkStatistic(Integer oid,Integer rid);
+//    void checkStatistic(Integer oid,Integer rid);
 
     void transferData(List<SensorData> sensorDatas);
 }

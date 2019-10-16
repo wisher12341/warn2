@@ -2,6 +2,7 @@ package com.warn.service.impl;
 
 import com.warn.controller.SystemController;
 import com.warn.dao.*;
+import com.warn.dto.Result;
 import com.warn.entity.OldMan;
 import com.warn.dto.PageHelper;
 import com.warn.entity.Room;
@@ -10,6 +11,7 @@ import com.warn.util.StaticVal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -110,7 +112,7 @@ public class DataServiceImpl implements DataService{
     }
 
     @Transactional
-    public void addOldman(OldMan oldMan, Integer segmentTwo_Ten) {
+    public Result addOldman(OldMan oldMan, Integer segmentTwo_Ten) {
 //        if(gatewayTwo_Ten.intValue()==2){
 //            //添加时，输入的网关是二进制的， 转换成十进制后，再存入数据库
 //            oldMan.setGatewayID(Integer.valueOf(oldMan.getGatewayID(),2).toString());
@@ -125,14 +127,21 @@ public class DataServiceImpl implements DataService{
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
         String dateNowStr = sdf.format(d);
         oldMan.setOldRegtime(dateNowStr);
+        Integer exist = dataDao.IsGatewayExist(Integer.parseInt(oldMan.getGatewayID()));
+        if(exist != 0)
+            return new Result(false,"有重复网关");
+        else{
+            dataDao.addOldman(oldMan);
+            oldMan.getRelatives().setOldId(oldMan.getOid());
+            dataDao.addRelatives(oldMan.getRelatives());
+            thresholdDao.addDoorThresholdByOid(oldMan.getOid());
+            StaticVal.oldManTimer.put(oldMan,false);
+             return new Result(true);
+        }
 //        oldMan.getRelatives().setOldId(oldMan.getOid());
-        dataDao.addOldman(oldMan);
-        oldMan.getRelatives().setOldId(oldMan.getOid());
-        dataDao.addRelatives(oldMan.getRelatives());
-        thresholdDao.addDoorThresholdByOid(oldMan.getOid());
+
 
         //添加该老人的定时器
-        StaticVal.oldManTimer.put(oldMan,false);
     }
 
     @Transactional

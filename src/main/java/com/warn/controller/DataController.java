@@ -99,8 +99,7 @@ public class DataController {
     @ResponseBody
     @RequestMapping(value = "/addOldman",method = RequestMethod.POST)
     public Result addOldman(OldMan oldMan,@RequestParam Integer segmentTwo_Ten){
-        dataService.addOldman(oldMan,segmentTwo_Ten);
-        return new Result(true);
+        return dataService.addOldman(oldMan,segmentTwo_Ten);
     }
 
     /**

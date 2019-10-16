@@ -26,7 +26,8 @@
         <!--获取连接超时时间-->
         <property name="checkoutTimeout" value="6000"/>
         <!--当获取连接失败重试次数-->
-        <property name="acquireRetryAttempts" value="2"/>
+        <property name="acquireRetryAttempts" value="3"/>
+
     </bean>
     <bean id="sensorDataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
         <property name="driverClass" value="${jdbc.driver}"/>
