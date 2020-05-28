@@ -161,6 +161,10 @@
                 <td><input name="gatewayID" class="auto" type="text"/></td>
             </tr>
             <tr>
+                <td><span class="addButton">型号：</span></td>
+                <td><input name="version" value="1" type="radio"/>1代<input name="version" value="2" type="radio">2代</td>
+            </tr>
+            <tr>
                 <td><span class="addButton">网段标识：</span></td>
                 <td><input name="segmentTwo_TenE" value="2" type="radio"/>二进制<input name="segmentTwo_TenE" value="10" type="radio">十进制</td>
             </tr>
@@ -230,6 +234,10 @@
           <tr>
               <td><span class="addButton">网关：</span></td>
               <td><input name="gatewayID" class="easyui-textbox" type="text"></td>
+          </tr>
+          <tr>
+              <td><span class="addButton">型号：</span></td>
+              <td><input name="version" value="1" type="radio"/>1代<input name="version" value="2" type="radio">2代</td>
           </tr>
           <tr>
               <td><span class="addButton">网段标识：</span></td>

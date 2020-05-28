@@ -21,6 +21,8 @@ public interface DataDao {
 
     List<OldMan> datagridNGUser(@Param("page")PageHelper page,@Param("oldMan")OldMan oldMan);
 
+    List<Integer> getOldsToStatistic();
+
     Integer addOldman(OldMan oldMan);
 
     void editOldman(OldMan oldMan);

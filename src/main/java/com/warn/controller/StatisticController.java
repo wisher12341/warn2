@@ -40,8 +40,11 @@ public class StatisticController {
 
     @RequestMapping(value = "/areaData",method  = RequestMethod.GET)
     @ResponseBody
-    public Result getAreaData(Integer gatewatId,Integer sensorPointId){
-        statisticService.getStatisticData(gatewatId);
+    public Result getAreaData(){
+        List<Integer> gatewayIDs = dataDao.getOldsToStatistic();
+        for(Integer gatewayID:gatewayIDs){
+            statisticService.getStatisticData(gatewayID);
+        }
         return new Result(true);
     }
 

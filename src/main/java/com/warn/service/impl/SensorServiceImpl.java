@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -2170,7 +2171,7 @@ public class SensorServiceImpl implements SensorService{
 //            throw new WarnException("move inner error:"+e.getMessage());
 //        }
     }
-    private void  sendPost2(DwrData sendAlarm,String urlS){
+    private void  sendPost2(DwrData sendAlarm,String urlS) {
         //JSONObject json = new JSONObject();
         //
         JSONObject json = JSONObject.fromObject(sendAlarm);
@@ -2193,7 +2194,9 @@ public class SensorServiceImpl implements SensorService{
             URLConnection conn = url.openConnection();
             HttpURLConnection httpUrlConnection = (HttpURLConnection) conn;
             // 设置请求属性
-            httpUrlConnection.setRequestProperty("Content-Type", "application/json");
+            httpUrlConnection.setRequestProperty("Content-Type", "application/json;charset=utf-8");
+            httpUrlConnection.setRequestProperty("Accept-Charset","utf-8");
+            httpUrlConnection.setRequestProperty("Charset","utf-8");
             // 发送POST请求必须设置如下两行
             httpUrlConnection.setDoOutput(true);
             httpUrlConnection.setDoInput(true);
@@ -2203,7 +2206,7 @@ public class SensorServiceImpl implements SensorService{
             out = new DataOutputStream(httpUrlConnection.getOutputStream());
             // 获取URLConnection对象对应的输出流
 
-            out.writeBytes(content);
+            out.write(content.getBytes("UTF-8"));
             // 发送请求参数
             // flush输出流的缓冲
             out.flush();

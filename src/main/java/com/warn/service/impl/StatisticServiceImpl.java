@@ -65,8 +65,11 @@ public class StatisticServiceImpl implements StatisticService  {
         Integer rSize = roomList.size();
         List<AreaStatistic> areaStatistics = statisticDao.getStatisticByDate(today,oldMan.getOid());
 
-        Integer areas[][] = new Integer[11][11];
-        String statisticInfo[] = new String[11];
+        Integer areas[][] = new Integer[3000][11];
+        String statisticInfo[] = new String[3000];
+       out.put(gatewayId,false);
+       judge.put(gatewayId,false);
+       key.put(gatewayId,true);
         for(Room room:roomList) {//更新，先获取今天的数据，如果没有就从零开始
             if (areaStatistics.size() == 0){
                 for (int j = 0; j <= 10; j++) {
@@ -74,9 +77,7 @@ public class StatisticServiceImpl implements StatisticService  {
                     areas[0][10] = 0;
                     areas[0][0] = 0;
                 }
-                out.put(gatewayId,false);
-                judge.put(gatewayId,false);
-                key.put(gatewayId,true);
+
             }
             else{
                 for (AreaStatistic areaStatistic : areaStatistics) {

@@ -1,5 +1,6 @@
 package com.warn.schedule;
 
+import com.warn.dao.DataDao;
 import com.warn.dao.SensorDataDao;
 import com.warn.entity.SensorData;
 import com.warn.mongodb.model.SensorCollection;
@@ -22,12 +23,18 @@ public class AreaDataFresher {
     StatisticService statisticService;
     @Autowired
     SensorDataDao sensorDataDao;
+    @Autowired
+    DataDao dataDao;
 
-//    @Scheduled(cron = "0 2 0-12 * * ?")
+    //@Scheduled(cron = "0 2 0-12 * * ?")
     public void updateArea(){
-        statisticService.getStatisticData(48);
-        statisticService.getStatisticData(43);
-        statisticService.getStatisticData(42);
+        List<Integer> gatewayIDs = dataDao.getOldsToStatistic();
+        for(Integer gatewayID:gatewayIDs){
+            statisticService.getStatisticData(gatewayID);
+        }
+//        statisticService.getStatisticData(48);
+//        statisticService.getStatisticData(43);
+//        statisticService.getStatisticData(42);
 
     }
 
@@ -43,7 +50,7 @@ public class AreaDataFresher {
         statisticService.getStatisticData(42);
     }
 
-//   @Scheduled(cron = "0 0 17 * * *")
+  // @Scheduled(cron = "0 0 17 * * *")
     public void recordForSql(){
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -52,7 +59,7 @@ public class AreaDataFresher {
         sensorCollection.setTimeString(Tool.getYesDate());
         sensorDataDao.addDateRecord(sensorCollection);
     }
-//    @Scheduled(cron = "0 2 17 * * *")
+    //@Scheduled(cron = "0 2 17 * * *")
     public void recordForSql_fg(){
         Date date = new Date();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -62,7 +69,7 @@ public class AreaDataFresher {
         sensorDataDao.addDateRecord_fg(sensorCollection);
     }
 
-//   @Scheduled(cron = "0 5 17 * * *")
+   //@Scheduled(cron = "0 5 17 * * *")
     public void recordGatewayForSql(){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));

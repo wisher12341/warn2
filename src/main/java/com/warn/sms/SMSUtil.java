@@ -1,14 +1,15 @@
 package com.warn.sms;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.taobao.api.DefaultTaobaoClient;
-import com.taobao.api.TaobaoClient;
-import com.taobao.api.request.AlibabaAliqinFcSmsNumSendRequest;
-import com.taobao.api.response.AlibabaAliqinFcSmsNumSendResponse;
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.IAcsClient;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
+import com.aliyuncs.profile.DefaultProfile;
+import com.aliyuncs.profile.IClientProfile;
 import com.warn.controller.SystemController;
 import com.warn.dao.SmsDao;
-import com.warn.dao.SystemDao;
 import com.warn.dao.WarnHistoryDao;
 import com.warn.entity.SmsOrder;
 import com.warn.entity.SmsSendEntity;
@@ -24,6 +25,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static com.warn.sms.SMSConstants.SMS_SIGN;
+import static com.warn.sms.SMSConstants.SMS_TEMPLATE_CODE;
+import static com.warn.sms.SmsDemo.*;
+
 /**
  * 短信通知工具类
  * Created by netlab606 on 2017/5/28.
@@ -37,18 +42,7 @@ public class SMSUtil {
     @Autowired
     WarnHistoryDao warnHistoryDao;
 
-    //请求地址
-    private static String URL = SMSConstants.URL;
-    //TOP分配给应用的AppKey
-    private static String APP_KEY = SMSConstants.APP_KEY;
-    //短信签名AppKey对应的secret值
-    private static String SECRET = SMSConstants.SECRET;
-    //短信类型，传入值请填写normal
-    private static String SMS_TYPE = SMSConstants.SMS_TYPE;
-    //阿里大于账户配置的短信签名
-    private static String SMS_SIGN = SMSConstants.SMS_SIGN;
-    //阿里大于账户配置的短信模板ID
-    private static String SMS_TEMPLATE_CODE = SMSConstants.SMS_TEMPLATE_CODE;
+
 
     //发送短信的定时任务
     public static Map<String,ScheduledExecutorService> smsTimer=new HashMap<>();//短信的定时任务
@@ -63,47 +57,50 @@ public class SMSUtil {
      * @return
      * @throws Exception
      */
-    public String sendMsg(String phone,SMSParam smsParam) throws Exception {
-        //System.out.println("验证码code:"+code);
-        //获得第三方阿里云短信通知接口
-        TaobaoClient client = new DefaultTaobaoClient(URL, APP_KEY, SECRET);
-        //获得短信通知请求头
-        AlibabaAliqinFcSmsNumSendRequest req = new AlibabaAliqinFcSmsNumSendRequest();
-        //短信通知类型
-        req.setSmsType(SMS_TYPE);
-        //短信通知签名
-        req.setSmsFreeSignName(SMS_SIGN);
-        //短信接收号码:传入号码为11位手机号码不能加0或+86,最多传入200个号码,多个号码以逗号分隔
-        req.setRecNum(phone);
-        //短信通知参数json格式
-
-        String smsParamJson = JSONObject.toJSONString(smsParam);
-        SystemController.logger.info("短信通知参数smsParam:"+smsParam);
-        //短信模板变量，传参规则{"key":"value"}，key的名字须和申请模板中的变量名一致，多个变量之间以逗号隔开
-        req.setSmsParamString(smsParamJson);
-        //短信模板ID
-        req.setSmsTemplateCode(SMS_TEMPLATE_CODE);
-        AlibabaAliqinFcSmsNumSendResponse rsp = client.execute(req);
-        JSONObject json = JSON.parseObject(rsp.getBody());
-        String jsonStr = json.getString("alibaba_aliqin_fc_sms_num_send_response");
-        if (jsonStr!=null&&!jsonStr.isEmpty() ) {
-            json = JSON.parseObject(jsonStr);
-            String result = json.getString("result");
-            if (result!=null && !result.isEmpty()) {
-                json = JSON.parseObject(result);
-                SystemController.logger.info("json:"+json);
-                String errorCode = json.getString("err_code");
-                if ("0".equals(errorCode)) {
-                    //发送成功
-                    return "success";
-                } else {
-                    //发送失败
-                    return "false";
-                }
-            }
+    public Boolean sendMsg(String phone,SMSParam smsParam) throws Exception {
+        SystemController.logger.info("1");
+        try {
+            SendSmsResponse sendSmsResponse = sendSms(phone, smsParam);
+            return sendSmsResponse.getCode().equals("OK");
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        //发送失败
-        return "false";
+        return false;
+
+    }
+
+    public static SendSmsResponse sendSms(String phone,SMSParam smsParam) throws ClientException {
+        SystemController.logger.info("2");
+        //可自助调整超时时间
+        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
+        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
+
+        //初始化acsClient,暂不支持region化
+        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
+        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
+        IAcsClient acsClient = new DefaultAcsClient(profile);
+
+        //组装请求对象-具体描述见控制台-文档部分内容
+        SendSmsRequest request = new SendSmsRequest();
+        //必填:待发送手机号
+        request.setPhoneNumbers(phone);
+        //必填:短信签名-可在短信控制台中找到
+        request.setSignName(SMS_SIGN);
+        //必填:短信模板-可在短信控制台中找到
+        request.setTemplateCode(SMS_TEMPLATE_CODE);
+        //可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
+        request.setTemplateParam(String.valueOf(JSON.toJSON(smsParam)));
+
+        //选填-上行短信扩展码(无特殊需求用户请忽略此字段)
+        //request.setSmsUpExtendCode("90997");
+
+        //可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
+        request.setOutId("yourOutId");
+
+        //hint 此处可能会抛出异常，注意catch
+        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
+
+        return sendSmsResponse;
     }
 
 
@@ -173,7 +170,7 @@ public class SMSUtil {
                                             if(smsSendEntity.getOrderSms()==smsOrder.getOrderSms()) {
                                                 SystemController.logger.info(smsSendEntity.toString());
                                                 try {
-                                                    String result = sendMsg(smsSendEntity.getPhone(), smsParam);
+                                                    Boolean result = sendMsg(smsSendEntity.getPhone(), smsParam);
                                                     SystemController.logger.info("短信：发送结果：" + result);
                                                     sms.put(warnData,smsOrder.getOrderSms());
 //                                                    SystemController.logger.info("短信发送成功");
@@ -184,10 +181,10 @@ public class SMSUtil {
                                             }
                                         }
                                         //待所有的手机的 短信都已发完  将该记录 设置为  短信已发的状态
-                                        if(maxOrder==sms.get(warnData)){
+                                        if(sms.get(warnData)!=null &&maxOrder==sms.get(warnData)){
                                             warnHistoryDao.updateSMSByWid(warnData.getWdid());
                                         }
-                                        break;
+                                        continue;
                                     }
                                 }
 

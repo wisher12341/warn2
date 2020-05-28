@@ -6,7 +6,9 @@
   <link rel="stylesheet" type="text/css" href="${path}/css/data_css.css"/>
   <script type="text/javascript" src="${path}/js/equip_js.js"></script>
     <script type="text/javascript" src="${path}/js/common.js"></script>
-  <%--<script type="text/javascript" src="${path}/js/paper_author.js"></script>--%>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<%--<script type="text/javascript" src="${path}/js/paper_author.js"></script>--%>
 </head>
 <body class="easyui-layout" fit="true">
 <div region="center" border="false" style="overflow: hidden;">
@@ -141,7 +143,7 @@
         <tr>
           <tr>
               <td><span class="addButton"></span></td>
-              <td><input name="eid" class="easyui-textbox" type="text" data-options="validType:'length[1,4]'"></td></tr>
+              <td><input id="equipmentId" name="eid" class="easyui-textbox" type="text" data-options="validType:'length[1,4]'"></td></tr>
           <tr>
             <td><span class="addButton">设备名：</span></td>
           <td><input name="eName" class="easyui-textbox" type="text"></td>

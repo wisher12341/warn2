@@ -91,26 +91,51 @@ function addDialog(){
 }
 
 function saveEquip(){
-    $('#addEquip').form('submit', {
-        url: url,
-        onSubmit: function () {
-            return $(this).form();
-        },
-        success: function (result) {
-            var result = eval('(' + result + ')');
-            if (result.success) {
-                mesTitle = '新增成功';
-                $('#dlg_addEquip').dialog('close');
-                $('#datagrid').datagrid('reload');
-            } else {
-                mesTitle = '新增失败';
+    var eid  = document.getElementById("equipmentId").value;
+    alert(eid);
+    if (eid == "") {
+        swal({
+            text: "设备ID不能为空！",
+            icon: "error"
+        })
+    }else{
+        eid = parseInt(eid);
+        if(!isNaN(eid)){
+            if(eid < 0){
+                swal({
+                    text: "设备ID输入格式有误！",
+                    icon: "error"
+                })
+            }else{
+                $('#addEquip').form('submit', {
+                    url: url,
+                    onSubmit: function () {
+                        return $(this).form();
+                    },
+                    success: function (result) {
+                        var result = eval('(' + result + ')');
+                        if (result.success) {
+                            mesTitle = '新增成功';
+                            $('#dlg_addEquip').dialog('close');
+                            $('#datagrid').datagrid('reload');
+                        } else {
+                            mesTitle = '新增失败';
+                        }
+                        $.messager.show({
+                            title: mesTitle,
+                            msg: result.msg
+                        });
+                    }
+                });
             }
-            $.messager.show({
-                title: mesTitle,
-                msg: result.msg
-            });
+        }else{
+            swal({
+                text: "设备ID输入格式有误！",
+                icon: "error"
+            })
         }
-    });
+    }
+
 }
 
 //删除

@@ -1,5 +1,6 @@
 package com.warn.service;
 
+import com.warn.dao.DataDao;
 import com.warn.dao.SensorDataDao;
 import com.warn.mongodb.model.SensorCollection;
 import com.warn.util.DynamicDataSourceHolder;
@@ -27,6 +28,10 @@ public class MyTest {
 
     @Autowired
     SensorDataDao sensorDataDao;
+    @Autowired
+    StatisticService statisticService;
+    @Autowired
+    DataDao dataDao;
 
     @Autowired
     @Resource(name = "secondaryMongoTemplate")
@@ -56,20 +61,15 @@ public class MyTest {
         }
     }
 
+
+
+
     @Test
-    public void testMigrate(){
-        Query query = new Query();
-        Criteria criteria = new Criteria();
-        query.with(new Sort(Sort.Direction.DESC, "_id"));
-        List<SensorCollection>  sensorCollections = getMongoTemplate().find(query.skip(2500000).limit(2501000), SensorCollection.class);
-        sensorCollections.get(0);
-
-
-
-    }
-
-    public MongoTemplate getMongoTemplate() {
-        return mongoTemplate;
+    public void testStatistic(){
+        List<Integer> gatewayIDs = dataDao.getOldsToStatistic();
+        for(Integer gatewayID:gatewayIDs){
+            statisticService.getStatisticData(gatewayID);
+        }
     }
 
 //    @Test

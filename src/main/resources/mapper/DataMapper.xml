@@ -191,7 +191,7 @@
 
     <!--插入后返回老人的主键 以便于给relatives的oldId赋值-->
     <insert id="addOldman" parameterType="com.warn.entity.OldMan"  useGeneratedKeys="true" keyProperty="oid">
-        INSERT INTO oldman(gatewayID,segment,oldName,oldPhone,oldAddress,oldRegtime) VALUES (#{gatewayID},#{segment},#{oldName},#{oldPhone},#{oldAddress},#{oldRegtime})
+        INSERT INTO oldman(gatewayID,segment,oldName,oldPhone,oldAddress,oldRegtime,version) VALUES (#{gatewayID},#{segment},#{oldName},#{oldPhone},#{oldAddress},#{oldRegtime},#{version})
     </insert>
 
     <insert id="addRelatives" parameterType="com.warn.entity.Relatives">
@@ -199,7 +199,7 @@
     </insert>
 
     <update id="editOldman" parameterType="com.warn.entity.OldMan">
-        UPDATE oldman SET gatewayID=#{gatewayID},segment=#{segment},oldName=#{oldName},oldPhone=#{oldPhone},oldAddress=#{oldAddress},oldRegtime=#{oldRegtime} WHERE oid=#{oid}
+        UPDATE oldman SET gatewayID=#{gatewayID},segment=#{segment},oldName=#{oldName},oldPhone=#{oldPhone},oldAddress=#{oldAddress},oldRegtime=#{oldRegtime},version=#{version} WHERE oid=#{oid}
     </update>
 
     <update id="editRelatives" parameterType="com.warn.entity.Relatives">
@@ -250,6 +250,10 @@
     select
     count(1)
     from oldman
+    </select>
+
+    <select id="getOldsToStatistic" resultType="Integer">
+        select gatewayID from oldman where version = 2 and oldRegtime >= "2019-03-13" and gatewayID != 1
     </select>
 
 
