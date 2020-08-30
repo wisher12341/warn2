@@ -1,6 +1,7 @@
 package com.warn.dao;
 
 import com.warn.dto.PageHelper;
+import com.warn.entity.SmsOrder;
 import com.warn.entity.WarnData;
 import org.apache.ibatis.annotations.Param;
 
@@ -29,4 +30,7 @@ public interface WarnHistoryDao {
 
     void updateSMSByWid(@Param("id")Integer wdid);
 
+    List<WarnData> getNoReadNoFinishSmsData(@Param("smsOrder")Integer smsOrder);
+
+    void updateSMSByWids(List<Integer> wids);
 }

@@ -1,5 +1,6 @@
 package com.warn.controller;
 
+import com.warn.dao.DataDao;
 import com.warn.dto.*;
 import com.warn.dwr.Remote;
 import com.warn.entity.Equipment;
@@ -8,13 +9,19 @@ import com.warn.exception.NullFromDBException;
 import com.warn.mongodb.model.SensorCollection;
 import com.warn.service.SensorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;

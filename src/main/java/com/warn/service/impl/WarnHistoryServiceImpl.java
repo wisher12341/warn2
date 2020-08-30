@@ -1,10 +1,13 @@
 package com.warn.service.impl;
 
+import com.warn.dao.DataDao;
 import com.warn.dao.ThresholdDao;
 import com.warn.dao.WarnHistoryDao;
 import com.warn.dto.DwrData;
 import com.warn.dto.PageHelper;
+import com.warn.entity.OldMan;
 import com.warn.entity.WarnData;
+import com.warn.service.LejianOldmanService;
 import com.warn.service.WarnHistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,8 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
     WarnHistoryDao warnHistoryDao;
     @Autowired
     ThresholdDao thresholdDao;
+    @Autowired
+    private LejianOldmanService lejianOldmanService;
 
     @Override
     public void addWarnHistory(DwrData dwrData) {
@@ -34,11 +39,14 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
         String dateNowStr = sdf.format(d);
         warnData.setTimeW(dateNowStr);
 
+        String gatewayId="";
+
         switch (dwrData.getType()){
             case "urgency":
                 warnData.setTypeW("紧急报警");
                 warnData.setOid(dwrData.getUrgency().getOldMan().getOid());
                 warnData.setOldName(dwrData.getUrgency().getOldMan().getOldName());
+                gatewayId=dwrData.getUrgency().getOldMan().getGatewayID();
                 //@区分大标题 %区分小标题
                 String data="老人信息：" +
                         "%老人ID："+dwrData.getUrgency().getOldMan().getOid()+
@@ -54,6 +62,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "warn_move":
                 warnData.setTypeW("行为预警");
                 warnData.setOid(dwrData.getWarn().getOldMan().getOid());
+                gatewayId=dwrData.getWarn().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getWarn().getOldMan().getOldName());
                 String data_warn="老人信息：" +
                         "%老人ID：" + dwrData.getWarn().getOldMan().getOid() +
@@ -74,6 +83,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "warn_position":
                 warnData.setTypeW("行为预警");
                 warnData.setOid(dwrData.getWarn().getOldMan().getOid());
+                gatewayId=dwrData.getWarn().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getWarn().getOldMan().getOldName());
                 String data_position="老人信息：" +
                         "%老人ID：" + dwrData.getWarn().getOldMan().getOid() +
@@ -94,6 +104,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "warn_wendu":
                 warnData.setTypeW("温度预警");
                 warnData.setOid(dwrData.getWarn_wendu().getOldMan().getOid());
+                gatewayId=dwrData.getWarn_wendu().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getWarn_wendu().getOldMan().getOldName());
                 String data_wendu="老人信息：" +
                         "%老人ID：" + dwrData.getWarn_wendu().getOldMan().getOid()+ "" +
@@ -110,6 +121,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "warn_light":
                 warnData.setTypeW("光强预警");
                 warnData.setOid(dwrData.getWarn_light().getOldMan().getOid());
+                gatewayId=dwrData.getWarn_light().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getWarn_light().getOldMan().getOldName());
                 String data_light="老人信息：" +
                         "%老人ID：" + dwrData.getWarn_light().getOldMan().getOid()+ "" +
@@ -130,6 +142,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "outdoor_nocome":
                 warnData.setTypeW("未归预警");
                 warnData.setOid(dwrData.getOutdoor().getOldMan().getOid());
+                gatewayId=dwrData.getOutdoor().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getOutdoor().getOldMan().getOldName());
                 String data_out="老人信息：" +
                         "%老人ID：" + dwrData.getOutdoor().getOldMan().getOid()+ "" +
@@ -145,6 +158,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
             case "warn_statistic":
                 warnData.setTypeW("规律异常预警");
                 warnData.setOid(dwrData.getWarn_statistic().getOldMan().getOid());
+                gatewayId=dwrData.getWarn_statistic().getOldMan().getGatewayID();
                 warnData.setOldName(dwrData.getWarn_statistic().getOldMan().getOldName());
                 String data_statistic = "老人信息：" +
                         "%老人ID：" + warnData.getOid() +"" +
@@ -160,6 +174,7 @@ public class WarnHistoryServiceImpl implements WarnHistoryService {
                 warnData.setReadW("否");
 
         }
+        lejianOldmanService.alarm(gatewayId,warnData.getTypeW(),warnData.getDataW());
         warnHistoryDao.addWarnHistory(warnData);
         dwrData.setId(warnData.getWdid());
     }

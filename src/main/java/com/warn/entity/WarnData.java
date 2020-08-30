@@ -13,8 +13,18 @@ public class WarnData {
     private String dataW;//具体报警内容
     private String readW;//是否已读  是 否
     private String timeW;//写入时间
+    private Integer sms;
 
-    //未显示 是否发送过短信 0没有 1发送过
+    public Integer getSms() {
+        return sms;
+    }
+
+    public void setSms(Integer sms) {
+        this.sms = sms;
+    }
+
+
+//未显示 是否发送过短信 0没有 1发送过
 
     public Integer getWdid() {
         return wdid;

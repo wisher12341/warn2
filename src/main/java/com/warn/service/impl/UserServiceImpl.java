@@ -100,6 +100,26 @@ public class UserServiceImpl implements UserService{
                         SystemController.logger.log(Level.SEVERE, "读取文件日志错误", e);
                     }
                 }
+                if(SystemController.smslogger==null){
+                    SystemController.smslogger= Logger.getLogger("com.horstmann.corejava");
+                    FileHandler fh;
+                    try {
+                        File f=new File("smslog.txt");
+                        if(!f.exists()){
+                            f.createNewFile();
+                        }
+                        SystemController.absolutePath = f.getAbsolutePath();
+//                        System.out.println(SystemController.absolutePath);
+                        fh = new FileHandler("smslog.txt",true);
+                        SystemController.smslogger.addHandler(fh);//日志输出文件
+                        fh.setFormatter(new SimpleFormatter());//输出格式
+                    } catch (SecurityException e) {
+                        SystemController.smslogger.log(Level.SEVERE, "安全性错误", e);
+                    } catch (IOException e) {
+                        System.out.println("IO异常");
+                        SystemController.smslogger.log(Level.SEVERE, "读取文件日志错误", e);
+                    }
+                }
 
                 return true;
             }else {

@@ -82,7 +82,21 @@
         WHERE readW='否' AND sms=0
     </select>
 
+    <select id="getNoReadNoFinishSmsData"  resultType="com.warn.entity.WarnData">
+        select
+        oid,oldName,typeW,wdid,timeW,sms
+        FROM warnhistory
+        WHERE readW='否' AND sms &lt; #{smsOrder}
+    </select>
+
     <update id="updateSMSByWid">
         UPDATE warnhistory SET sms=1 WHERE wdid=#{id}
+    </update>
+
+    <update id="updateSMSByWids">
+        UPDATE warnhistory SET sms=sms+1 WHERE wdid IN
+        <foreach collection="list" index="wids" item="item" open="(" separator="," close=")">
+            ${item}
+        </foreach>
     </update>
 </mapper>

@@ -16,14 +16,21 @@ import com.warn.entity.SmsSendEntity;
 import com.warn.entity.WarnData;
 import com.warn.exception.NullFromDBException;
 import com.warn.exception.WarnException;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static com.warn.sms.SMSConstants.SMS_SIGN;
 import static com.warn.sms.SMSConstants.SMS_TEMPLATE_CODE;
@@ -57,51 +64,17 @@ public class SMSUtil {
      * @return
      * @throws Exception
      */
-    public Boolean sendMsg(String phone,SMSParam smsParam) throws Exception {
-        SystemController.logger.info("1");
+    public Boolean sendMsg(String phone,SMSParam smsParam) {
         try {
-            SendSmsResponse sendSmsResponse = sendSms(phone, smsParam);
+            SendSmsResponse sendSmsResponse = SmsDemo.sendSms(phone, smsParam);
+            SystemController.smslogger.info("结果："+sendSmsResponse.getCode()+","+sendSmsResponse.getMessage());
             return sendSmsResponse.getCode().equals("OK");
         }catch (Exception e){
             e.printStackTrace();
         }
         return false;
-
     }
 
-    public static SendSmsResponse sendSms(String phone,SMSParam smsParam) throws ClientException {
-        SystemController.logger.info("2");
-        //可自助调整超时时间
-        System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
-        System.setProperty("sun.net.client.defaultReadTimeout", "10000");
-
-        //初始化acsClient,暂不支持region化
-        IClientProfile profile = DefaultProfile.getProfile("cn-hangzhou", accessKeyId, accessKeySecret);
-        DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
-        IAcsClient acsClient = new DefaultAcsClient(profile);
-
-        //组装请求对象-具体描述见控制台-文档部分内容
-        SendSmsRequest request = new SendSmsRequest();
-        //必填:待发送手机号
-        request.setPhoneNumbers(phone);
-        //必填:短信签名-可在短信控制台中找到
-        request.setSignName(SMS_SIGN);
-        //必填:短信模板-可在短信控制台中找到
-        request.setTemplateCode(SMS_TEMPLATE_CODE);
-        //可选:模板中的变量替换JSON串,如模板内容为"亲爱的${name},您的验证码为${code}"时,此处的值为
-        request.setTemplateParam(String.valueOf(JSON.toJSON(smsParam)));
-
-        //选填-上行短信扩展码(无特殊需求用户请忽略此字段)
-        //request.setSmsUpExtendCode("90997");
-
-        //可选:outId为提供给业务方扩展字段,最终在短信回执消息中将此值带回给调用者
-        request.setOutId("yourOutId");
-
-        //hint 此处可能会抛出异常，注意catch
-        SendSmsResponse sendSmsResponse = acsClient.getAcsResponse(request);
-
-        return sendSmsResponse;
-    }
 
 
     /**
@@ -109,106 +82,64 @@ public class SMSUtil {
      * @throws NullFromDBException
      * @throws WarnException
      */
-    public void sendPre() throws NullFromDBException,WarnException {
+    public void sendPre() throws WarnException {
         try {
             if (SMSConstants.openSys == 1 && smsTimer.get("timer") == null) {
                 //启动定时任务
-                SystemController.logger.info("短信：启动定时任务");
-                //所有的手机号
-                final List<SmsSendEntity> phones = smsDao.datagridSmsSendEntity(new SmsSendEntity());
-                //所有顺序
-                final List<SmsOrder> smsOrders=smsDao.datagridSmsOrder();
-                //对smsOrder 排序 由大到小
-                Collections.sort(smsOrders);
+                SystemController.smslogger.info("短信：启动定时任务");
 
-                if (phones.size() == 0) {
-                    throw new NullFromDBException("短信：电话列表为空");
-                }
-
-                Runnable runnable = new Runnable() {
-                    public void run() {
-                        List<WarnData> warnDataList = warnHistoryDao.getNoReadNoSmsData();
-                        for(WarnData warnData:sms.keySet()){
-                            if(!warnDataList.contains(warnData)){
-                                sms.remove(warnData);
-                            }
+                Runnable runnable = () -> {
+                    try {
+                        List<SmsSendEntity> phones = smsDao.datagridSmsSendEntity(new SmsSendEntity());
+                        List<SmsOrder> smsOrders = smsDao.datagridSmsOrder();
+                        if (CollectionUtils.isEmpty(phones) || CollectionUtils.isEmpty(smsOrders)) {
+                            return;
                         }
+                        phones.sort(Comparator.comparingInt(SmsSendEntity::getOrderSms));
 
-                        if (warnDataList.size() == 0) {
-                            SystemController.logger.info("短信：没有找到未读且还没有发送短信的记录，关闭定时任务");
-                            if (smsTimer.get("timer") != null) {
-                                smsTimer.get("timer").shutdown();
-                                smsTimer.remove("timer");
-                            }
-                        } else {
-                            SystemController.logger.info("短信：未读且还没有发送短信的记录数：" + warnDataList.size());
-                            for (WarnData warnData : warnDataList) {
+                        List<WarnData> warnDataList = warnHistoryDao.getNoReadNoFinishSmsData(phones.get(phones.size() - 1).getOrderSms());
+                        if (CollectionUtils.isEmpty(warnDataList)) {
+                            return;
+                        }
+                        Map<Integer, List<SmsSendEntity>> phoneMap = phones.stream().collect(Collectors.groupingBy(SmsSendEntity::getOrderSms));
+                        Map<Integer, Integer> orderMap = smsOrders.stream().collect(Collectors.toMap(SmsOrder::getOrderSms, SmsOrder::getTimeSms));
+                        Map<String, List<WarnData>> result = new HashMap<>();
 
-                                SystemController.logger.info("短信：未读且还没有发送短信的记录：" + warnData.toString());
-                                //未读消息生成的时间
-                                String time = warnData.getTimeW();
-                                //当前系统时间
-                                Date d = new Date();
-                                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                                sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-                                String currentTime = sdf.format(d);
-                                int value = intervalTime(currentTime, time.substring(11, time.length()));
-                                SystemController.logger.info("当前时间间隔："+(value/60));
-
-                                int maxOrder=smsOrders.get(0).getOrderSms();//获得 最大的顺序  (已排序)
-                                //已排序  顺序由大到小  先判断顺序大的 是否符合条件
-                                for(SmsOrder smsOrder:smsOrders){
-                                    SystemController.logger.info(smsOrder.toString());
-                                    if(value>smsOrder.getTimeSms()*60&&(sms.get(warnData)==null||sms.get(warnData)<smsOrder.getOrderSms())){
-                                        //超过指定时间 没有读
-                                        SMSParam smsParam = new SMSParam();
-                                        smsParam.setOldMan(warnData.getOid() + "");
-                                        smsParam.setOldName(warnData.getOldName());
-                                        smsParam.setTime(time.substring(5, time.length()));
-                                        smsParam.setWarnType(warnData.getTypeW());
-                                        for (SmsSendEntity smsSendEntity : phones) {
-                                            if(smsSendEntity.getOrderSms()==smsOrder.getOrderSms()) {
-                                                SystemController.logger.info(smsSendEntity.toString());
-                                                try {
-                                                    Boolean result = sendMsg(smsSendEntity.getPhone(), smsParam);
-                                                    SystemController.logger.info("短信：发送结果：" + result);
-                                                    sms.put(warnData,smsOrder.getOrderSms());
-//                                                    SystemController.logger.info("短信发送成功");
-//                                                    warnHistoryDao.updateSMSByWid(warnData.getWdid());
-                                                } catch (Exception e) {
-                                                    e.printStackTrace();
-                                                }
-                                            }
-                                        }
-                                        //待所有的手机的 短信都已发完  将该记录 设置为  短信已发的状态
-                                        if(sms.get(warnData)!=null &&maxOrder==sms.get(warnData)){
-                                            warnHistoryDao.updateSMSByWid(warnData.getWdid());
-                                        }
-                                        continue;
+                        warnDataList.forEach(warnData -> {
+                            DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                            LocalDateTime createTime = LocalDateTime.parse(warnData.getTimeW(), df);
+                            SystemController.smslogger.info("当前时间："+LocalDateTime.now());
+                            long value = Duration.between(createTime, LocalDateTime.now()).toMinutes();
+                            if (orderMap.get(warnData.getSms() + 1) <= value) {
+                                List<String> phoneList = phoneMap.get(warnData.getSms() + 1).stream().map(SmsSendEntity::getPhone).collect(Collectors.toList());
+                                phoneList.forEach(phone -> {
+                                    if (result.containsKey(phone)) {
+                                        result.get(phone).add(warnData);
+                                    } else {
+                                        List<WarnData> list = new ArrayList<>();
+                                        list.add(warnData);
+                                        result.put(phone, list);
                                     }
-                                }
-
-
-                                //之前的 没有手机号 先后顺序的代码
-//                                if (value > SMSConstants.smsTime * 60) {
-//                                    //超过指定时间 没有读
-//                                    SMSParam smsParam = new SMSParam();
-//                                    smsParam.setOldMan(warnData.getOid() + "");
-//                                    smsParam.setOldName(warnData.getOldName());
-//                                    smsParam.setTime(time.substring(5, time.length()));
-//                                    smsParam.setWarnType(warnData.getTypeW());
-//                                    for (String phone : phones) {
-//                                        try {
-//                                            String result = sendMsg(phone, smsParam);
-//                                            SystemController.logger.info("短信：发送结果：" + result);
-//                                            warnHistoryDao.updateSMSByWid(warnData.getWdid());
-//                                        } catch (Exception e) {
-//                                            e.printStackTrace();
-//                                        }
-//                                    }
-//                                }
+                                });
                             }
+                        });
+                        SystemController.smslogger.info("短信：发送数据：" + result.toString());
+                        if (MapUtils.isNotEmpty(result)) {
+                            result.forEach((k, v) -> v.forEach(warnData -> {
+                                SMSParam smsParam = new SMSParam();
+                                smsParam.setOldMan(warnData.getOid() + "");
+                                smsParam.setOldName(warnData.getOldName());
+                                smsParam.setTime(warnData.getTimeW());
+                                smsParam.setWarnType(warnData.getTypeW());
+                                boolean b = sendMsg(k, smsParam);
+                                SystemController.smslogger.info("短信：" + k + ",发送结果：" + b);
+                            }));
+                            List<Integer> wids = warnDataList.stream().map(WarnData::getWdid).collect(Collectors.toList());
+                            warnHistoryDao.updateSMSByWids(wids);
                         }
+                    }catch (Exception e){
+                        SystemController.smslogger.info("短信：报错");
+                        e.printStackTrace();
                     }
                 };
 

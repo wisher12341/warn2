@@ -45,6 +45,8 @@ public class SystemController {
     public static String absolutePath="";//日志地址
 
     public static Logger logger;
+
+    public static Logger smslogger;
     /**
      *获取菜单栏
      */
