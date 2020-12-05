@@ -25,6 +25,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -828,89 +831,95 @@ public class SensorServiceImpl implements SensorService{
 
             Runnable runnable = new Runnable() {
                 public void run() {
-                    Date d = new Date();
-                    SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
-                    sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-                    String currentTime = sdf.format(d);
-                    SystemController.logger.info("当前时间：" + currentTime + "   最初不动时间：" + sensorDataDeal.getTime());
-                    int value = intervalTime(currentTime, sensorDataDeal.getTime());
-                    SystemController.logger.info("老人已经不动：" + (value / 60) + "分钟");
-                    if (warn2.get(sensorDataDeal.getOldMan()) != null || outdoorY.get(sensorDataDeal.getOldMan()) != null) {
-                        //进行了二级预警 或者 老人出门 停止定时任务
-                        SystemController.logger.info("已进行了二级预警 或者 老人出门 停止定时任务");
-                        if (timer.get(sensorDataDeal.getOldMan()) != null) {
-                            timer.get(sensorDataDeal.getOldMan()).shutdown();
-                            SystemController.logger.info("已停止定时器");
-                        }
-
-                    } else {
-                        //一级预警
-                        SystemController.logger.info("还没进行二级预警且没有出门");
-                        if (warn1.get(sensorDataDeal.getOldMan()) == null) {
-                            SystemController.logger.info("还没进行一级预警  value=" + value + "  一级阈值=" + threshold1.get(sensorDataDeal.getOldMan()));
-                            if (value >= threshold1.get(sensorDataDeal.getOldMan())) {
-                                SystemController.logger.info("一级报警");
-                                Warn warn = warnMap.get(sensorDataDeal.getOldMan());
-                                warn.setWarnLevel(1);
-                                warn.setNoMoveTime(value / 60);
-                                DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_move");
-                                dwrData.setWarn(warn);
-                                SystemController.logger.info(warn.toString());
-                                //存入历史消息
-                                warnHistoryService.addWarnHistory(dwrData);
-                                SystemController.logger.info("已存入历史消息");
-                                //推送
-                                Remote.noticeNewOrder(dwrData);
-                                sendPost2(dwrData,StaticVal.url2);
-                                //地图更新
-//                                HouseMarker houseMarker=new HouseMarker();
-//                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
-//                                houseMarker.setStyleIndex(8); //红色
-//                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
-//                                mapUpdate(houseMarker);
-
-                                sensorDataDeal.getOldMan().setStatus(2);
-                                mapUpdate(sensorDataDeal.getOldMan());
-
-                                //启动短信定时任务
-                                smsService.smsSwitch();
-                                SystemController.logger.info("已进行报警");
-                                //设置已经进行了一级报警
-                                warn1.put(sensorDataDeal.getOldMan(), true);
+                    try {
+                        Date d = new Date();
+                        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+                        String currentTime = sdf.format(d);
+                        SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，当前时间：" + currentTime + "   最初不动时间：" + sensorDataDeal.getTime());
+                        int value = intervalTime(currentTime, sensorDataDeal.getTime());
+                        SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，老人已经不动：" + (value / 60) + "分钟");
+                        if (warn2.get(sensorDataDeal.getOldMan()) != null || outdoorY.get(sensorDataDeal.getOldMan()) != null) {
+                            //进行了二级预警 或者 老人出门 停止定时任务
+                            SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，已进行了二级预警 或者 老人出门 停止定时任务");
+                            if (timer.get(sensorDataDeal.getOldMan()) != null) {
+                                timer.get(sensorDataDeal.getOldMan()).shutdown();
+                                SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，已停止定时器");
                             }
+
                         } else {
-                            //二级预警
-                            SystemController.logger.info("还没进行二级预警  value=" + value + "  二级阈值=" + threshold2.get(sensorDataDeal.getOldMan()));
-                            if (value >= threshold2.get(sensorDataDeal.getOldMan())) {
-                                SystemController.logger.info("二级报警");
-                                Warn warn = warnMap.get(sensorDataDeal.getOldMan());
-                                warn.setWarnLevel(2);
-                                warn.setNoMoveTime(value / 60);
-                                DwrData dwrData = new DwrData();
-                                dwrData.setType("warn_move");
-                                dwrData.setWarn(warn);
-                                //存入历史消息
-                                warnHistoryService.addWarnHistory(dwrData);
-                                //推送
-                                Remote.noticeNewOrder(dwrData);
-                                sendPost2(dwrData,StaticVal.url2);
-                                //地图更新
+                            //一级预警
+                            SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，还没进行二级预警且没有出门");
+                            if (warn1.get(sensorDataDeal.getOldMan()) == null) {
+                                SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，还没进行一级预警  value=" + value + "  一级阈值=" + threshold1.get(sensorDataDeal.getOldMan()));
+                                if (value >= threshold1.get(sensorDataDeal.getOldMan())) {
+                                    SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，一级报警");
+                                    Warn warn = warnMap.get(sensorDataDeal.getOldMan());
+                                    warn.setWarnLevel(1);
+                                    warn.setNoMoveTime(value / 60);
+                                    DwrData dwrData = new DwrData();
+                                    dwrData.setType("warn_move");
+                                    dwrData.setWarn(warn);
+                                    SystemController.logger.info(warn.toString());
+                                    //存入历史消息
+                                    warnHistoryService.addWarnHistory(dwrData);
+                                    SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，已存入历史消息");
+                                    //推送
+                                    Remote.noticeNewOrder(dwrData);
+                                    sendPost2(dwrData, StaticVal.url2);
+                                    //地图更新
 //                                HouseMarker houseMarker=new HouseMarker();
 //                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
 //                                houseMarker.setStyleIndex(8); //红色
 //                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
 //                                mapUpdate(houseMarker);
-                                sensorDataDeal.getOldMan().setStatus(2);
-                                mapUpdate(sensorDataDeal.getOldMan());
 
-                                //启动短信定时任务
-                                smsService.smsSwitch();
-                                //设置已经进行了二级报警.2
-                                warn2.put(sensorDataDeal.getOldMan(), true);
+                                    sensorDataDeal.getOldMan().setStatus(2);
+                                    mapUpdate(sensorDataDeal.getOldMan());
+
+                                    //启动短信定时任务
+                                    smsService.smsSwitch();
+                                    SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，已进行报警");
+                                    //设置已经进行了一级报警
+                                    warn1.put(sensorDataDeal.getOldMan(), true);
+                                }
+                            } else {
+                                //二级预警
+                                SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，还没进行二级预警  value=" + value + "  二级阈值=" + threshold2.get(sensorDataDeal.getOldMan()));
+                                if (value >= threshold2.get(sensorDataDeal.getOldMan())) {
+                                    SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，二级报警");
+                                    Warn warn = warnMap.get(sensorDataDeal.getOldMan());
+                                    warn.setWarnLevel(2);
+                                    warn.setNoMoveTime(value / 60);
+                                    DwrData dwrData = new DwrData();
+                                    dwrData.setType("warn_move");
+                                    dwrData.setWarn(warn);
+                                    //存入历史消息
+                                    warnHistoryService.addWarnHistory(dwrData);
+                                    //推送
+                                    Remote.noticeNewOrder(dwrData);
+                                    sendPost2(dwrData, StaticVal.url2);
+                                    //地图更新
+//                                HouseMarker houseMarker=new HouseMarker();
+//                                houseMarker.setOid(dwrData.getWarn().getOldMan().getOid());
+//                                houseMarker.setStyleIndex(8); //红色
+//                                houseMarker.setDetail("行为预警&nbsp;&nbsp;&nbsp;不动开始时刻："+dwrData.getWarn().getTime());
+//                                mapUpdate(houseMarker);
+                                    sensorDataDeal.getOldMan().setStatus(2);
+                                    mapUpdate(sensorDataDeal.getOldMan());
+
+                                    //启动短信定时任务
+                                    smsService.smsSwitch();
+                                    //设置已经进行了二级报警.2
+                                    warn2.put(sensorDataDeal.getOldMan(), true);
+                                }
                             }
                         }
+                    }catch (Exception e){
+                        SystemController.logger.info("网关id："+oldMan.getGatewayID()+"，报错了");
+                        e.printStackTrace();
                     }
+
                 }
             };
 
@@ -1383,9 +1392,16 @@ public class SensorServiceImpl implements SensorService{
         try {
             SensorType sensorType = new SensorType();
             for (SensorCollection sensorCollection : sensorCollections.getSensorCollections()) {
+                DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                LocalDateTime localDateTime=LocalDateTime.parse(sensorCollection.getTimeString(),df);
+                sensorCollection.setHour(localDateTime.getHour()+"");
+                sensorCollection.setMinute(localDateTime.getMinute()+"");
+                sensorCollection.setSecond(localDateTime.getSecond()+"");
+
                 sensorCollection.setHour((sensorCollection.getHour().length() == 1) ? "0" + sensorCollection.getHour() : sensorCollection.getHour());
                 sensorCollection.setMinute((sensorCollection.getMinute().length() == 1) ? "0" + sensorCollection.getMinute() : sensorCollection.getMinute());
                 sensorCollection.setSecond((sensorCollection.getSecond().length() == 1) ? "0" + sensorCollection.getSecond() : sensorCollection.getSecond());
+
                 SystemController.logger.info(sensorCollection.toString());
                 switch (sensorCollection.getSensorID()) {
                     case 1:

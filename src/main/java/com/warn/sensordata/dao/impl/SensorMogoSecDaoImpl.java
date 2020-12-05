@@ -1,5 +1,6 @@
 package com.warn.sensordata.dao.impl;
 
+import com.warn.controller.SystemController;
 import com.warn.dao.SensorDataDao;
 import com.warn.entity.SensorData;
 import com.warn.exception.GetMDBException;
@@ -47,6 +48,7 @@ public class SensorMogoSecDaoImpl implements SensorMogoSecDao {
             }
             List<SensorCollection> sensorCollections = new ArrayList<>();
             if(type == 1){
+                SystemController.logger.info("findByTime：start:"+startTime+",end:"+endTime);
                 sensorCollections = sensorDataDao.findByTime_fg(gatewayIDs,startTime,endTime);
             }else
                 sensorCollections = sensorDataDao.findByTime(gatewayIDs,startTime,endTime);

@@ -137,90 +137,92 @@ public class TimerServiceImpl implements TimerService {
 //                }
                 Runnable runnable = new Runnable() {
                     public void run() {
+                        try {
 
-                        //已开启 预警自动总开关  获得所有预警开关被关闭的 老人的 网关ID  用于判断 是否自动启动该网关
-                        List<Integer> closeWarns=new ArrayList<>();
-                        if(StaticVal.timerOpen==1) {
-                            SystemController.logger.info("自动总开关开");
-                            for (OldMan oldMan : StaticVal.oldManTimer.keySet()) {
-                                if(StaticVal.oldManTimer.get(oldMan)!=true) {
-                                    closeWarns.add(Integer.parseInt(oldMan.getGatewayID()));
-                                    SystemController.logger.info("关闭的老人的网关ID：" + oldMan.getGatewayID());
+                            //已开启 预警自动总开关  获得所有预警开关被关闭的 老人的 网关ID  用于判断 是否自动启动该网关
+                            List<Integer> closeWarns = new ArrayList<>();
+                            if (StaticVal.timerOpen == 1) {
+                                SystemController.logger.info("自动总开关开");
+                                for (OldMan oldMan : StaticVal.oldManTimer.keySet()) {
+                                    if (StaticVal.oldManTimer.get(oldMan) != true) {
+                                        closeWarns.add(Integer.parseInt(oldMan.getGatewayID()));
+                                        SystemController.logger.info("关闭的老人的网关ID：" + oldMan.getGatewayID());
+                                    }
                                 }
                             }
-                        }
 
 
-                        Date d = new Date();
+                            Date d = new Date();
 //                    Date d1 = new Date(d.getTime() - 12*60*60*1000);
-                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-                        String currentTime = sdf.format(d);
+                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+                            String currentTime = sdf.format(d);
 
-                        Date s = new Date(d.getTime() - (StaticVal.accessDatabaseTime + 1) * 60 * 1000); //开始的时间 当前时间推迟1分钟   因为传感器发送到数据库 有 1-59秒不等的延迟
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//可以方便地修改日期格式
-                        dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
-                        String startTime = dateFormat.format(s);
+                            Date s = new Date(d.getTime() - (StaticVal.accessDatabaseTime + 1) * 60 * 1000); //开始的时间 当前时间推迟1分钟   因为传感器发送到数据库 有 1-59秒不等的延迟
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//可以方便地修改日期格式
+                            dateFormat.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
+                            String startTime = dateFormat.format(s);
 
-                        SystemController.logger.info("当前检测时间段：" + startTime + "-------" + currentTime);
-                        List<SensorCollection> sensorCollectionListAll = null;
-                     //   List<SensorCollection> secSensorCollectionListALL = null;
-                        try {
-                            //从mongodb数据库获得该时间段 该老人的数据
+                            SystemController.logger.info("网关id：" + oldMan.getGatewayID() + "，当前检测时间段：" + startTime + "-------" + currentTime);
+                            List<SensorCollection> sensorCollectionListAll = null;
+                            //   List<SensorCollection> secSensorCollectionListALL = null;
+                            try {
+                                //从mongodb数据库获得该时间段 该老人的数据
 //                            OldMan oldMan=dataDao.getOldManByOid(timeDto.getOldMan().getOid());
-                            if(oldMan.getVersion() == 2)
-                            sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()),closeWarns,2);
-                            else {
-                                sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns,1);
-                                Collections.sort(sensorCollectionListAll, new Comparator<SensorCollection>() {
-                                    @Override
-                                    public int compare(SensorCollection o1, SensorCollection o2) {
-                                        int diff = Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
-                                        if(diff > 0)
-                                            return 1;
-                                        else if(diff < 0)
-                                            return -1;
-                                        return 0;
-                                    }
-                                });
+                                if (oldMan.getVersion() == 2)
+                                    sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns, 2);
+                                else {
+                                    sensorCollectionListAll = sensorMogoSecDao.findByTime(startTime, currentTime, Integer.parseInt(oldMan.getGatewayID()), closeWarns, 1);
+                                    SystemController.logger.info("网关id：" + oldMan.getGatewayID() + "，数据大小：" + sensorCollectionListAll.size());
+                                    Collections.sort(sensorCollectionListAll, new Comparator<SensorCollection>() {
+                                        @Override
+                                        public int compare(SensorCollection o1, SensorCollection o2) {
+                                            int diff = Integer.parseInt(o1.getId()) - Integer.parseInt(o2.getId());
+                                            if (diff > 0)
+                                                return 1;
+                                            else if (diff < 0)
+                                                return -1;
+                                            return 0;
+                                        }
+                                    });
+                                }
+
+                            } catch (GetMDBException e1) {
+                                SystemController.logger.info(e1.getMessage()+"，oldMan:"+oldMan.getOid());
+                                closeTimer(timeDto);
+                            } catch (Exception e) {
+                                SystemController.logger.info("获取传感器数据时出错"+"，oldMan:"+oldMan.getOid());
+                                SystemController.logger.info(e.getMessage());
+                                closeTimer(timeDto);
                             }
+                            //  sensorCollectionListAll.addAll(secSensorCollectionListALL);
 
-                        } catch (GetMDBException e1) {
-                            SystemController.logger.info(e1.getMessage());
-                            closeTimer(timeDto);
-                        } catch (Exception e) {
-                            SystemController.logger.info("获取传感器数据时出错");
-                            SystemController.logger.info(e.getMessage());
-                            closeTimer(timeDto);
-                        }
-                      //  sensorCollectionListAll.addAll(secSensorCollectionListALL);
-
-                        List<SensorCollection> sensorCollectionList=null;
-                       // List<SensorCollection> secSensorCollectionList=null;
-                        if(closeWarns.size()>0) {
+                            List<SensorCollection> sensorCollectionList = null;
+                            // List<SensorCollection> secSensorCollectionList=null;
+                            if (closeWarns.size() > 0) {
 //                            SystemController.logger.info("处理前：");
 //                            for(SensorCollection sensorCollection:sensorCollectionListAll){
 //                                SystemController.logger.info(sensorCollection.toString());
 //                            }
-                            sensorCollectionList = heartDeal(sensorCollectionListAll, closeWarns);
-                           // secSensorCollectionList = heartDeal(secSensorCollectionListALL, closeWarns);
+                                sensorCollectionList = heartDeal(sensorCollectionListAll, closeWarns);
+                                // secSensorCollectionList = heartDeal(secSensorCollectionListALL, closeWarns);
 //                            SystemController.logger.info("处理后：");
 //                            for(SensorCollection sensorCollection:sensorCollectionList){
 //                                SystemController.logger.info(sensorCollection.toString());
 //                            }
-                        }else{
-                            sensorCollectionList=sensorCollectionListAll;
-                          //  secSensorCollectionList = secSensorCollectionListALL;
-                        }
+                            } else {
+                                sensorCollectionList = sensorCollectionListAll;
+                                //  secSensorCollectionList = secSensorCollectionListALL;
+                            }
 
-                        //删除之前 已检测的重复数据
-                        if (preSensorCollections.size() > 0) {
-                            for (SensorCollection sensorCollection : preSensorCollections) {
-                                if (sensorCollectionList.contains(sensorCollection)) {
-                                    sensorCollectionList.remove(sensorCollection);
+                            //删除之前 已检测的重复数据
+                            if (preSensorCollections.size() > 0) {
+                                for (SensorCollection sensorCollection : preSensorCollections) {
+                                    if (sensorCollectionList.contains(sensorCollection)) {
+                                        sensorCollectionList.remove(sensorCollection);
+                                    }
                                 }
                             }
-                        }
 //                        if (preSecSensorCollections.size() > 0) {
 //                            for (SensorCollection sensorCollection : preSecSensorCollections) {
 //                                if (secSensorCollectionList.contains(sensorCollection)) {
@@ -230,17 +232,17 @@ public class TimerServiceImpl implements TimerService {
 //                        }
 
 //                    List<SensorCollection> sensorCollectionList=sensorMogoDao.findByTime("2017-05-07 18:48:05","2017-05-07 18:54:05",equipments);
-                        if (sensorCollectionList != null) {
+                            if (sensorCollectionList != null) {
 //                            SystemController.logger.info("传感器数据数量：" + sensorCollectionList.size());
-                            //故障处理
-                            gatewayDown(currentTime,sensorCollectionList.size(),oldMan,equipDownList);//判断该老人的网关是否故障
-                            if(sensorCollectionList.size()>0) {
-                                equipDown(currentTime, sensorCollectionList, oldMan,equipDownList);//判断该老人的设备是否故障  只判断 温度、湿度、光强
-                                lowBattery(sensorCollectionList,oldMan);
-                            }
-                        } else {
+                                //故障处理
+                                gatewayDown(currentTime, sensorCollectionList.size(), oldMan, equipDownList);//判断该老人的网关是否故障
+                                if (sensorCollectionList.size() > 0) {
+                                    equipDown(currentTime, sensorCollectionList, oldMan, equipDownList);//判断该老人的设备是否故障  只判断 温度、湿度、光强
+                                    lowBattery(sensorCollectionList, oldMan);
+                                }
+                            } else {
 //                            SystemController.logger.info("传感器数据为空");
-                        }
+                            }
 //                        if (secSensorCollectionList != null) {
 ////                            SystemController.logger.info("传感器数据数量：" + sensorCollectionList.size());
 //                            //故障处理
@@ -249,91 +251,95 @@ public class TimerServiceImpl implements TimerService {
 //                                equipDown(currentTime, secSensorCollectionList, oldMan,equipDownList);//判断该老人的设备是否故障  只判断 温度、湿度、光强
 //                            }
 //                        }
-                        SensorCollections sensorCollections = new SensorCollections();
-                        sensorCollections.setSensorCollections(sensorCollectionList);
+                            SensorCollections sensorCollections = new SensorCollections();
+                            sensorCollections.setSensorCollections(sensorCollectionList);
 //                        SensorCollections secSensorCollections = new SensorCollections();
 //                        secSensorCollections.setSensorCollections(secSensorCollectionList);
-                        SensorType sensorType = new SensorType();
-                        if(oldMan.getVersion() == 1)
-                            sensorType = sensorService.conType(sensorCollections);
-                        if(oldMan.getVersion() == 2)
-                            sensorType = sensorService.conSecType(sensorCollections);
-                      //  SensorType sensorType1 = sensorService.conType(secSensorCollections);
+                            SensorType sensorType = new SensorType();
+                            if (oldMan.getVersion() == 1)
+                                sensorType = sensorService.conType(sensorCollections);
+                            if (oldMan.getVersion() == 2)
+                                sensorType = sensorService.conSecType(sensorCollections);
+                            //  SensorType sensorType1 = sensorService.conType(secSensorCollections);
 //                        OldMan oldMan = null;
 //                        if (sensorCollectionList.size() > 0) {
 //                            oldMan = dataDao.getOldManByGatewayID(sensorCollectionList.get(0).getGatewayID());
 //                        }
-                        try {
-                            if (oldMan != null && SensorServiceImpl.outdoorY.get(oldMan) != null && SensorServiceImpl.outdoorY.get(oldMan) == true) {
-                                //门
-                               // List<SensorCollection> doorSensorCollectionLis1 = sensorType1.getDoorSensorCollection();
-                                List<SensorCollection> doorSensorCollectionLis = sensorType.getDoorSensorCollection();
-                                if (doorSensorCollectionLis.size() > 0) {
-                                    sensorService.checkDoorData(doorSensorCollectionLis);
-                                    //让门的 定时任务先执行完
-                                    try {
-                                        Thread.sleep(3000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
+                            try {
+                                if (oldMan != null && SensorServiceImpl.outdoorY.get(oldMan) != null && SensorServiceImpl.outdoorY.get(oldMan) == true) {
+                                    //门
+                                    // List<SensorCollection> doorSensorCollectionLis1 = sensorType1.getDoorSensorCollection();
+                                    List<SensorCollection> doorSensorCollectionLis = sensorType.getDoorSensorCollection();
+                                    if (doorSensorCollectionLis.size() > 0) {
+                                        sensorService.checkDoorData(doorSensorCollectionLis);
+                                        //让门的 定时任务先执行完
+                                        try {
+                                            Thread.sleep(3000);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    //温度预警
+                                    List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
+                                    if (wenduSensorCollectionLis.size() > 0) {
+                                        sensorService.checkWenduData(wenduSensorCollectionLis);
+                                    }
+                                    //光亮预警
+                                    List<SensorCollection> lightSensorCollectionLis = sensorType.getLightSensorCollection();
+                                    if (lightSensorCollectionLis.size() > 0) {
+                                        sensorService.checkLightData(lightSensorCollectionLis);
+                                    }
+                                    //行为预警/位置预警
+                                    List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
+                                    if (moveSensorCollectionLis.size() > 0) {
+                                        if (oldMan.getVersion() == 1)
+                                            sensorService.checkMoveData(moveSensorCollectionLis);
+                                        else
+                                            sensorService.checkPositionData(moveSensorCollectionLis);
+                                    }
+                                } else {
+                                    //行为预警/位置预警
+                                    List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
+                                    if (moveSensorCollectionLis.size() > 0) {
+                                        if (oldMan.getVersion() == 1)
+                                            sensorService.checkMoveData(moveSensorCollectionLis);
+                                        else
+                                            sensorService.checkPositionData(moveSensorCollectionLis);
+                                    }
+                                    //温度预警
+                                    List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
+                                    if (wenduSensorCollectionLis.size() > 0) {
+                                        sensorService.checkWenduData(wenduSensorCollectionLis);
+                                    }
+                                    //光亮预警
+                                    List<SensorCollection> lightSensorCollectionLis = sensorType.getLightSensorCollection();
+                                    if (lightSensorCollectionLis.size() > 0) {
+                                        sensorService.checkLightData(lightSensorCollectionLis);
+                                    }
+                                    //门
+                                    List<SensorCollection> doorSensorCollectionLis = sensorType.getDoorSensorCollection();
+                                    if (doorSensorCollectionLis.size() > 0) {
+                                        sensorService.checkDoorData(doorSensorCollectionLis);
                                     }
                                 }
-
-                                //温度预警
-                                List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
-                                if (wenduSensorCollectionLis.size() > 0) {
-                                    sensorService.checkWenduData(wenduSensorCollectionLis);
-                                }
-                                //光亮预警
-                                List<SensorCollection> lightSensorCollectionLis = sensorType.getLightSensorCollection();
-                                if (lightSensorCollectionLis.size() > 0) {
-                                    sensorService.checkLightData(lightSensorCollectionLis);
-                                }
-                                //行为预警/位置预警
-                                List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
-                                if (moveSensorCollectionLis.size() > 0) {
-                                    if(oldMan.getVersion() == 1)
-                                    sensorService.checkMoveData(moveSensorCollectionLis);
-                                    else
-                                        sensorService.checkPositionData(moveSensorCollectionLis);
-                                }
-                            } else {
-                                //行为预警/位置预警
-                                List<SensorCollection> moveSensorCollectionLis = sensorType.getMoveSensorCollection();
-                                if (moveSensorCollectionLis.size() > 0) {
-                                    if(oldMan.getVersion() == 1)
-                                    sensorService.checkMoveData(moveSensorCollectionLis);
-                                    else
-                                        sensorService.checkPositionData(moveSensorCollectionLis);
-                                }
-                                //温度预警
-                                List<SensorCollection> wenduSensorCollectionLis = sensorType.getWenduSensorCollection();
-                                if (wenduSensorCollectionLis.size() > 0) {
-                                    sensorService.checkWenduData(wenduSensorCollectionLis);
-                                }
-                                //光亮预警
-                                List<SensorCollection> lightSensorCollectionLis = sensorType.getLightSensorCollection();
-                                if (lightSensorCollectionLis.size() > 0) {
-                                    sensorService.checkLightData(lightSensorCollectionLis);
-                                }
-                                //门
-                                List<SensorCollection> doorSensorCollectionLis = sensorType.getDoorSensorCollection();
-                                if (doorSensorCollectionLis.size() > 0) {
-                                    sensorService.checkDoorData(doorSensorCollectionLis);
-                                }
+                            } catch (NullFromDBException e1) {
+                                SystemController.logger.info("读取Mysql数据库，null值异常"+"，oldMan:"+oldMan.getOid());
+                                SystemController.logger.info(e1.getMessage());
+                                closeTimer(timeDto);
+                            } catch (Exception e) {
+                                SystemController.logger.info("预警算法异常"+"，oldMan:"+oldMan.getOid());
+                                SystemController.logger.info(e.getMessage());
+                                closeTimer(timeDto);
                             }
-                        } catch (NullFromDBException e1) {
-                            SystemController.logger.info("读取Mysql数据库，null值异常");
-                            SystemController.logger.info(e1.getMessage());
-                            closeTimer(timeDto);
-                        } catch (Exception e) {
-                            SystemController.logger.info("预警算法异常");
-                            SystemController.logger.info(e.getMessage());
-                            closeTimer(timeDto);
+
+                            preSensorCollections = sensorCollectionList;
+                        }catch (Exception e){
+                            SystemController.logger.info("定时任务异常"+e.getMessage()+"，oldMan:"+oldMan.getOid());
                         }
 
-                        preSensorCollections = sensorCollectionList;
-
                     }
+
                 };
 
                 //开启 数据库定时任务
