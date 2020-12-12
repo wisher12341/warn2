@@ -48,6 +48,8 @@ public class SMSUtil {
     SmsDao smsDao;
     @Autowired
     WarnHistoryDao warnHistoryDao;
+    @Autowired
+    private SmsDemo smsDemo;
 
 
 
@@ -66,7 +68,7 @@ public class SMSUtil {
      */
     public Boolean sendMsg(String phone,SMSParam smsParam) {
         try {
-            SendSmsResponse sendSmsResponse = SmsDemo.sendSms(phone, smsParam);
+            SendSmsResponse sendSmsResponse = smsDemo.sendSms(phone, smsParam);
             SystemController.smslogger.info("结果："+sendSmsResponse.getCode()+","+sendSmsResponse.getMessage());
             return sendSmsResponse.getCode().equals("OK");
         }catch (Exception e){

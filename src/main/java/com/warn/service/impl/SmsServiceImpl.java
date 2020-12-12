@@ -158,9 +158,9 @@ public class SmsServiceImpl implements SmsService {
     @Override
     public Sms_template getSmsTemplate() {
         Sms_template sms_template=new Sms_template();
-        sms_template.setAPP_KEY(SMSConstants.APP_KEY);
+//        sms_template.setAPP_KEY(SMSConstants.APP_KEY);
         sms_template.setEXTEND(SMSConstants.EXTEND);
-        sms_template.setSECRET(SMSConstants.SECRET);
+//        sms_template.setSECRET(SMSConstants.SECRET);
         sms_template.setSMS_SIGN(SMSConstants.SMS_SIGN);
         sms_template.setSMS_TEMPLATE_CODE(SMSConstants.SMS_TEMPLATE_CODE);
         sms_template.setSMS_TYPE(SMSConstants.SMS_TYPE);
@@ -171,7 +171,7 @@ public class SmsServiceImpl implements SmsService {
     public void editTemplate(String name,String data) {
         switch (name){
             case "AppKey":
-                SMSConstants.APP_KEY=data;
+//                SMSConstants.APP_KEY=data;
                 break;
             case "短信签名":
                 SMSConstants.SMS_SIGN=data;
@@ -186,7 +186,7 @@ public class SmsServiceImpl implements SmsService {
                 SMSConstants.SMS_TEMPLATE_CODE=data;
                 break;
             case "App Secret":
-                SMSConstants.SECRET=data;
+//                SMSConstants.SECRET=data;
                 break;
 
         }
