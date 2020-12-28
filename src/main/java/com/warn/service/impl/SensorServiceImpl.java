@@ -13,6 +13,7 @@ import com.warn.mongodb.model.SensorCollection;
 import com.warn.service.*;
 import com.warn.util.StaticVal;
 import net.sf.json.JSONObject;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -539,6 +540,7 @@ public class SensorServiceImpl implements SensorService{
 
             Runnable runnable = new Runnable() {
                 public void run() {
+
                     Date d = new Date();
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                     sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
@@ -774,12 +776,14 @@ public class SensorServiceImpl implements SensorService{
             if (momentInTimeA != null && momentInTimeA.isInTime()) {
                 momentInTime.setFlag("a");
                 momentInTime.setInTime(true);
+                momentInTime.setEndTime(momentInTimeA.getEndTime());
             } else if (momentInTimeR != null && momentInTimeR.isInTime()) {
 //            if(momentInTime.getFlag().equals("a")){
 //                momentInTime.setFlag("a&r");
 //            }else{
                 momentInTime.setFlag("r");
                 momentInTime.setInTime(true);
+                momentInTime.setEndTime(momentInTimeR.getEndTime());
 //            }
             } else {
                 momentInTime.setInTime(false);
@@ -829,9 +833,19 @@ public class SensorServiceImpl implements SensorService{
             warnMap.put(sensorDataDeal.getOldMan(), warn);
 
 
+            RoomModel finalRoomModel = roomModel;
+            SensorCollection finalSensorCollection = sensorCollection;
             Runnable runnable = new Runnable() {
                 public void run() {
                     try {
+                        if (reset(momentInTime, finalRoomModel)){
+                            SystemController.logger.info("老人重置，网关id："+oldMan.getGatewayID());
+                            if (timer.get(sensorDataDeal.getOldMan()) != null) {
+                                timer.get(sensorDataDeal.getOldMan()).shutdown();
+                            }
+                            simulateMove(finalSensorCollection);
+                            return;
+                        }
                         Date d = new Date();
                         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                         sdf.setTimeZone(TimeZone.getTimeZone("Asia/Shanghai"));
@@ -935,6 +949,69 @@ public class SensorServiceImpl implements SensorService{
         }catch (Exception e){
             throw new WarnException("move inner error:"+e.getMessage());
         }
+    }
+
+    /**
+     * 模拟用户行为数据
+     * 用于重置 行为报警
+     * @param finalSensorCollection
+     */
+    private void simulateMove(SensorCollection finalSensorCollection) {
+        LocalDateTime localDateTime=LocalDateTime.now();
+        SensorCollection sensorCollection=new SensorCollection();
+        BeanUtils.copyProperties(finalSensorCollection,sensorCollection);
+        sensorCollection.setHour(String.valueOf(localDateTime.getHour()));
+        sensorCollection.setMinute(String.valueOf(localDateTime.getMinute()));
+        sensorCollection.setSecond(String.valueOf(localDateTime.getSecond()));
+        List<SensorCollection> sensorCollections=new ArrayList<>();
+        sensorCollections.add(sensorCollection);
+        checkMoveData(sensorCollections);
+    }
+
+    /**
+     * 是否需要重置报警
+     * 规则：
+     * 1. 在规律模型中 且是活动模型
+     * 2. 同一房间， 当前时间到达休息模型时段， 活动->休息
+     * 3. 当前时间 超过 当前模型的结束时间
+     * @param momentInTime 当前时间所在的模型时段
+     * @param finalRoomModel 老人的规则模型
+     */
+    private boolean reset(MomentInTime momentInTime, RoomModel finalRoomModel) {
+        //1
+        if (!momentInTime.isInTime() || momentInTime.getFlag().equals("r")){
+            return false;
+        }
+
+        //3
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String[] endTime=momentInTime.getEndTime().split(":");
+        if (localDateTime.getHour() < Integer.valueOf(endTime[0])
+                || (localDateTime.getHour() == Integer.valueOf(endTime[0]) && localDateTime.getMinute()< Integer.valueOf(endTime[1]))){
+            return false;
+        }
+
+        String[] times=finalRoomModel.getRest().split("#");
+        if (times.length>0){
+            for(String dur:times){
+
+                String start = dur.split("-")[0];
+                if (start.split(":").length<3){
+                    start+=":00";
+                }
+                String nowDate = localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                start = nowDate+" "+start;
+                LocalDateTime startDateTime = LocalDateTime.parse(start,DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                /**
+                 * 已经到达休息模型的时间段
+                 */
+                if (localDateTime.isAfter(startDateTime)){
+                    return true;
+                }
+
+            }
+        }
+        return false;
     }
 
     //之前的行为预警   机制是即使老人不动也接受不动的数据
@@ -1277,6 +1354,7 @@ public class SensorServiceImpl implements SensorService{
     public MomentInTime moment_timeDeal(String moment,String time){
         MomentInTime momentInTime=new MomentInTime();
         String[] times=time.split("-");// /xx:xx-yy:yy
+        momentInTime.setEndTime(times[1]);
         //模型时间段位 20:30:00-06:30:00的情况
         if(times[1].compareTo(times[0])<0){
             if(moment.compareTo(times[0])>0||moment.compareTo(times[1])<0){

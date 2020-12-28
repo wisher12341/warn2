@@ -1,0 +1,324 @@
+十二月 28, 2020 7:51:31 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 7:52:58 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='19:51:26'}
+十二月 28, 2020 7:54:02 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 7:54:06 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='19:54:1'}
+十二月 28, 2020 7:54:07 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 7:55:16 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 8:12:52 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 8:12:52 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='20:12:52'}
+十二月 28, 2020 8:14:29 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 8:14:29 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='20:14:29'}
+十二月 28, 2020 8:17:46 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 8:17:46 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='20:17:46'}
+十二月 28, 2020 8:19:30 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 8:19:30 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 8:19:47 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 8:20:38 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 8:20:39 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='20:20:38'}
+十二月 28, 2020 8:21:28 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:21:28   最初不动时间：20:20:38
+十二月 28, 2020 8:21:28 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：0分钟
+十二月 28, 2020 8:21:28 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:21:28 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=50  一级阈值=3600
+十二月 28, 2020 8:21:43 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:21:43   最初不动时间：20:20:38
+十二月 28, 2020 8:21:43 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：1分钟
+十二月 28, 2020 8:21:43 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:21:43 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=65  一级阈值=3600
+十二月 28, 2020 8:22:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:22:40   最初不动时间：20:20:38
+十二月 28, 2020 8:22:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：2分钟
+十二月 28, 2020 8:22:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:22:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=122  一级阈值=3600
+十二月 28, 2020 8:23:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:23:40   最初不动时间：20:20:38
+十二月 28, 2020 8:23:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：3分钟
+十二月 28, 2020 8:23:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:23:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=182  一级阈值=3600
+十二月 28, 2020 8:24:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:24:40   最初不动时间：20:20:38
+十二月 28, 2020 8:24:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：4分钟
+十二月 28, 2020 8:24:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:24:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=242  一级阈值=3600
+十二月 28, 2020 8:25:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:25:40   最初不动时间：20:20:38
+十二月 28, 2020 8:25:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：5分钟
+十二月 28, 2020 8:25:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:25:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=302  一级阈值=3600
+十二月 28, 2020 8:26:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:26:40   最初不动时间：20:20:38
+十二月 28, 2020 8:26:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：6分钟
+十二月 28, 2020 8:26:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:26:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=362  一级阈值=3600
+十二月 28, 2020 8:27:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:27:40   最初不动时间：20:20:38
+十二月 28, 2020 8:27:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：7分钟
+十二月 28, 2020 8:27:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:27:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=422  一级阈值=3600
+十二月 28, 2020 8:28:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:28:40   最初不动时间：20:20:38
+十二月 28, 2020 8:28:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：8分钟
+十二月 28, 2020 8:28:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:28:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=482  一级阈值=3600
+十二月 28, 2020 8:29:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：20:29:40   最初不动时间：20:20:38
+十二月 28, 2020 8:29:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：9分钟
+十二月 28, 2020 8:29:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 8:29:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=542  一级阈值=3600
+十二月 28, 2020 8:30:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 8:31:40 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 9:13:12 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 9:13:12 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='21:13:12'}
+十二月 28, 2020 9:13:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:13:13   最初不动时间：21:13:12
+十二月 28, 2020 9:13:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：0分钟
+十二月 28, 2020 9:13:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:13:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=1  一级阈值=3600
+十二月 28, 2020 9:14:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:14:13   最初不动时间：21:13:12
+十二月 28, 2020 9:14:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：1分钟
+十二月 28, 2020 9:14:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:14:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=61  一级阈值=3600
+十二月 28, 2020 9:15:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:15:13   最初不动时间：21:13:12
+十二月 28, 2020 9:15:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：2分钟
+十二月 28, 2020 9:15:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:15:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=121  一级阈值=3600
+十二月 28, 2020 9:16:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:16:13   最初不动时间：21:13:12
+十二月 28, 2020 9:16:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：3分钟
+十二月 28, 2020 9:16:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:16:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=181  一级阈值=3600
+十二月 28, 2020 9:17:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:17:13   最初不动时间：21:13:12
+十二月 28, 2020 9:17:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：4分钟
+十二月 28, 2020 9:17:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:17:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=241  一级阈值=3600
+十二月 28, 2020 9:18:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:18:13   最初不动时间：21:13:12
+十二月 28, 2020 9:18:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：5分钟
+十二月 28, 2020 9:18:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:18:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=301  一级阈值=3600
+十二月 28, 2020 9:19:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:19:13   最初不动时间：21:13:12
+十二月 28, 2020 9:19:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：6分钟
+十二月 28, 2020 9:19:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:19:13 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=361  一级阈值=3600
+十二月 28, 2020 9:24:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 老人重置，网关id：20
+十二月 28, 2020 9:24:33 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 9:24:52 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 9:28:42 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 9:28:43 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='21:28:42'}
+十二月 28, 2020 9:28:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:28:44   最初不动时间：21:28:42
+十二月 28, 2020 9:28:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：0分钟
+十二月 28, 2020 9:28:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:28:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=2  一级阈值=3600
+十二月 28, 2020 9:29:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:29:44   最初不动时间：21:28:42
+十二月 28, 2020 9:29:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：1分钟
+十二月 28, 2020 9:29:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:29:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=62  一级阈值=3600
+十二月 28, 2020 9:30:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:30:44   最初不动时间：21:28:42
+十二月 28, 2020 9:30:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：2分钟
+十二月 28, 2020 9:30:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:30:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=122  一级阈值=3600
+十二月 28, 2020 9:31:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:31:44   最初不动时间：21:28:42
+十二月 28, 2020 9:31:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：3分钟
+十二月 28, 2020 9:31:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:31:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=182  一级阈值=3600
+十二月 28, 2020 9:32:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:32:44   最初不动时间：21:28:42
+十二月 28, 2020 9:32:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：4分钟
+十二月 28, 2020 9:32:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:32:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=242  一级阈值=3600
+十二月 28, 2020 9:33:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:33:44   最初不动时间：21:28:42
+十二月 28, 2020 9:33:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：5分钟
+十二月 28, 2020 9:33:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:33:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=302  一级阈值=3600
+十二月 28, 2020 9:34:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:34:44   最初不动时间：21:28:42
+十二月 28, 2020 9:34:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：6分钟
+十二月 28, 2020 9:34:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:34:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=362  一级阈值=3600
+十二月 28, 2020 9:35:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:35:44   最初不动时间：21:28:42
+十二月 28, 2020 9:35:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：7分钟
+十二月 28, 2020 9:35:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:35:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=422  一级阈值=3600
+十二月 28, 2020 9:36:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:36:44   最初不动时间：21:28:42
+十二月 28, 2020 9:36:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：8分钟
+十二月 28, 2020 9:36:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:36:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=482  一级阈值=3600
+十二月 28, 2020 9:37:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:37:44   最初不动时间：21:28:42
+十二月 28, 2020 9:37:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：9分钟
+十二月 28, 2020 9:37:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:37:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=542  一级阈值=3600
+十二月 28, 2020 9:38:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:38:44   最初不动时间：21:28:42
+十二月 28, 2020 9:38:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：10分钟
+十二月 28, 2020 9:38:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:38:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=602  一级阈值=3600
+十二月 28, 2020 9:39:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:39:44   最初不动时间：21:28:42
+十二月 28, 2020 9:39:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：11分钟
+十二月 28, 2020 9:39:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:39:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=662  一级阈值=3600
+十二月 28, 2020 9:40:44 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 老人重置，网关id：20
+十二月 28, 2020 9:40:44 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 9:41:03 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了
+十二月 28, 2020 9:57:31 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 9:57:32 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: SensorDataDeal{oldMan=OldMan{oid=2, gatewayID=20, segment='', oldName='刘大爷', oldPhone='15162598465', oldAddress='xx路xx号', oldRegtime='null', relatives=null}, activityRoom=Room{rid=2, roomName='卧室', collectId='8', nerRoom='', oldId=2, rRegtime='2017-04-01'}, time='21:57:31'}
+十二月 28, 2020 9:57:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:57:33   最初不动时间：21:57:31
+十二月 28, 2020 9:57:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：0分钟
+十二月 28, 2020 9:57:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:57:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=2  一级阈值=3600
+十二月 28, 2020 9:58:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:58:33   最初不动时间：21:57:31
+十二月 28, 2020 9:58:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：1分钟
+十二月 28, 2020 9:58:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:58:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=62  一级阈值=3600
+十二月 28, 2020 9:59:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，当前时间：21:59:33   最初不动时间：21:57:31
+十二月 28, 2020 9:59:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，老人已经不动：2分钟
+十二月 28, 2020 9:59:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行二级预警且没有出门
+十二月 28, 2020 9:59:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，还没进行一级预警  value=122  一级阈值=3600
+十二月 28, 2020 10:00:33 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 老人重置，网关id：20
+十二月 28, 2020 10:02:00 下午 com.warn.service.impl.SensorServiceImpl checkMoveData
+信息: ======================================行为预警=========================================================
+十二月 28, 2020 10:02:24 下午 com.warn.service.impl.SensorServiceImpl$3 run
+信息: 网关id：20，报错了

@@ -10,6 +10,16 @@ public class MomentInTime {
 //    private Integer toEnd;//该时刻距该时间段的结束时间的时长 单位秒
     private String flag;//如果在，则该时间段属于 a活动 还是 r休息  a&r有时活动有时休息
 
+    private String endTime; //该数段 结束时间
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
     public Boolean isInTime() {
         return inTime;
     }
